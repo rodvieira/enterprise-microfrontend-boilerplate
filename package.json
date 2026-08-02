@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
     "dependency-cruiser": "^16.4.2",
     "lefthook": "^1.8.2",
     "tsx": "^4.19.2",

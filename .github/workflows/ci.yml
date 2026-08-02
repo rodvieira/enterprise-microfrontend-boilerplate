@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Boundary check
+        run: pnpm check:boundaries
+        continue-on-error: true # remove once apps/ exists — dependency-cruiser needs real files to check
+
+      - name: Shared deps drift check
+        run: pnpm check:shared-deps
+        continue-on-error: true # remove once apps/ exists — same reason
+
+      - name: Security audit
+        run: pnpm audit --audit-level=high
+        continue-on-error: true # tighten to a hard failure once the project has real dependencies to audit
