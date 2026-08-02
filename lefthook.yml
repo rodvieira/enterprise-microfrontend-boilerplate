@@ -1,14 +1,14 @@
 pre-commit:
   commands:
     format:
-      glob: "*.{js,jsx,ts,tsx,json}"
+      glob: "*.{js,jsx,mjs,cjs,ts,tsx,json}"
       run: pnpm biome check --write {staged_files}
       stage_fixed: true
 
 commit-msg:
   commands:
     commitlint:
-      run: pnpm dlx commitlint --edit {1}
+      run: pnpm exec commitlint --edit {1}
 
 pre-push:
   commands:
