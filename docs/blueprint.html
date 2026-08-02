@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>enterprise-microfrontend-boilerplate — Technical Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ec;
+    --bg-elev: #ebe6dd;
+    --bg-card: #ffffff;
+    --bg-code: #1a1815;
+    --border: #d9d3c7;
+    --border-strong: #b8b0a0;
+    --text: #1a1815;
+    --text-dim: #4a4640;
+    --text-muted: #8a857c;
+
+    --accent: #ff4d1a;
+    --accent-soft: #e04010;
+    --yellow: #ffe94d;
+    --green: #2d7a3d;
+
+    --code-ink: #f5f2ec;
+    --code-com: #8a857c;
+    --code-kw: #ff9770;
+    --code-str: #ffe94d;
+    --code-fn: #7bc9ff;
+    --code-var: #d4b3ff;
+    --code-val: #a8e6a3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.65;
+    font-size: 15px;
+    min-height: 100vh;
+    background-image:
+      linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .container { max-width: 1140px; margin: 0 auto; padding: 60px 40px 120px; }
+
+  header.hero { padding: 60px 0; border-bottom: 1px solid var(--border); margin-bottom: 60px; }
+
+  .meta-line {
+    display: flex; gap: 16px; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 28px;
+  }
+  .meta-line::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+
+  h1.hero-title {
+    font-family: 'Instrument Serif', serif; font-weight: 400;
+    font-size: clamp(44px, 7vw, 84px); line-height: 0.98; letter-spacing: -0.02em; margin-bottom: 26px;
+  }
+  h1.hero-title em { font-style: italic; color: var(--accent); }
+
+  .hero-lede {
+    font-family: 'Instrument Serif', serif; font-style: italic; font-size: 22px;
+    color: var(--text-dim); max-width: 760px; line-height: 1.45;
+  }
+
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 50px;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .hero-stat { padding: 22px 18px 22px 0; border-right: 1px solid var(--border); }
+  .hero-stat:last-child { border-right: none; padding-right: 0; }
+  .hero-stat:not(:first-child) { padding-left: 18px; }
+  .hero-stat-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
+  }
+  .hero-stat-value { font-family: 'JetBrains Mono', monospace; font-size: 17px; color: var(--text); font-weight: 700; }
+  .hero-stat-value.accent { color: var(--accent); }
+
+  nav.toc {
+    background: var(--bg-card); border: 1px solid var(--border-strong); padding: 26px 30px;
+    margin-bottom: 80px; font-family: 'JetBrains Mono', monospace; font-size: 13px; position: relative;
+  }
+  nav.toc::before {
+    content: 'INDEX'; position: absolute; top: -10px; left: 24px; background: var(--bg);
+    padding: 0 12px; font-size: 10px; letter-spacing: 3px; color: var(--text-muted);
+  }
+  nav.toc ol { list-style: none; counter-reset: toc; columns: 2; column-gap: 44px; }
+  nav.toc li { counter-increment: toc; margin-bottom: 9px; break-inside: avoid; display: flex; gap: 10px; }
+  nav.toc li::before { content: counter(toc, decimal-leading-zero); color: var(--accent); font-weight: 700; min-width: 22px; }
+  nav.toc a { color: var(--text); text-decoration: none; border-bottom: 1px solid transparent; }
+  nav.toc a:hover { border-bottom-color: var(--accent); }
+
+  section { margin-bottom: 90px; scroll-margin-top: 40px; }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 20px; margin-bottom: 34px;
+    padding-bottom: 20px; border-bottom: 2px solid var(--text);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--bg);
+    background: var(--text); font-weight: 700; padding: 3px 8px; letter-spacing: 1px;
+  }
+  h2 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 42px; line-height: 1; letter-spacing: -0.02em; flex: 1; }
+  h2 em { font-style: italic; color: var(--accent); }
+  h3 { font-family: 'Instrument Serif', serif; font-size: 27px; font-weight: 400; margin: 34px 0 14px; letter-spacing: -0.01em; }
+  h4 {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--accent); margin: 28px 0 12px; font-weight: 700;
+  }
+
+  p { margin-bottom: 15px; color: var(--text-dim); }
+  p strong { color: var(--text); font-weight: 700; }
+  ul, ol { margin: 15px 0 15px 22px; color: var(--text-dim); }
+  li { margin-bottom: 7px; }
+  li strong { color: var(--text); }
+
+  code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--text);
+    color: var(--bg); padding: 2px 7px; border-radius: 2px;
+  }
+
+  .card { background: var(--bg-card); padding: 26px 30px; margin: 22px 0; border: 1px solid var(--border); border-radius: 4px; }
+  .card.accent { border-left: 4px solid var(--accent); }
+  .card.dark { background: var(--text); color: var(--bg); border: none; }
+  .card.dark p { color: rgba(245,242,236,0.85); }
+  .card.dark strong { color: var(--yellow); }
+
+  .decisions { display: flex; flex-direction: column; gap: 14px; margin: 30px 0; }
+  .decision-item {
+    display: grid; grid-template-columns: 30px 1fr; gap: 18px; padding: 20px 22px;
+    background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 4px;
+  }
+  .decision-num { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 26px; color: var(--accent); line-height: 1; }
+  .decision-body h4 { margin: 0 0 6px 0; color: var(--text); font-family: 'Inter'; font-size: 14.5px; text-transform: none; letter-spacing: normal; font-weight: 700; }
+  .decision-body p { font-size: 13px; color: var(--text-dim); margin-bottom: 0; line-height: 1.55; }
+
+  table.stack { width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 13.5px; background: var(--bg-card); border: 1px solid var(--text); }
+  table.stack th {
+    text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--bg);
+    background: var(--text); text-transform: uppercase; letter-spacing: 1.5px; padding: 11px 16px; font-weight: 700;
+  }
+  table.stack td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.stack td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--text); font-size: 12.5px; width: 24%; font-weight: 600; }
+  table.stack td:nth-child(2) { color: var(--text); font-weight: 600; }
+  table.stack td:last-child { color: var(--text-dim); font-size: 12.5px; }
+  table.stack tr:last-child td { border-bottom: none; }
+  table.stack tr:hover td { background: var(--bg-elev); }
+  table.stack td.you-col { background: rgba(255,77,26,0.06); font-weight: 700; color: var(--accent); text-align: center; }
+  table.stack td.x-col { text-align: center; color: var(--text-muted); }
+
+  pre {
+    background: var(--bg-code); color: var(--code-ink); padding: 44px 26px 22px; overflow-x: auto;
+    margin: 18px 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; border-radius: 4px; position: relative;
+  }
+  pre::before {
+    content: ''; position: absolute; top: 12px; left: 12px; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%; box-shadow: 16px 0 0 var(--yellow), 32px 0 0 var(--green);
+  }
+  pre code { background: none; color: var(--code-ink); padding: 0; }
+  pre .com { color: var(--code-com); font-style: italic; }
+  pre .kw { color: var(--code-kw); }
+  pre .str { color: var(--code-str); }
+  pre .fn { color: var(--code-fn); }
+  pre .var { color: var(--code-var); }
+
+  .tree {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.85; background: var(--bg-code);
+    color: var(--code-ink); padding: 44px 26px 22px; border-radius: 4px; overflow-x: auto; margin: 18px 0; position: relative;
+  }
+  .tree::before {
+    content: ''; position: absolute; top: 12px; left: 12px; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%; box-shadow: 16px 0 0 var(--yellow), 32px 0 0 var(--green);
+  }
+  .tree .dir { color: var(--code-kw); font-weight: 500; }
+  .tree .file { color: var(--code-ink); }
+  .tree .annot { color: var(--code-com); font-style: italic; }
+  .tree .new { color: var(--code-val); }
+
+  .checklist { list-style: none; margin-left: 0; padding: 0; }
+  .checklist li {
+    padding: 9px 0 9px 34px; position: relative; color: var(--text); font-size: 13.5px;
+    border-bottom: 1px dashed var(--border); line-height: 1.5;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: ''; position: absolute; left: 0; top: 11px; width: 17px; height: 17px;
+    border: 2px solid var(--border-strong); border-radius: 3px; background: var(--bg-code);
+  }
+  .checklist-group { background: var(--bg-card); border: 1px solid var(--border); padding: 22px 26px; border-radius: 4px; margin: 18px 0; }
+  .checklist-group h4 { margin-top: 0; color: var(--accent); }
+
+  .pills { display: flex; gap: 7px; flex-wrap: wrap; margin: 12px 0; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; padding: 4px 9px; border: 1px solid var(--text);
+    border-radius: 2px; color: var(--text); background: var(--bg-card); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+  }
+  .pill.accent { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  .phase { display: grid; grid-template-columns: 90px 1fr; gap: 28px; padding: 28px 0; border-top: 1px solid var(--border); }
+  .phase:last-child { border-bottom: 1px solid var(--border); }
+  .phase-num { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 56px; color: var(--accent); line-height: 1; letter-spacing: -0.02em; }
+  .phase-content h3 { margin-top: 0; margin-bottom: 6px; }
+  .phase-duration { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+
+  footer {
+    margin-top: 110px; padding-top: 34px; border-top: 2px solid var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; display: flex; justify-content: space-between;
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 40px 20px 80px; }
+    h1.hero-title { font-size: 44px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-stat { border-right: none; border-bottom: 1px solid var(--border); }
+    nav.toc ol { columns: 1; }
+    .phase { grid-template-columns: 56px 1fr; gap: 16px; }
+    .phase-num { font-size: 40px; }
+    .section-header { flex-direction: column; gap: 10px; align-items: flex-start; }
+    h2 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <div class="meta-line">Technical Blueprint · v1 · High-level, enterprise-scale</div>
+    <h1 class="hero-title">enterprise-microfrontend-<em>boilerplate</em></h1>
+    <p class="hero-lede">
+      A production-grade starting point for large, scalable React applications built
+      on micro-frontend architecture. Not a "hello world" federation demo — a
+      boilerplate designed to be adopted by real engineering teams, with the
+      boundaries, guard rails, and shared contracts that make micro-frontends
+      survive contact with production.
+    </p>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-label">Bundler</div><div class="hero-stat-value accent">Rspack</div></div>
+      <div class="hero-stat"><div class="hero-stat-label">Federation</div><div class="hero-stat-value">MF 2.0</div></div>
+      <div class="hero-stat"><div class="hero-stat-label">Framework</div><div class="hero-stat-value">React 19</div></div>
+      <div class="hero-stat"><div class="hero-stat-label">Monorepo</div><div class="hero-stat-value">Turborepo</div></div>
+      <div class="hero-stat"><div class="hero-stat-label">Cost/mo</div><div class="hero-stat-value accent">$0</div></div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <ol>
+      <li><a href="#product">Product overview</a></li>
+      <li><a href="#decisions">Key decisions and why</a></li>
+      <li><a href="#gap">Competitive gap map</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#integration">Integration structure (exposed/internal)</a></li>
+      <li><a href="#remotes">Remote examples: dashboard + admin</a></li>
+      <li><a href="#packages">Shared packages catalog</a></li>
+      <li><a href="#auth">Auth/SSO strategy</a></li>
+      <li><a href="#security">Security &amp; CVE strategy</a></li>
+      <li><a href="#claude-setup">Claude Code setup</a></li>
+      <li><a href="#structure">Full folder structure</a></li>
+      <li><a href="#testing">Testing strategy</a></li>
+      <li><a href="#cicd">CI/CD</a></li>
+      <li><a href="#deploy">Deployment</a></li>
+      <li><a href="#roadmap">Build order &amp; roadmap</a></li>
+      <li><a href="#dod">Definition of done</a></li>
+    </ol>
+  </nav>
+
+  <!-- 01 PRODUCT -->
+  <section id="product">
+    <div class="section-header"><span class="section-num">/ 01</span><h2>Product <em>overview</em></h2></div>
+
+    <h3>The problem</h3>
+    <p>Every existing micro-frontend starter in the ecosystem is either a full framework you have to adopt wholesale (Piral), a mature-but-dated router with no real domain example (single-spa), or a set of official generators locked inside a specific monorepo tool's ecosystem (Nx) — with toy demos (shop, cart, characters) that prove the mechanics but never the operational concerns real teams hit: shared auth, dependency drift, security boundaries, or what a second team building a second remote actually needs.</p>
+
+    <h3>The product</h3>
+    <p>A monorepo boilerplate that ships two working example micro-frontends (a dashboard and an admin panel) composed inside a shell, talking to each other through a typed event bus, sharing a design system and an authentication contract, with guard rails in CI that catch the two bugs that actually break micro-frontend architectures in production: dependency version drift and import boundary violations.</p>
+
+    <h3>Explicit non-goals</h3>
+    <ul>
+      <li>Not a full framework (no proprietary vocabulary, no hosted cloud service).</li>
+      <li>Not locked to one monorepo tool's ecosystem — works standalone or split across repos.</li>
+      <li>Does not implement real authentication — ships the contract, not the login flow (see §8).</li>
+      <li>Does not chase Webpack-1.0-era browser support — targets evergreen browsers only.</li>
+    </ul>
+  </section>
+
+  <!-- 02 DECISIONS -->
+  <section id="decisions">
+    <div class="section-header"><span class="section-num">/ 02</span><h2>Key <em>decisions</em> and why</h2></div>
+    <p>Every decision below is final, reached through explicit research during planning — not assumed. Each links to evidence gathered at decision time.</p>
+
+    <div class="decisions">
+      <div class="decision-item">
+        <div class="decision-num">01</div>
+        <div class="decision-body">
+          <h4>Name: enterprise-microfrontend-boilerplate</h4>
+          <p>"microfrontend-starter" (the generic phrase) already has 5+ established competitors, one with 10.3k stars — a new repo cannot rank against that. "enterprise" + microfrontend had no strong OSS competitor at research time, and matches the author's real production experience (corporate Design System + Micro-Frontends at scale).</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">02</div>
+        <div class="decision-body">
+          <h4>Bundler: Rspack, not Vite</h4>
+          <p>Module Federation 2.0's flagship features (Manifest, Federation Runtime, Runtime Plugin System) have confirmed official support in Webpack and Rspack. Rspack itself was built by ByteDance specifically because Vite's esbuild/Rollup pipeline could not handle their Module Federation setup at scale. Production adoption: ByteDance/TikTok, Microsoft, Amazon, Discord, Mews (3min → 10s startup).</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">03</div>
+        <div class="decision-body">
+          <h4>Module Federation 2.0 as the federation layer</h4>
+          <p>The modern standard as of 2026 — dynamic TypeScript type sharing, manifest-based dynamic host discovery, unified runtime across bundlers. Rejected Qiankun (narrower international reach) and single-spa (pre-MF architecture, SystemJS-based, framework-less root config is a dated constraint).</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">04</div>
+        <div class="decision-body">
+          <h4>React 19 + TypeScript strict + Tailwind CSS</h4>
+          <p>Consistency with the rest of the author's portfolio. Tailwind has official Rspack support (PostCSS-based, plus a dedicated <code>@rsbuild/plugin-tailwindcss</code> that reads Rspack's module graph for minimal CSS output).</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">05</div>
+        <div class="decision-body">
+          <h4>pnpm workspaces + Turborepo for the monorepo</h4>
+          <p>Consistent with the author's other projects. Deliberately not Nx — Nx's generators are the strongest in the ecosystem, but require adopting Nx as the permanent monorepo tool. Turborepo generators (Plop-based) achieve the same scaffolding goal without that lock-in.</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">06</div>
+        <div class="decision-body">
+          <h4>exposed/ vs internal/ as the contract boundary</h4>
+          <p>Module Federation itself prescribes no folder structure — this convention is ours. Only code under <code>src/exposed/</code> is listed in a remote's <code>federation.config.ts</code> <code>exposes</code> map and is importable from outside. Everything in <code>src/internal/</code> is physically unreachable through federation.</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">07</div>
+        <div class="decision-body">
+          <h4>Dual-repo readiness: monorepo convenience, separate-repo discipline</h4>
+          <p>A separate repository enforces the exposed/internal boundary for free — there's no relative import path to another repository. A monorepo does not enforce this automatically. Solution: never use relative imports across apps, even in the monorepo, enforced by <code>dependency-cruiser</code> in CI, so migrating a remote out to its own repository later breaks nothing.</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">08</div>
+        <div class="decision-body">
+          <h4>Generator built after two real remotes exist, not before</h4>
+          <p>Building <code>pnpm turbo gen remote</code> before having two working remotes risks encoding the wrong abstraction. The dashboard and admin remotes are built by hand first; the generator is extracted from what both actually have in common. Documented as its own build-order decision (§15).</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">09</div>
+        <div class="decision-body">
+          <h4>Authentication: contract and stub, not a real implementation</h4>
+          <p>Every enterprise adopting this already has an identity provider (Okta, Entra ID, Auth0, Keycloak). Shipping a real login flow means shipping code that gets ripped out on adoption. Instead: a stable <code>useAuth()</code> / <code>&lt;ProtectedRoute&gt;</code> contract backed by an in-memory stub, plus a documented integration path. See §8 for the full reasoning, including the 2026 BFF security consensus this deliberately does not implement.</p>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">10</div>
+        <div class="decision-body">
+          <h4>Two remotes, chosen to prove cross-remote communication, not just federation loading</h4>
+          <p>Dashboard (analytics/overview) and Admin (users/permissions) were chosen because they mirror the most common real enterprise micro-frontend adoption pattern — internal backoffice split by team ownership — and because a role change in Admin updating a live KPI in Dashboard via the shared event bus proves the architecture end-to-end, not just that two apps can be loaded side by side.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GAP -->
+  <section id="gap">
+    <div class="section-header"><span class="section-num">/ 03</span><h2>Competitive <em>gap map</em></h2></div>
+    <p>Researched at planning time across three different categories of existing solution. None of them combine all of the rows below — the combination is the differentiator, not any single feature.</p>
+
+    <table class="stack">
+      <thead><tr><th>Capability</th><th>Piral</th><th>single-spa</th><th>Nx</th><th style="background:var(--accent)">This project</th></tr></thead>
+      <tbody>
+        <tr><td>Lightweight, "clone and own"</td><td class="x-col">✕</td><td class="x-col">✓</td><td class="x-col">✕</td><td class="you-col">✓</td></tr>
+        <tr><td>Module Federation 2.0</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="x-col">✓ (partial)</td><td class="you-col">✓</td></tr>
+        <tr><td>Remote generator</td><td class="x-col">✓</td><td class="x-col">✓</td><td class="x-col">✓</td><td class="you-col">✓</td></tr>
+        <tr><td>Real domain example (not toy)</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="you-col">✓</td></tr>
+        <tr><td>CI guard rail vs. dependency drift</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="you-col">✓</td></tr>
+        <tr><td>Shared auth contract</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="you-col">✓</td></tr>
+        <tr><td>Working design system included</td><td class="x-col">✓ (heavy)</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="you-col">✓</td></tr>
+        <tr><td>AI-native workflow (Claude Code)</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="x-col">✕</td><td class="you-col">✓</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 04 ARCHITECTURE -->
+  <section id="architecture">
+    <div class="section-header"><span class="section-num">/ 04</span><h2>Architecture</h2></div>
+
+    <pre><code><span class="com">┌──────────────────────────────────────────────────────────────┐</span>
+<span class="com">│                          apps/shell                          │</span>
+<span class="com">│  React host · reads federation/manifest.ts per environment   │</span>
+<span class="com">└───────────────┬──────────────────────────┬───────────────────┘</span>
+                <span class="com">│  loads via                │  loads via</span>
+                <span class="com">▼                            ▼</span>
+<span class="com">┌────────────────────────┐   ┌────────────────────────┐</span>
+<span class="com">│    apps/dashboard       │   │      apps/admin         │</span>
+<span class="com">│  exposes: ./App         │   │  exposes: ./App         │</span>
+<span class="com">└───────────┬──────────────┘   └───────────┬──────────────┘</span>
+           <span class="com">│                                │</span>
+           <span class="com">└──────────┬─────────────────────┘</span>
+                     <span class="com">▼</span>
+   <span class="kw">packages/event-bus</span>  <span class="kw">packages/auth</span>  <span class="kw">packages/ui</span>  <span class="kw">packages/shared-types</span>
+   <span class="com">(all singleton-shared across shell + every remote)</span></code></pre>
+
+    <h4>Non-negotiable principles</h4>
+    <ul>
+      <li><strong>Module Federation prescribes no folder structure.</strong> Host/Remote, Manifest, and shared-deps are the only official concepts — everything else here is convention we designed and documented.</li>
+      <li><strong>Shell never imports remote internals.</strong> Only <code>federation/loadRemote.ts</code> touches remote code, and only through the federation boundary.</li>
+      <li><strong>Singletons are enforced, not assumed.</strong> React, ReactDOM, <code>packages/auth</code>, and <code>packages/event-bus</code> must resolve to one shared instance — checked in CI, not just configured and hoped for.</li>
+      <li><strong>No relative imports across apps.</strong> Even inside the monorepo. This is what makes moving a remote to its own repository later a non-event.</li>
+    </ul>
+  </section>
+
+  <!-- 05 INTEGRATION -->
+  <section id="integration">
+    <div class="section-header"><span class="section-num">/ 05</span><h2>Integration structure <em>(exposed/internal)</em></h2></div>
+
+    <h3>Inside the shell — manifest-driven remote registry</h3>
+    <div class="tree">
+<span class="dir">apps/shell/src/</span>
+├── <span class="dir">federation/</span>
+│   ├── <span class="file">manifest.ts</span>              <span class="annot"># reads the right JSON for the current env</span>
+│   ├── <span class="file">remotes.dev.json</span>          <span class="annot"># localhost:port per remote</span>
+│   ├── <span class="file">remotes.staging.json</span>
+│   ├── <span class="file">remotes.production.json</span>
+│   ├── <span class="file">loadRemote.ts</span>             <span class="annot"># wraps packages/federation-utils</span>
+│   └── <span class="file">types.ts</span>                  <span class="annot"># RemoteModule contract</span>
+├── <span class="dir">routes/</span>
+│   └── <span class="file">remote-routes.tsx</span>          <span class="annot"># route path → remote mapping</span>
+└── <span class="file">App.tsx</span>
+    </div>
+    <p>Switching environments is switching a JSON file, not recompiling the shell. Adding a remote touches the manifest, never the shell's own code.</p>
+
+    <h3>Inside every remote — the contract for anyone integrating</h3>
+    <div class="tree">
+<span class="dir">apps/&lt;remote-name&gt;/</span>            <span class="annot"># or a fully separate repository, same layout</span>
+├── <span class="dir">src/</span>
+│   ├── <span class="dir new">exposed/</span>                  <span class="annot"># ★ only this is federation-importable</span>
+│   │   ├── <span class="file">App.tsx</span>
+│   │   └── <span class="file">routes.ts</span>
+│   ├── <span class="dir">internal/</span>                 <span class="annot"># business logic, never exposed</span>
+│   └── <span class="file">bootstrap.tsx</span>              <span class="annot"># standalone entry — runs remote alone</span>
+├── <span class="file">federation.config.ts</span>          <span class="annot"># what it exposes + what it shares</span>
+└── <span class="file">remote.manifest.json</span>           <span class="annot"># name, version, routes, owning team</span>
+    </div>
+
+    <div class="card accent">
+      <p><strong>The real boundary is enforced by repository topology, not convention alone.</strong> A separate repository has no <code>../</code> to another team's internal code — the boundary is physical. A monorepo doesn't get that for free: <code>dependency-cruiser</code> runs in CI to catch any relative import crossing an app boundary, so the rule holds identically whether a remote lives in this monorepo or gets split out to its own repository later.</p>
+    </div>
+
+    <h4>Dual-mode generator</h4>
+    <p><code>pnpm turbo gen remote</code> ships two output modes:</p>
+    <ul>
+      <li><strong>Monorepo mode</strong> — creates <code>apps/&lt;name&gt;</code>, workspace-linked to <code>packages/*</code>.</li>
+      <li><strong>Standalone mode</strong> — generates a fully independent project, consuming <code>packages/*</code> as published dependencies (via GitHub Packages) instead of workspace links. Changesets is the publishing engine, not just a changelog tool.</li>
+    </ul>
+  </section>
+
+  <!-- 06 REMOTES -->
+  <section id="remotes">
+    <div class="section-header"><span class="section-num">/ 06</span><h2>Remote examples: <em>dashboard + admin</em></h2></div>
+
+    <h3>apps/dashboard — Analytics/Overview</h3>
+    <ul>
+      <li>KPI cards (active users, usage trend) — proves async data fetching inside an isolated remote.</li>
+      <li>Activity chart over time — proves a third-party chart library works isolated inside federation without leaking CSS/JS into the shell.</li>
+      <li>Recent activity feed.</li>
+    </ul>
+
+    <h3>apps/admin — Users &amp; Permissions</h3>
+    <ul>
+      <li>User table with pagination/sorting — proves a heavy shared data component (<code>packages/ui</code>) works across remotes.</li>
+      <li>Invite/edit modal — proves a form pattern plus a protected route (<code>&lt;ProtectedRoute&gt;</code> from <code>packages/auth</code>).</li>
+      <li>Role change action.</li>
+    </ul>
+
+    <div class="card dark">
+      <p><strong>The detail that makes the demo worth watching:</strong> when Admin changes a user's role, Dashboard's "active users" KPI updates live — no reload, no direct coupling between the two remotes. The update travels through <code>packages/event-bus</code>. This is the proof that cross-remote communication works in practice, not just in the architecture diagram — and it's the moment the README demo GIF is built around.</p>
+    </div>
+  </section>
+
+  <!-- 07 PACKAGES -->
+  <section id="packages">
+    <div class="section-header"><span class="section-num">/ 07</span><h2>Shared packages <em>catalog</em></h2></div>
+
+    <table class="stack">
+      <thead><tr><th>Package</th><th>Solves</th></tr></thead>
+      <tbody>
+        <tr><td>packages/ui</td><td>Working design system — Button, Input, Modal, Table, Toast, Layout, Nav. Not empty; something real renders on clone.</td></tr>
+        <tr><td>packages/auth</td><td>Shared session contract: <code>useAuth()</code>, <code>&lt;ProtectedRoute&gt;</code>, <code>&lt;AuthProvider&gt;</code>. Stub implementation by default (see §8).</td></tr>
+        <tr><td>packages/shared-types</td><td>TypeScript contracts between shell and remotes — User, Permission, exposed component prop types.</td></tr>
+        <tr><td>packages/federation-utils</td><td>A <code>useRemote()</code> hook wrapping <code>React.lazy</code> + <code>Suspense</code> + error boundary, so no remote hand-rolls federation loading mechanics.</td></tr>
+        <tr><td>packages/event-bus</td><td>Typed pub/sub for cross-remote communication without direct coupling — the mechanism behind the dashboard/admin live-update demo.</td></tr>
+        <tr><td>packages/telemetry</td><td>Thin observability wrapper — any remote reports errors/traces without building this from scratch.</td></tr>
+        <tr><td>packages/testing-utils</td><td>Mocks and helpers for testing federation-consuming components without simulating the whole runtime.</td></tr>
+        <tr><td>packages/config-typescript</td><td>Shared base tsconfig.</td></tr>
+        <tr><td>packages/config-biome</td><td>Shared lint/format rules.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 08 AUTH -->
+  <section id="auth">
+    <div class="section-header"><span class="section-num">/ 08</span><h2>Auth/SSO <em>strategy</em></h2></div>
+
+    <div class="card accent">
+      <p><strong>No real login is implemented.</strong> Every enterprise adopting this boilerplate already runs an identity provider (Okta, Entra ID, Auth0, Keycloak). Shipping a real auth flow means shipping code that gets ripped out during adoption. What actually helps is the socket, not the plug.</p>
+    </div>
+
+    <h4>What ships working (no server required)</h4>
+    <pre><code><span class="com">// packages/auth — contract, stub implementation</span>
+<span class="kw">export function</span> <span class="fn">useAuth</span>() {
+  <span class="kw">return</span> { user, isAuthenticated, login, logout }; <span class="com">// in-memory fake user today</span>
+}
+
+<span class="kw">export function</span> <span class="fn">ProtectedRoute</span>({ children }) { <span class="com">/* gate on isAuthenticated */</span> }</code></pre>
+    <p>Remotes consume the contract, never the implementation behind it. Swapping the stub for a real provider later touches nothing inside dashboard or admin.</p>
+
+    <h4>What ships as documentation, not code</h4>
+    <ul>
+      <li><code>docs/how-to-connect-sso.md</code> — where to swap the stub. Any OIDC-compliant provider (which covers the overwhelming majority of enterprise IdPs) enters through the same door, no per-provider code.</li>
+      <li><code>.env.example</code> pre-named: <code>AUTH_ISSUER_URL</code>, <code>AUTH_CLIENT_ID</code>, <code>AUTH_REDIRECT_URI</code>.</li>
+      <li>A checklist of what to request from the company's identity team before wiring a real provider.</li>
+    </ul>
+
+    <h4>Security note, registered honestly</h4>
+    <p>The 2026 consensus for SPA security is the Backend-For-Frontend (BFF) pattern — tokens never touch the browser, session lives in an <code>HttpOnly</code> cookie. Because this boilerplate is frontend-only by deliberate decision, BFF is documented as the recommended upgrade path (naturally connecting to a future Node.js-based project), not implemented here. This is a stated trade-off, not an oversight.</p>
+
+    <p><strong>Guard rail extension:</strong> <code>packages/auth</code> must resolve to a single shared instance across shell and remotes — the same CI check that guards React/ReactDOM singleton drift now also covers "two divergent auth contexts."</p>
+  </section>
+
+  <!-- 09 SECURITY -->
+  <section id="security">
+    <div class="section-header"><span class="section-num">/ 09</span><h2>Security &amp; <em>CVE strategy</em></h2></div>
+
+    <h3>Category A — known CVEs in dependencies</h3>
+    <table class="stack">
+      <thead><tr><th>Layer</th><th>Tool</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td>Every PR</td><td><code>pnpm audit --audit-level=high</code></td><td>Baseline, free, built-in</td></tr>
+        <tr><td>Automated PRs</td><td>Dependabot or Renovate</td><td>Opens a PR when a fix is available; Renovate is more configurable for monorepos</td></tr>
+        <tr><td>Local, pre-push</td><td>OWASP CVE Lite CLI</td><td>Runs fully offline, suggests the exact fix command, catches pnpm workspace-level drift a root-only scan misses</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Category B — malicious packages (supply chain, not CVE)</h3>
+    <p>A different threat model: a package compromised on purpose (typosquatting, malicious install script) has no CVE because it isn't a documented flaw — it's an active attack. <strong>Socket</strong> analyzes what a package actually does (unusual network access, dynamic code execution) before it lands in the lockfile.</p>
+
+    <h3>Category C — the risk unique to micro-frontends</h3>
+    <p>The shell loads and executes remote code from a URL at runtime. If that origin is compromised, it's arbitrary code running inside the shell's own origin — a real supply-chain risk this category of architecture carries that none of the researched competitors document.</p>
+    <ul>
+      <li><strong>CSP</strong> (<code>script-src</code>) allow-listing only known remote origins.</li>
+      <li><strong>Runtime origin allow-list</strong> — the shell refuses to load a remote from any URL outside the configured list, even if the manifest is tampered with.</li>
+      <li><strong>HTTPS enforced</strong> outside local dev, validated by a script that fails the build on an http:// remote URL.</li>
+      <li>Manifest integrity hashing for remote pinning — flagged for technical validation during implementation, not asserted as already solved.</li>
+    </ul>
+  </section>
+
+  <!-- 10 CLAUDE -->
+  <section id="claude-setup">
+    <div class="section-header"><span class="section-num">/ 10</span><h2>Claude Code <em>setup</em></h2></div>
+    <div class="tree">
+<span class="dir">.claude/</span>
+├── <span class="file">CLAUDE.md</span>
+├── <span class="dir">agents/</span>
+│   ├── <span class="file">shared-deps-guard.md</span>       <span class="annot"># checks singleton version drift pre-PR</span>
+│   ├── <span class="file">scaffold-assistant.md</span>       <span class="annot"># guides remote creation conversationally</span>
+│   ├── <span class="file">commit-crafter.md</span>
+│   └── <span class="file">pr-reviewer.md</span>
+├── <span class="dir">skills/</span>
+├── <span class="dir">commands/</span>
+│   ├── <span class="file">scaffold-remote.md</span>          <span class="annot"># /scaffold-remote name</span>
+│   └── <span class="file">add-shared-package.md</span>
+└── <span class="file">settings.json</span>
+    </div>
+  </section>
+
+  <!-- 11 STRUCTURE -->
+  <section id="structure">
+    <div class="section-header"><span class="section-num">/ 11</span><h2>Full folder <em>structure</em></h2></div>
+    <div class="tree">
+<span class="dir">enterprise-microfrontend-boilerplate/</span>
+├── <span class="dir">.claude/</span>
+├── <span class="dir">.github/</span>
+│   ├── <span class="dir">workflows/</span>
+│   │   ├── <span class="file">ci.yml</span>
+│   │   └── <span class="file">security.yml</span>
+│   ├── <span class="dir">ISSUE_TEMPLATE/</span>
+│   └── <span class="file">PULL_REQUEST_TEMPLATE.md</span>
+├── <span class="dir">apps/</span>
+│   ├── <span class="dir">shell/</span>
+│   ├── <span class="dir new">dashboard/</span>
+│   └── <span class="dir new">admin/</span>
+├── <span class="dir">packages/</span>
+│   ├── <span class="dir">ui/</span> <span class="dir">auth/</span> <span class="dir">shared-types/</span>
+│   ├── <span class="dir">federation-utils/</span> <span class="dir">event-bus/</span> <span class="dir">telemetry/</span>
+│   └── <span class="dir">testing-utils/</span> <span class="dir">config-typescript/</span> <span class="dir">config-biome/</span>
+├── <span class="dir">turbo/generators/</span>              <span class="annot"># built in sprint 7, after 2 real remotes exist</span>
+├── <span class="dir">docs/</span>
+│   ├── <span class="file">architecture.md</span>
+│   ├── <span class="file">how-to-add-a-remote.md</span>
+│   ├── <span class="file">how-to-connect-sso.md</span>
+│   └── <span class="dir">decisions/</span>                 <span class="annot"># ADRs</span>
+├── <span class="dir">scripts/</span>
+│   ├── <span class="file">check-shared-deps.ts</span>
+│   └── <span class="file">check-boundaries.ts</span>
+├── <span class="file">.dependency-cruiser.js</span>
+├── <span class="file">.env.example</span>
+├── <span class="file">turbo.json</span>
+├── <span class="file">pnpm-workspace.yaml</span>
+├── <span class="file">biome.json</span>
+├── <span class="file">CONTRIBUTING.md</span>
+├── <span class="file">CODE_OF_CONDUCT.md</span>
+├── <span class="file">LICENSE</span>
+└── <span class="file">README.md</span>
+    </div>
+  </section>
+
+  <!-- 12 TESTING -->
+  <section id="testing">
+    <div class="section-header"><span class="section-num">/ 12</span><h2>Testing <em>strategy</em></h2></div>
+    <table class="stack">
+      <thead><tr><th>Type</th><th>Tool</th><th>Covers</th></tr></thead>
+      <tbody>
+        <tr><td>Unit</td><td>Vitest</td><td>Package logic, hooks, event-bus behavior</td></tr>
+        <tr><td>Component</td><td>Vitest + Testing Library</td><td>UI components, dashboard/admin internals</td></tr>
+        <tr><td>E2E</td><td>Playwright</td><td>Shell composing both remotes, cross-remote event flow (the role-change → KPI-update path)</td></tr>
+        <tr><td>Boundary check</td><td>dependency-cruiser</td><td>No relative import crosses an app boundary</td></tr>
+        <tr><td>Singleton check</td><td>Custom script + CI job</td><td>React, ReactDOM, auth, event-bus resolve to one shared instance</td></tr>
+        <tr><td>Security</td><td>pnpm audit + Socket + OWASP CVE Lite CLI</td><td>Known CVEs and malicious packages</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 13 CICD -->
+  <section id="cicd">
+    <div class="section-header"><span class="section-num">/ 13</span><h2>CI/CD</h2></div>
+    <pre><code><span class="kw">name:</span> ci
+<span class="kw">on:</span> [push, pull_request]
+<span class="kw">jobs:</span>
+  build-and-test:
+    <span class="kw">steps:</span>
+      - <span class="kw">run:</span> pnpm install --frozen-lockfile
+      - <span class="kw">run:</span> pnpm turbo build      <span class="com"># each app isolated + shell composed</span>
+      - <span class="kw">run:</span> pnpm turbo test
+      - <span class="kw">run:</span> pnpm check:boundaries  <span class="com"># dependency-cruiser</span>
+      - <span class="kw">run:</span> pnpm check:shared-deps <span class="com"># singleton drift guard</span>
+      - <span class="kw">run:</span> pnpm audit --audit-level=high
+
+  e2e:
+    <span class="kw">needs:</span> build-and-test
+    <span class="kw">steps:</span>
+      - <span class="kw">run:</span> pnpm exec playwright test  <span class="com"># shell + dashboard + admin composed</span></code></pre>
+  </section>
+
+  <!-- 14 DEPLOY -->
+  <section id="deploy">
+    <div class="section-header"><span class="section-num">/ 14</span><h2>Deployment</h2></div>
+    <p>Each app deploys independently — the entire point of the architecture. Shell and both remotes on Vercel or any static host, each with its own build and its own deploy cadence. Manifest per environment means production simply points at the deployed remote URLs; nothing about the shell's own code changes between environments.</p>
+    <table class="stack">
+      <thead><tr><th>Service</th><th>Tier</th><th>Cost/mo</th></tr></thead>
+      <tbody>
+        <tr><td>Shell + dashboard + admin (Vercel or static host)</td><td>Free</td><td>$0</td></tr>
+        <tr><td>GitHub Actions (public repo)</td><td>Free</td><td>$0</td></tr>
+        <tr><td colspan="2"><strong>Total</strong></td><td><strong>$0</strong></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 15 ROADMAP -->
+  <section id="roadmap">
+    <div class="section-header"><span class="section-num">/ 15</span><h2>Build order <em>&amp; roadmap</em></h2></div>
+    <p>Shared packages before the shell. The shell before any remote. Both remotes before the generator — the generator is extracted from real, working code, not designed in advance.</p>
+
+    <div class="phase">
+      <div class="phase-num">01</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 1 · foundation</div>
+        <h3>Monorepo setup</h3>
+        <ul><li>Turborepo + pnpm workspace, Biome, lefthook, commitlint.</li><li>Empty CI running lint + typecheck.</li><li><code>specify init</code>, constitution via Spec Kit.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">02</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 2 · shared packages, no federation yet</div>
+        <h3>packages/config-*, shared-types, ui, auth stub</h3>
+        <ul><li>Pure React/TS — no Rspack dependency at this stage.</li><li>Design system components: Button, Input, Modal, Table, Toast, Layout, Nav.</li><li>Auth contract + in-memory stub.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">03</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 3 · shell</div>
+        <h3>Host app, Rspack + Module Federation configured</h3>
+        <ul><li>Manifest system, per-environment remote registry.</li><li>Runtime origin allow-list + HTTPS enforcement script.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">04</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 4 · first remote</div>
+        <h3>apps/dashboard</h3>
+        <ul><li>Proves federation loading end-to-end.</li><li>KPI cards, chart, activity feed.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">05</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 5 · second remote</div>
+        <h3>apps/admin + event-bus wiring</h3>
+        <ul><li>User table, invite/edit modal, role change.</li><li>Role change → live dashboard KPI update via <code>packages/event-bus</code>.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">06</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 6 · guard rails</div>
+        <h3>dependency-cruiser, singleton CI check, error boundary</h3>
+        <ul><li>Boundary enforcement matches monorepo and standalone-repo behavior.</li><li>Fallback UI on remote-load failure.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">07</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 7 · generator (extracted, not guessed)</div>
+        <h3>turbo gen remote, dual mode</h3>
+        <ul><li>Extracted from what dashboard and admin actually share.</li><li>Monorepo mode + standalone mode via Changesets publishing.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">08</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 8 · docs + security</div>
+        <h3>Architecture docs, ADRs, CONTRIBUTING, CVE scanning</h3>
+        <ul><li>pnpm audit + Dependabot/Renovate + OWASP CVE Lite CLI + Socket wired into CI.</li><li>docs/how-to-connect-sso.md, docs/how-to-add-a-remote.md.</li></ul>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">09</div>
+      <div class="phase-content">
+        <div class="phase-duration">// sprint 9 · launch</div>
+        <h3>Deploy, README, publish</h3>
+        <ul><li>Demo GIF centered on the cross-remote KPI update.</li><li>Pin repo, write one technical post about the exposed/internal boundary decision.</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 DOD -->
+  <section id="dod">
+    <div class="section-header"><span class="section-num">/ 16</span><h2>Definition <em>of done</em></h2></div>
+
+    <div class="checklist-group">
+      <h4>◆ Architecture</h4>
+      <ul class="checklist">
+        <li>Shell composes dashboard and admin via manifest, no hardcoded remote URLs</li>
+        <li>exposed/ vs internal/ boundary enforced by dependency-cruiser in CI</li>
+        <li>React, ReactDOM, auth, event-bus verified singleton across shell + remotes</li>
+        <li>Cross-remote event (role change → KPI update) works end-to-end</li>
+        <li>Generator produces both monorepo-mode and standalone-mode output</li>
+      </ul>
+    </div>
+
+    <div class="checklist-group">
+      <h4>◆ Security</h4>
+      <ul class="checklist">
+        <li>pnpm audit, Dependabot/Renovate, Socket all wired into CI</li>
+        <li>CSP restricts remote script-src to known origins</li>
+        <li>Runtime origin allow-list rejects unknown remote URLs</li>
+        <li>HTTPS enforced outside local dev</li>
+      </ul>
+    </div>
+
+    <div class="checklist-group">
+      <h4>◆ Portfolio</h4>
+      <ul class="checklist">
+        <li>README opens with the cross-remote demo GIF and live URLs</li>
+        <li>CONTRIBUTING.md, CODE_OF_CONDUCT.md, issue/PR templates in place</li>
+        <li>ADRs committed for every decision in §2</li>
+        <li>Repo pinned, one technical post published</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>enterprise-microfrontend-boilerplate · blueprint v1</span>
+    <span>next: sprint 1 · foundation</span>
+  </footer>
+
+</div>
+</body>
+</html>
