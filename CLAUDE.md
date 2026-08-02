@@ -9,7 +9,9 @@ a design system, an auth contract, and a typed event bus for cross-remote
 communication.
 
 Full spec: `docs/blueprint.html` (open in a browser). Every architectural decision
-is also logged as an ADR in `docs/decisions/`.
+is also logged as an ADR in `docs/decisions/`. The binding rules behind both live
+in `.specify/memory/constitution.md` — this file is the runtime guidance derived
+from it, and the constitution wins on any conflict.
 
 ## Architecture (non-negotiable)
 
