@@ -1,0 +1,29 @@
+{
+  "name": "enterprise-microfrontend-boilerplate",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "e2e": "turbo e2e",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "turbo typecheck",
+    "check:boundaries": "depcruise apps packages --config .dependency-cruiser.js",
+    "check:shared-deps": "tsx scripts/check-shared-deps.ts",
+    "gen": "turbo gen",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "dependency-cruiser": "^16.4.2",
+    "lefthook": "^1.8.2",
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.2"
+  }
+}
