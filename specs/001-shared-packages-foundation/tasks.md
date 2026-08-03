@@ -126,25 +126,25 @@ independently verifiable, which is what the phase split is for.
 
 ### Package scaffolding
 
-- [ ] T045 [US2] Create `packages/auth/package.json` as `@enterprise-mfe/auth`, depending on `@enterprise-mfe/shared-types`, with `react`/`react-dom` `^19.2.8` as peerDependencies
-- [ ] T046 [US2] Create `packages/auth/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T045 [US2] Create `packages/auth/package.json` as `@enterprise-mfe/auth`, depending on `@enterprise-mfe/shared-types`, with `react`/`react-dom` `^19.2.8` as peerDependencies
+- [X] T046 [US2] Create `packages/auth/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
 
 ### Tests for User Story 2
 
-- [ ] T047 [P] [US2] `packages/auth/tests/session-status.test.tsx` — initial `status` is `unknown` and then resolves; never a boolean flash (spec edge case 1)
-- [ ] T048 [P] [US2] `packages/auth/tests/protected-route.test.tsx` — while unauthenticated, children are absent from the tree, not merely hidden (SC-003)
-- [ ] T049 [P] [US2] `packages/auth/tests/protected-route.test.tsx` — after `login()`, children render and identity plus permissions are readable
-- [ ] T050 [P] [US2] `packages/auth/tests/shared-session.test.tsx` — two consumers of `useAuth()` in one tree both observe a single `logout()` (FR-009)
-- [ ] T051 [P] [US2] `packages/auth/tests/use-auth-guard.test.tsx` — `useAuth()` outside a provider throws an error naming the missing provider (spec edge case 2)
-- [ ] T052 [P] [US2] `packages/auth/tests/invariant.test.tsx` — `user` is non-null exactly when `status === 'authenticated'`
+- [X] T047 [P] [US2] `packages/auth/tests/session-status.test.tsx` — initial `status` is `unknown` and then resolves; never a boolean flash (spec edge case 1)
+- [X] T048 [P] [US2] `packages/auth/tests/protected-route.test.tsx` — while unauthenticated, children are absent from the tree, not merely hidden (SC-003)
+- [X] T049 [P] [US2] `packages/auth/tests/protected-route.test.tsx` — after `login()`, children render and identity plus permissions are readable
+- [X] T050 [P] [US2] `packages/auth/tests/shared-session.test.tsx` — two consumers of `useAuth()` in one tree both observe a single `logout()` (FR-009)
+- [X] T051 [P] [US2] `packages/auth/tests/use-auth-guard.test.tsx` — `useAuth()` outside a provider throws an error naming the missing provider (spec edge case 2)
+- [X] T052 [P] [US2] `packages/auth/tests/invariant.test.tsx` — `user` is non-null exactly when `status === 'authenticated'`
 
 ### Implementation for User Story 2
 
-- [ ] T053 [US2] `packages/auth/src/stub.ts` — the fixed in-memory user with the `admin` role, isolated in one file so replacing it touches nothing else (research D9)
-- [ ] T054 [US2] `packages/auth/src/context.tsx` — `AuthProvider` holding the three-state `status`, and `useAuth()` that throws outside a provider
-- [ ] T055 [US2] `packages/auth/src/protected-route.tsx` — `children` / `fallback` / `pending` mapped to the three states per [auth-contract.md](contracts/auth-contract.md)
-- [ ] T056 [US2] `packages/auth/src/index.ts` exporting exactly `useAuth`, `AuthProvider`, `ProtectedRoute` and their types — nothing from `stub.ts` reaches the public surface
-- [ ] T057 [US2] Confirm no network call, storage access, or environment variable read exists anywhere in `packages/auth/src/` (FR-008)
+- [X] T053 [US2] `packages/auth/src/stub.ts` — the fixed in-memory user with the `admin` role, isolated in one file so replacing it touches nothing else (research D9)
+- [X] T054 [US2] `packages/auth/src/context.tsx` — `AuthProvider` holding the three-state `status`, and `useAuth()` that throws outside a provider
+- [X] T055 [US2] `packages/auth/src/protected-route.tsx` — `children` / `fallback` / `pending` mapped to the three states per [auth-contract.md](contracts/auth-contract.md)
+- [X] T056 [US2] `packages/auth/src/index.ts` exporting exactly `useAuth`, `AuthProvider`, `ProtectedRoute` and their types — nothing from `stub.ts` reaches the public surface
+- [X] T057 [US2] Confirm no network call, storage access, or environment variable read exists anywhere in `packages/auth/src/` (FR-008)
 
 **Checkpoint**: `pnpm test --filter @enterprise-mfe/auth` passes with zero configuration set
 

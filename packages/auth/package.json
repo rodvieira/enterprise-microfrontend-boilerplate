@@ -1,0 +1,26 @@
+{
+  "name": "@enterprise-mfe/auth",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The shared session contract, backed by an in-memory stub. Not real authentication.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "dependencies": {
+    "@enterprise-mfe/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@enterprise-mfe/config-typescript": "workspace:*",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}
