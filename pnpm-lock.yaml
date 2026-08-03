@@ -73,6 +73,22 @@ importers:
         specifier: workspace:*
         version: link:../config-typescript
 
+  packages/ui:
+    dependencies:
+      '@enterprise-mfe/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      '@enterprise-mfe/config-typescript':
+        specifier: workspace:*
+        version: link:../config-typescript
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
+
 packages:
 
   '@adobe/css-tools@4.5.0':

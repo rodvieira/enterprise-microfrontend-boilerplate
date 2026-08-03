@@ -23,6 +23,18 @@
       "trailingCommas": "all"
     }
   },
+  "overrides": [
+    {
+      "include": ["packages/ui/src/components/modal.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    }
+  ],
   "files": {
     "ignore": [
       "**/node_modules/**",

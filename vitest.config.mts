@@ -7,17 +7,40 @@ import { defineConfig } from 'vitest/config';
  * shared tsconfig and Biome rules. Run a single package with:
  *
  *   pnpm test --project @enterprise-mfe/ui
+ *
+ * Projects are listed explicitly rather than globbed. A glob-created project
+ * does not inherit `environment` or `setupFiles` from this file, which silently
+ * leaves every component test without a DOM.
  */
+function browserProject(name: string, root: string) {
+  return {
+    extends: true as const,
+    plugins: [react()],
+    test: {
+      name,
+      root,
+      environment: 'jsdom' as const,
+      setupFiles: ['../../vitest.setup.ts'],
+      include: ['tests/**/*.test.{ts,tsx}'],
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
   test: {
-    projects: ['packages/*'],
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./vitest.setup.ts'],
-    include: ['tests/**/*.test.{ts,tsx}'],
-    // config-typescript and config-biome ship configuration, not code, so they
-    // have no tests. A package without tests is not a failure.
     passWithNoTests: true,
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: '@enterprise-mfe/shared-types',
+          root: './packages/shared-types',
+          environment: 'node',
+          include: ['tests/**/*.test.ts'],
+        },
+      },
+      browserProject('@enterprise-mfe/ui', './packages/ui'),
+      browserProject('@enterprise-mfe/auth', './packages/auth'),
+    ],
   },
 });
