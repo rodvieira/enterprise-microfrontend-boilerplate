@@ -1,0 +1,11 @@
+{
+  "name": "@enterprise-mfe/config-biome",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared Biome lint and format rules every package and app extends.",
+  "license": "MIT",
+  "files": ["biome.json"],
+  "exports": {
+    "./biome.json": "./biome.json"
+  }
+}

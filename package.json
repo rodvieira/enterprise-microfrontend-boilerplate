@@ -3,17 +3,17 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.22.2"
   },
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "test": "turbo test",
+    "test": "vitest run",
     "e2e": "turbo e2e",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "turbo typecheck",
-    "check:boundaries": "depcruise apps packages --config .dependency-cruiser.js",
+    "check:boundaries": "depcruise packages --config .dependency-cruiser.js",
     "check:shared-deps": "tsx scripts/check-shared-deps.ts",
     "gen": "turbo gen",
     "prepare": "lefthook install"
@@ -22,10 +22,22 @@
     "@biomejs/biome": "^1.9.4",
     "@commitlint/cli": "^19.6.0",
     "@commitlint/config-conventional": "^19.6.0",
+    "@enterprise-mfe/config-biome": "workspace:*",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^6.0.5",
     "dependency-cruiser": "^16.4.2",
+    "jsdom": "^30.0.1",
     "lefthook": "^1.8.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "tsx": "^4.19.2",
     "turbo": "^2.3.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
   }
 }

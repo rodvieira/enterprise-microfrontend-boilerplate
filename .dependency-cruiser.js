@@ -31,10 +31,26 @@ module.exports = {
       from: { pathNot: '^apps/([^/]+)/src/internal/' },
       to: { path: '^apps/([^/]+)/src/internal/' },
     },
+    {
+      name: 'no-undeclared-dependencies',
+      severity: 'error',
+      comment:
+        'This module imports a package its own package.json does not declare. ' +
+        'The repository uses a single hoisted node_modules at the root (see .npmrc ' +
+        'and ADR-0011), so an undeclared package resolves anyway and nothing fails ' +
+        'locally — until someone extracts this app or package to its own repository, ' +
+        'where the import has nothing to resolve to. Declare it, or stop importing it.',
+      from: { path: '^(apps|packages)/' },
+      to: { dependencyTypes: ['npm-no-pkg', 'npm-unknown'] },
+    },
   ],
   options: {
     doNotFollow: { path: 'node_modules' },
     tsPreCompilationDeps: true,
-    tsConfig: { fileName: 'packages/config-typescript/tsconfig.base.json' },
+    // Points at the root tsconfig, not packages/config-typescript/tsconfig.base.json:
+    // dependency-cruiser hands the file to TypeScript, which rejects a config that
+    // resolves to zero input files (TS18003). The base config is meant to be
+    // extended, never used directly. The root config extends it and has inputs.
+    tsConfig: { fileName: 'tsconfig.json' },
   },
 };
