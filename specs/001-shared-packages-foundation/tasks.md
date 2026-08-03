@@ -156,10 +156,10 @@ independently verifiable, which is what the phase split is for.
 
 **Independent Test**: Search the workspace for competing definitions; change a shape and watch consumers fail to compile.
 
-- [ ] T058 [US3] Replace any local `User`, `Role`, or `Permission` declaration in `packages/auth/src/` with an import from `@enterprise-mfe/shared-types` (FR-015)
-- [ ] T059 [US3] Replace any local `className` prop declaration in `packages/ui/src/` with `WithClassName` from `@enterprise-mfe/shared-types`
-- [ ] T060 [US3] `specs/001-shared-packages-foundation/quickstart.md` §4 check — run the two `grep` commands and confirm exactly one definition each (SC-004)
-- [ ] T061 [US3] `packages/shared-types/tests/contract-propagation.test-d.ts` — a type-level test asserting consumers fail to compile when a shared shape changes incompatibly (spec scenario 3.3)
+- [X] T058 [US3] Replace any local `User`, `Role`, or `Permission` declaration in `packages/auth/src/` with an import from `@enterprise-mfe/shared-types` (FR-015)
+- [X] T059 [US3] Replace any local `className` prop declaration in `packages/ui/src/` with `WithClassName` from `@enterprise-mfe/shared-types`
+- [X] T060 [US3] `specs/001-shared-packages-foundation/quickstart.md` §4 check — run the two `grep` commands and confirm exactly one definition each (SC-004)
+- [X] T061 [US3] `packages/shared-types/tests/contract-propagation.test-d.ts` — a type-level test asserting consumers fail to compile when a shared shape changes incompatibly (spec scenario 3.3)
 
 **Checkpoint**: Zero duplicate declarations; a shape change breaks consumers at type-check time
 
@@ -171,10 +171,10 @@ independently verifiable, which is what the phase split is for.
 
 **Independent Test**: Create a throwaway package that extends the shared config and confirm it inherits strictness and formatting with no local overrides.
 
-- [ ] T062 [US4] Confirm every `packages/*/tsconfig.json` extends `@enterprise-mfe/config-typescript` and declares no compiler option already set in the base (FR-018)
-- [ ] T063 [US4] Point the root `biome.json` at `@enterprise-mfe/config-biome` via `extends`, then run `pnpm lint` and confirm **zero files change** — proving the extracted copy is faithful (FR-017)
-- [ ] T064 [US4] Create a throwaway package extending both shared configs, confirm it inherits strictness and formatting with no local rules, then delete it (SC-006)
-- [ ] T065 [US4] Introduce a deliberate rule violation in one package, confirm `pnpm lint` fails, then revert (spec scenario 4.2)
+- [X] T062 [US4] Confirm every `packages/*/tsconfig.json` extends `@enterprise-mfe/config-typescript` and declares no compiler option already set in the base (FR-018)
+- [X] T063 [US4] Point the root `biome.json` at `@enterprise-mfe/config-biome` via `extends`, then run `pnpm lint` and confirm **zero files change** — proving the extracted copy is faithful (FR-017)
+- [X] T064 [US4] Create a throwaway package extending both shared configs, confirm it inherits strictness and formatting with no local rules, then delete it (SC-006)
+- [X] T065 [US4] Introduce a deliberate rule violation in one package, confirm `pnpm lint` fails, then revert (spec scenario 4.2)
 
 **Checkpoint**: Adding a package requires extending configuration and copying zero rules
 
