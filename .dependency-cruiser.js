@@ -35,6 +35,10 @@ module.exports = {
   options: {
     doNotFollow: { path: 'node_modules' },
     tsPreCompilationDeps: true,
-    tsConfig: { fileName: 'packages/config-typescript/tsconfig.base.json' },
+    // Points at the root tsconfig, not packages/config-typescript/tsconfig.base.json:
+    // dependency-cruiser hands the file to TypeScript, which rejects a config that
+    // resolves to zero input files (TS18003). The base config is meant to be
+    // extended, never used directly. The root config extends it and has inputs.
+    tsConfig: { fileName: 'tsconfig.json' },
   },
 };
