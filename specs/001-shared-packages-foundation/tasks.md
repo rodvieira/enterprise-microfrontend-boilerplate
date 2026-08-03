@@ -76,43 +76,43 @@ independently verifiable, which is what the phase split is for.
 
 ### Package scaffolding
 
-- [ ] T019 [US1] Create `packages/ui/package.json` as `@enterprise-mfe/ui` with `react`/`react-dom` `^19.2.8` as **peerDependencies** (research D7 — never regular dependencies), matching devDependencies for tests, and zero runtime dependencies (research D3)
-- [ ] T020 [US1] Create `packages/ui/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
-- [ ] T021 [US1] Create `packages/ui/src/styles/tokens.css` with the Tailwind v4 `@theme` block defining colour, spacing, radius, and typography tokens (research D2)
-- [ ] T022 [US1] Add the `./styles.css` subpath to `packages/ui/package.json` `exports` so consumers import `@enterprise-mfe/ui/styles.css`
-- [ ] T023 [US1] Create `packages/ui/src/utils/cx.ts` — the ~10-line class-composition helper that replaces a `clsx` dependency
+- [X] T019 [US1] Create `packages/ui/package.json` as `@enterprise-mfe/ui` with `react`/`react-dom` `^19.2.8` as **peerDependencies** (research D7 — never regular dependencies), matching devDependencies for tests, and zero runtime dependencies (research D3)
+- [X] T020 [US1] Create `packages/ui/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T021 [US1] Create `packages/ui/src/styles/tokens.css` with the Tailwind v4 `@theme` block defining colour, spacing, radius, and typography tokens (research D2)
+- [X] T022 [US1] Add the `./styles.css` subpath to `packages/ui/package.json` `exports` so consumers import `@enterprise-mfe/ui/styles.css`
+- [X] T023 [US1] Create `packages/ui/src/utils/cx.ts` — the ~10-line class-composition helper that replaces a `clsx` dependency
 
 ### Tests for User Story 1
 
 > Write these first and confirm they fail before implementing the component each one covers
 
-- [ ] T024 [P] [US1] `packages/ui/tests/button.test.tsx` — renders each variant and size, click and Enter/Space activation, disabled state conveyed to assistive technology, `className` appended not replaced
-- [ ] T025 [P] [US1] `packages/ui/tests/input.test.tsx` — label programmatically associated, generated id when omitted, error announced, `className` forwarded
-- [ ] T026 [P] [US1] `packages/ui/tests/table.test.tsx` — renders rows with header scope, and an empty collection renders `emptyState` rather than a bare frame (spec scenario 1.3)
-- [ ] T027 [P] [US1] `packages/ui/tests/toast.test.tsx` — two simultaneous toasts both stay readable and dismiss independently (spec scenario 1.4), announced politely
-- [ ] T028 [P] [US1] `packages/ui/tests/layout.test.tsx` — header, sidebar, footer render as real landmark regions
-- [ ] T029 [P] [US1] `packages/ui/tests/nav.test.tsx` — arrow-key movement between items, active item marked as current rather than only styled
+- [X] T024 [P] [US1] `packages/ui/tests/button.test.tsx` — renders each variant and size, click and Enter/Space activation, disabled state conveyed to assistive technology, `className` appended not replaced
+- [X] T025 [P] [US1] `packages/ui/tests/input.test.tsx` — label programmatically associated, generated id when omitted, error announced, `className` forwarded
+- [X] T026 [P] [US1] `packages/ui/tests/table.test.tsx` — renders rows with header scope, and an empty collection renders `emptyState` rather than a bare frame (spec scenario 1.3)
+- [X] T027 [P] [US1] `packages/ui/tests/toast.test.tsx` — two simultaneous toasts both stay readable and dismiss independently (spec scenario 1.4), announced politely
+- [X] T028 [P] [US1] `packages/ui/tests/layout.test.tsx` — header, sidebar, footer render as real landmark regions
+- [X] T029 [P] [US1] `packages/ui/tests/nav.test.tsx` — arrow-key movement between items, active item marked as current rather than only styled
 
 **The five Modal focus rules — one named test each** ([ui-contract.md](contracts/ui-contract.md)). These are the acceptance surface for research decision D3 (hand-rolled instead of Radix), so they are not folded into one "modal works" test:
 
-- [ ] T030 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 1**: on open, focus moves to the first focusable element, or to the container when none exists
-- [ ] T031 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 2**: Tab and Shift+Tab cycle within the modal and never reach content behind it
-- [ ] T032 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 3**: Escape invokes `onClose`
-- [ ] T033 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 4**: on close, focus returns to the element focused before opening (spec scenario 1.2)
-- [ ] T034 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 5**: content behind the modal is inert to assistive technology while it is open
+- [X] T030 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 1**: on open, focus moves to the first focusable element, or to the container when none exists
+- [X] T031 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 2**: Tab and Shift+Tab cycle within the modal and never reach content behind it
+- [X] T032 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 3**: Escape invokes `onClose`
+- [X] T033 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 4**: on close, focus returns to the element focused before opening (spec scenario 1.2)
+- [X] T034 [P] [US1] `packages/ui/tests/modal-focus.test.tsx` — **rule 5**: content behind the modal is inert to assistive technology while it is open
 
 ### Implementation for User Story 1
 
-- [ ] T035 [P] [US1] `packages/ui/src/components/button.tsx` — variants, sizes, ref forwarding, prop spreading
-- [ ] T036 [P] [US1] `packages/ui/src/components/input.tsx` — required `label`, generated id, `error` and `hint`
-- [ ] T037 [P] [US1] `packages/ui/src/components/table.tsx` — generic over row type, `columns`/`rows`/`getRowId`/`emptyState`
-- [ ] T038 [P] [US1] `packages/ui/src/components/layout.tsx` — landmark regions, predictable small-width collapse
-- [ ] T039 [P] [US1] `packages/ui/src/components/nav.tsx` — roving focus, `aria-current` on the active item
-- [ ] T040 [US1] `packages/ui/src/hooks/use-focus-trap.ts` — the focus management behind Modal rules 1, 2, and 4
-- [ ] T041 [US1] `packages/ui/src/components/modal.tsx` — consumes the focus trap, handles Escape, marks background inert (depends on T040)
-- [ ] T042 [US1] `packages/ui/src/components/toast.tsx` and `packages/ui/src/hooks/use-toast.ts` — provider-owned queue, independent dismissal
-- [ ] T043 [US1] `packages/ui/src/index.ts` re-exporting the seven components, `ToastProvider`, `useToast`, and every prop type
-- [ ] T044 [US1] Confirm no component imports from `@enterprise-mfe/auth` or any app (FR-005) — verified by `pnpm check:boundaries` and by inspection of `packages/ui/package.json` dependencies
+- [X] T035 [P] [US1] `packages/ui/src/components/button.tsx` — variants, sizes, ref forwarding, prop spreading
+- [X] T036 [P] [US1] `packages/ui/src/components/input.tsx` — required `label`, generated id, `error` and `hint`
+- [X] T037 [P] [US1] `packages/ui/src/components/table.tsx` — generic over row type, `columns`/`rows`/`getRowId`/`emptyState`
+- [X] T038 [P] [US1] `packages/ui/src/components/layout.tsx` — landmark regions, predictable small-width collapse
+- [X] T039 [P] [US1] `packages/ui/src/components/nav.tsx` — roving focus, `aria-current` on the active item
+- [X] T040 [US1] `packages/ui/src/hooks/use-focus-trap.ts` — the focus management behind Modal rules 1, 2, and 4
+- [X] T041 [US1] `packages/ui/src/components/modal.tsx` — consumes the focus trap, handles Escape, marks background inert (depends on T040)
+- [X] T042 [US1] `packages/ui/src/components/toast.tsx` and `packages/ui/src/hooks/use-toast.ts` — provider-owned queue, independent dismissal
+- [X] T043 [US1] `packages/ui/src/index.ts` re-exporting the seven components, `ToastProvider`, `useToast`, and every prop type
+- [X] T044 [US1] Confirm no component imports from `@enterprise-mfe/auth` or any app (FR-005) — verified by `pnpm check:boundaries` and by inspection of `packages/ui/package.json` dependencies
 
 **Checkpoint**: `pnpm test --filter @enterprise-mfe/ui` passes; all seven components render and are keyboard-operable (SC-002)
 
