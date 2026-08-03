@@ -1,0 +1,4 @@
+{
+  "extends": "@enterprise-mfe/config-typescript/tsconfig.base.json",
+  "include": ["src/**/*", "tests/**/*"]
+}

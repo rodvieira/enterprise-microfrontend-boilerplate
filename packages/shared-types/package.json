@@ -1,0 +1,17 @@
+{
+  "name": "@enterprise-mfe/shared-types",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TypeScript contracts shared between the shell and every remote.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@enterprise-mfe/config-typescript": "workspace:*"
+  }
+}

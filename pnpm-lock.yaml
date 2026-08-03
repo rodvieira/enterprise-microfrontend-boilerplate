@@ -67,6 +67,12 @@ importers:
 
   packages/config-typescript: {}
 
+  packages/shared-types:
+    devDependencies:
+      '@enterprise-mfe/config-typescript':
+        specifier: workspace:*
+        version: link:../config-typescript
+
 packages:
 
   '@adobe/css-tools@4.5.0':

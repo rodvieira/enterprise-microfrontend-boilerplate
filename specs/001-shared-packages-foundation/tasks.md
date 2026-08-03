@@ -56,13 +56,13 @@ independently verifiable, which is what the phase split is for.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T012 Create `packages/shared-types/package.json` as `@enterprise-mfe/shared-types` with `exports` pointing at `./src/index.ts` (no build step, per research D1)
-- [ ] T013 Create `packages/shared-types/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.base.json`
-- [ ] T014 [P] Create `packages/shared-types/src/user.ts` defining `Permission` (`users:read`, `users:write`, `dashboard:read`), `Role` (`admin`, `editor`, `viewer`), and `User` per [data-model.md](data-model.md)
-- [ ] T015 [P] Create `packages/shared-types/src/component.ts` defining `WithClassName` and `RemoteAppProps`
-- [ ] T016 Add the frozen `ROLE_PERMISSIONS` lookup table to `packages/shared-types/src/user.ts`, mapping each role to its permissions — the one piece of runtime data in this package, per [config-contract.md](contracts/config-contract.md)
-- [ ] T017 Create `packages/shared-types/src/index.ts` re-exporting every public type and `ROLE_PERMISSIONS`, as the package's only public entry
-- [ ] T018 Create `packages/shared-types/tests/role-permissions.test.ts` asserting every `Role` has an entry and every listed permission is a valid `Permission`
+- [X] T012 Create `packages/shared-types/package.json` as `@enterprise-mfe/shared-types` with `exports` pointing at `./src/index.ts` (no build step, per research D1)
+- [X] T013 Create `packages/shared-types/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.base.json`
+- [X] T014 [P] Create `packages/shared-types/src/user.ts` defining `Permission` (`users:read`, `users:write`, `dashboard:read`), `Role` (`admin`, `editor`, `viewer`), and `User` per [data-model.md](data-model.md)
+- [X] T015 [P] Create `packages/shared-types/src/component.ts` defining `WithClassName` and `RemoteAppProps`
+- [X] T016 Add the frozen `ROLE_PERMISSIONS` lookup table to `packages/shared-types/src/user.ts`, mapping each role to its permissions — the one piece of runtime data in this package, per [config-contract.md](contracts/config-contract.md)
+- [X] T017 Create `packages/shared-types/src/index.ts` re-exporting every public type and `ROLE_PERMISSIONS`, as the package's only public entry
+- [X] T018 Create `packages/shared-types/tests/role-permissions.test.ts` asserting every `Role` has an entry and every listed permission is a valid `Permission`
 
 **Checkpoint**: Types resolve from a package name; `pnpm test` and `pnpm typecheck` pass
 
