@@ -205,7 +205,7 @@ independently verifiable, which is what the phase split is for.
 - [X] T077 Create `docs/packages.md` cataloguing the five packages, matching the tone of `docs/blueprint.html` §7 — the documentation entry FR-019 requires beyond code
 - [X] T078 Confirm CI's `continue-on-error` on the boundary and drift steps in `.github/workflows/ci.yml`: the drift step can become a hard failure now that the script exists; the boundary step stays tolerant only if `apps/` is still absent — decide and record which, in the PR
 - [X] T079 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
-- [ ] T080 Write the pull request description with a **one-line justification for each of the four new root devDependencies** — `vitest`, `@vitejs/plugin-react`, `jsdom`, `@testing-library/react` (constitution Principle IX)
+- [X] T080 Write the pull request description with a **one-line justification for each of the four new root devDependencies** — `vitest`, `@vitejs/plugin-react`, `jsdom`, `@testing-library/react` (constitution Principle IX)
 - [X] T081 Review the full diff against `.claude/agents/pr-reviewer.md` before opening the pull request (done inline, not via a spawned agent)
 
 ---
