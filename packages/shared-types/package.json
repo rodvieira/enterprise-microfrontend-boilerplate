@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
-    "@enterprise-mfe/config-typescript": "workspace:*"
+    "@enterprise-mfe/config-typescript": "workspace:*",
+    "vitest": "^4.1.10"
   }
 }

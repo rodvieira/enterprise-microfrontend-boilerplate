@@ -45,6 +45,22 @@ Use `.claude/commands/add-shared-package.md`, or by hand:
    not optional — it is how `auth` is protected, and skipping it reintroduces the
    exact class of bug the guard rail exists to catch (constitution Principle III).
 
+## Where dependencies live
+
+There is one `node_modules`, at the repository root (`node-linker=hoisted` in
+`.npmrc` — see [ADR-0011](decisions/0011-hoisted-node-modules.md)). React is
+installed once and appears in no package directory.
+
+The small `node_modules` you will still see inside a package holds only symlinks
+to its *workspace* dependencies — that is how pnpm expresses the graph, and it is
+24 KB across all packages.
+
+Because everything else is hoisted, an undeclared import resolves anyway and
+nothing fails locally. **Declare every package you import in that package's own
+`package.json`**, including test tooling. `pnpm check:boundaries` enforces this
+through the `no-undeclared-dependencies` rule, and it is what lets a package be
+extracted to its own repository later (ADR-0007).
+
 ## No build step
 
 Packages ship TypeScript source: `exports` points at `src/index.ts` and the

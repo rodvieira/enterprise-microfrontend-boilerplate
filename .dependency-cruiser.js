@@ -31,6 +31,18 @@ module.exports = {
       from: { pathNot: '^apps/([^/]+)/src/internal/' },
       to: { path: '^apps/([^/]+)/src/internal/' },
     },
+    {
+      name: 'no-undeclared-dependencies',
+      severity: 'error',
+      comment:
+        'This module imports a package its own package.json does not declare. ' +
+        'The repository uses a single hoisted node_modules at the root (see .npmrc ' +
+        'and ADR-0011), so an undeclared package resolves anyway and nothing fails ' +
+        'locally — until someone extracts this app or package to its own repository, ' +
+        'where the import has nothing to resolve to. Declare it, or stop importing it.',
+      from: { path: '^(apps|packages)/' },
+      to: { dependencyTypes: ['npm-no-pkg', 'npm-unknown'] },
+    },
   ],
   options: {
     doNotFollow: { path: 'node_modules' },
