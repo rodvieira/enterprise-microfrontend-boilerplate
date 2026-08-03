@@ -31,14 +31,15 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Test
+        run: pnpm test
+
       - name: Boundary check
         run: pnpm check:boundaries
-        continue-on-error: true # remove once apps/ exists — dependency-cruiser needs real files to check
 
       - name: Shared deps drift check
         run: pnpm check:shared-deps
-        continue-on-error: true # remove once apps/ exists — same reason
 
       - name: Security audit
         run: pnpm audit --audit-level=high
-        continue-on-error: true # tighten to a hard failure once the project has real dependencies to audit
+        continue-on-error: true # a new upstream advisory must not block an unrelated PR; reviewed rather than enforced

@@ -32,7 +32,7 @@ their own merits, with no `--no-verify` and no `continue-on-error` masking them.
 ## 2. The component set is real (SC-001, SC-002)
 
 ```bash
-pnpm test --filter @enterprise-mfe/ui
+pnpm test -- --project @enterprise-mfe/ui
 ```
 
 Expected: every one of the seven components has rendering and keyboard tests, and
@@ -48,7 +48,7 @@ all pass. Specifically verifiable:
 ## 3. The session contract works with zero configuration (SC-003)
 
 ```bash
-pnpm test --filter @enterprise-mfe/auth
+pnpm test -- --project @enterprise-mfe/auth
 ```
 
 Expected, with no environment variable set and no service running:

@@ -184,12 +184,12 @@ independently verifiable, which is what the phase split is for.
 
 **Purpose**: Build the Principle III gate that `pnpm check:shared-deps` currently fails for want of. Separated from Polish because it is a constitutional requirement (FR-012), not a nicety.
 
-- [ ] T066 Create `scripts/check-shared-deps.ts` reading every `package.json` under `apps/*` and `packages/*`, treating a missing directory as not-an-error (`apps/` does not exist yet)
-- [ ] T067 Implement the comparison: for each singleton, the declared range must be byte-identical across `dependencies`, `devDependencies`, and `peerDependencies` in every manifest that declares it
-- [ ] T068 Define the singleton list as an explicit exported constant — `react`, `react-dom`, `@enterprise-mfe/auth` (FR-012), with `@enterprise-mfe/event-bus` commented as sprint-6 work — carrying a comment that points at constitution Principle III
-- [ ] T069 Implement the report: a table of package → declared range → where on divergence with exit code 1, one line per singleton with exit code 0 on agreement. It reports and never edits a manifest, matching `.claude/agents/shared-deps-guard.md`
-- [ ] T070 Verify `pnpm check:shared-deps` exits 0 on the real workspace
-- [ ] T071 **Prove the gate catches drift**: change `react` to a different range in `packages/ui/package.json`, confirm `pnpm check:shared-deps` exits 1 and names `packages/ui`, then revert and confirm it exits 0 again (quickstart §5 — a gate that has never failed has not been tested)
+- [X] T066 Create `scripts/check-shared-deps.ts` reading every `package.json` under `apps/*` and `packages/*`, treating a missing directory as not-an-error (`apps/` does not exist yet)
+- [X] T067 Implement the comparison: for each singleton, the declared range must be byte-identical across `dependencies`, `devDependencies`, and `peerDependencies` in every manifest that declares it
+- [X] T068 Define the singleton list as an explicit exported constant — `react`, `react-dom`, `@enterprise-mfe/auth` (FR-012), with `@enterprise-mfe/event-bus` commented as sprint-6 work — carrying a comment that points at constitution Principle III
+- [X] T069 Implement the report: a table of package → declared range → where on divergence with exit code 1, one line per singleton with exit code 0 on agreement. It reports and never edits a manifest, matching `.claude/agents/shared-deps-guard.md`
+- [X] T070 Verify `pnpm check:shared-deps` exits 0 on the real workspace
+- [X] T071 **Prove the gate catches drift**: change `react` to a different range in `packages/ui/package.json`, confirm `pnpm check:shared-deps` exits 1 and names `packages/ui`, then revert and confirm it exits 0 again (quickstart §5 — a gate that has never failed has not been tested)
 
 **Checkpoint**: Both previously-broken gates now pass on their own merits
 
@@ -197,14 +197,14 @@ independently verifiable, which is what the phase split is for.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T072 [P] `packages/config-typescript/README.md` — one paragraph on what it solves (FR-019)
-- [ ] T073 [P] `packages/config-biome/README.md` — one paragraph on what it solves
-- [ ] T074 [P] `packages/shared-types/README.md` — one paragraph, noting it ships no runtime code
-- [ ] T075 [P] `packages/ui/README.md` — one paragraph, plus the stylesheet import step a consumer must not skip
-- [ ] T076 [P] `packages/auth/README.md` — **the first paragraph must state this is a stub with an in-memory user and is not production authentication** (FR-011, SC-008), then link `docs/decisions/0009-auth-contract-not-implementation.md`
-- [ ] T077 Create `docs/packages.md` cataloguing the five packages, matching the tone of `docs/blueprint.html` §7 — the documentation entry FR-019 requires beyond code
-- [ ] T078 Confirm CI's `continue-on-error` on the boundary and drift steps in `.github/workflows/ci.yml`: the drift step can become a hard failure now that the script exists; the boundary step stays tolerant only if `apps/` is still absent — decide and record which, in the PR
-- [ ] T079 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
+- [X] T072 [P] `packages/config-typescript/README.md` — one paragraph on what it solves (FR-019)
+- [X] T073 [P] `packages/config-biome/README.md` — one paragraph on what it solves
+- [X] T074 [P] `packages/shared-types/README.md` — one paragraph, noting it ships no runtime code
+- [X] T075 [P] `packages/ui/README.md` — one paragraph, plus the stylesheet import step a consumer must not skip
+- [X] T076 [P] `packages/auth/README.md` — **the first paragraph must state this is a stub with an in-memory user and is not production authentication** (FR-011, SC-008), then link `docs/decisions/0009-auth-contract-not-implementation.md`
+- [X] T077 Create `docs/packages.md` cataloguing the five packages, matching the tone of `docs/blueprint.html` §7 — the documentation entry FR-019 requires beyond code
+- [X] T078 Confirm CI's `continue-on-error` on the boundary and drift steps in `.github/workflows/ci.yml`: the drift step can become a hard failure now that the script exists; the boundary step stays tolerant only if `apps/` is still absent — decide and record which, in the PR
+- [X] T079 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
 - [ ] T080 Write the pull request description with a **one-line justification for each of the four new root devDependencies** — `vitest`, `@vitejs/plugin-react`, `jsdom`, `@testing-library/react` (constitution Principle IX)
 - [ ] T081 Run the `pr-reviewer` agent over the full diff before opening the pull request
 
