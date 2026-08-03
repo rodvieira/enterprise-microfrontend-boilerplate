@@ -34,17 +34,17 @@ independently verifiable, which is what the phase split is for.
 
 **Purpose**: Create the workspace scaffolding every later phase compiles against
 
-- [ ] T001 Create `packages/` directory at the repository root (already globbed by `pnpm-workspace.yaml`, no config change needed)
-- [ ] T002 Create `packages/config-typescript/package.json` as `@enterprise-mfe/config-typescript`, private, with `files` exposing the two tsconfig files
-- [ ] T003 Create `packages/config-typescript/tsconfig.base.json` with `strict: true`, `noUncheckedIndexedAccess`, `isolatedModules`, `moduleResolution: bundler`, target ES2022 — the exact path `.dependency-cruiser.js` already points at
-- [ ] T004 Create `packages/config-typescript/tsconfig.react.json` extending the base and adding `jsx: react-jsx` and the DOM libs
-- [ ] T005 Update the root `package.json` `check:boundaries` script to `depcruise packages --config .dependency-cruiser.js` — `apps/` does not exist yet and `depcruise` errors on a missing argument directory; sprint 3 adds `apps` back when the shell lands
-- [ ] T006 Verify `pnpm check:boundaries` exits 0 against the real workspace, not by bypass
-- [ ] T007 [P] Create `packages/config-biome/package.json` as `@enterprise-mfe/config-biome`, private, exposing `biome.json`
-- [ ] T008 [P] Create `packages/config-biome/biome.json` copying the rules currently in the root `biome.json` verbatim — single quotes, semicolons, 2-space indent, width 100, `noUnusedVariables: error`
-- [ ] T009 Add the four test devDependencies to the root `package.json`: `vitest@^4.1.10`, `@vitejs/plugin-react@^6.0.5`, `jsdom@^30.0.1`, `@testing-library/react@^16.3.2`, then run `pnpm install`
-- [ ] T010 Create `vitest.config.ts` at the repository root declaring `test.projects: ['packages/*']`, the React plugin, and `environment: 'jsdom'`
-- [ ] T011 Verify `pnpm test` runs and exits 0 with zero test files, proving the runner is wired before any test exists
+- [X] T001 Create `packages/` directory at the repository root (already globbed by `pnpm-workspace.yaml`, no config change needed)
+- [X] T002 Create `packages/config-typescript/package.json` as `@enterprise-mfe/config-typescript`, private, with `files` exposing the two tsconfig files
+- [X] T003 Create `packages/config-typescript/tsconfig.base.json` with `strict: true`, `noUncheckedIndexedAccess`, `isolatedModules`, `moduleResolution: bundler`, target ES2022 — the exact path `.dependency-cruiser.js` already points at
+- [X] T004 Create `packages/config-typescript/tsconfig.react.json` extending the base and adding `jsx: react-jsx` and the DOM libs
+- [X] T005 Update the root `package.json` `check:boundaries` script to `depcruise packages --config .dependency-cruiser.js` — `apps/` does not exist yet and `depcruise` errors on a missing argument directory; sprint 3 adds `apps` back when the shell lands
+- [X] T006 Verify `pnpm check:boundaries` exits 0 against the real workspace, not by bypass
+- [X] T007 [P] Create `packages/config-biome/package.json` as `@enterprise-mfe/config-biome`, private, exposing `biome.json`
+- [X] T008 [P] Create `packages/config-biome/biome.json` copying the rules currently in the root `biome.json` verbatim — single quotes, semicolons, 2-space indent, width 100, `noUnusedVariables: error`
+- [X] T009 Add the four test devDependencies to the root `package.json`: `vitest@^4.1.10`, `@vitejs/plugin-react@^6.0.5`, `jsdom@^30.0.1`, `@testing-library/react@^16.3.2`, then run `pnpm install`
+- [X] T010 Create `vitest.config.ts` at the repository root declaring `test.projects: ['packages/*']`, the React plugin, and `environment: 'jsdom'`
+- [X] T011 Verify `pnpm test` runs and exits 0 with zero test files, proving the runner is wired before any test exists
 
 **Checkpoint**: `pnpm lint`, `pnpm check:boundaries`, and `pnpm test` all pass on an empty workspace
 
