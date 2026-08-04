@@ -202,10 +202,10 @@ even though the underlying plumbing is shared.
 
 **Purpose**: The singleton drift check gains its first `apps/` manifest; every existing gate is re-verified with the shell in place
 
-- [ ] T066 Add `react-router` to `SINGLETONS` in `scripts/check-shared-deps.ts`, with a comment pointing at constitution Principle III and research D6 (router context crossing the federation boundary is the same class of bug as two Reacts)
-- [ ] T067 Run `pnpm check:shared-deps` and confirm it reports on `apps/shell` — the first manifest under `apps/` the drift check has ever seen — with `react`, `react-dom`, and `react-router` all in agreement
-- [ ] T068 **Prove the drift check catches drift in an app, not just a package**: set a mismatched `react-router` range in `apps/shell/package.json`, confirm `pnpm check:shared-deps` exits 1 and names `apps/shell/package.json`, then revert
-- [ ] T069 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence on a clean checkout and confirm all six exit `0` (`SC-007`)
+- [X] T066 Add `react-router` to `SINGLETONS` in `scripts/check-shared-deps.ts`, with a comment pointing at constitution Principle III and research D6 (router context crossing the federation boundary is the same class of bug as two Reacts)
+- [X] T067 Run `pnpm check:shared-deps` and confirm it reports on `apps/shell` — the first manifest under `apps/` the drift check has ever seen — with `react`, `react-dom`, and `react-router` all in agreement
+- [X] T068 **Prove the drift check catches drift in an app, not just a package**: set a mismatched `react-router` range in `apps/shell/package.json`, confirm `pnpm check:shared-deps` exits 1 and names `apps/shell/package.json`, then revert
+- [X] T069 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence on a clean checkout and confirm all six exit `0` (`SC-007`)
 
 ---
 
