@@ -41,6 +41,8 @@ export default defineConfig({
       },
       browserProject('@enterprise-mfe/ui', './packages/ui'),
       browserProject('@enterprise-mfe/auth', './packages/auth'),
+      browserProject('@enterprise-mfe/federation-utils', './packages/federation-utils'),
+      browserProject('shell', './apps/shell'),
     ],
   },
 });

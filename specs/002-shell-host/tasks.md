@@ -34,17 +34,17 @@ even though the underlying plumbing is shared.
 
 **Purpose**: `federation-utils` and the shell scaffolding — nothing story-specific yet
 
-- [ ] T001 Create `packages/federation-utils/package.json` as `@enterprise-mfe/federation-utils`, `react` as a peerDependency, no bundler or MF runtime dependency (research D5)
-- [ ] T002 Create `packages/federation-utils/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
-- [ ] T003 Add `@enterprise-mfe/federation-utils` as a project entry in `vitest.config.mts`, following the pattern already used for `ui` and `auth`
-- [ ] T004 Create `apps/shell/package.json` as `@enterprise-mfe/shell`, declaring `@rspack/core@^2.1.7`, `@rspack/cli@^2.1.7`, `@module-federation/enhanced@^2.8.1`, `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.25`, `postcss-loader@^8.2.1`, `react-router@^8.3.0`, plus `@enterprise-mfe/ui`, `@enterprise-mfe/auth`, `@enterprise-mfe/shared-types`, `@enterprise-mfe/federation-utils` as workspace dependencies — every import must be declared per ADR-0011
-- [ ] T005 Create `apps/shell/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
-- [ ] T006 Create `apps/shell/src/exposed/` and `apps/shell/src/internal/` — the same split a remote uses (Principle I, research D8)
-- [ ] T007 Create `apps/shell/index.html` and `apps/shell/src/index.tsx` as the standalone entry point
-- [ ] T008 [P] Create `apps/shell/src/bootstrap.tsx` mounting `apps/shell/src/exposed/App.tsx` into the DOM
-- [ ] T009 Create `apps/shell/rspack.config.ts` with `ModuleFederationPlugin` configured as a host with an **empty `exposes` map**, carrying a comment explaining why it is empty (research D8) — `react`, `react-dom`, `@enterprise-mfe/auth`, `react-router` declared as `shared` singletons
-- [ ] T010 Add `dev`/`build` scripts to `apps/shell/package.json` invoking `rspack serve` / `rspack build`
-- [ ] T011 Verify `pnpm dev --filter shell` starts and serves a blank page with no errors — confirms the Rspack + MF host config is valid before anything is built on top of it
+- [X] T001 Create `packages/federation-utils/package.json` as `@enterprise-mfe/federation-utils`, `react` as a peerDependency, no bundler or MF runtime dependency (research D5)
+- [X] T002 Create `packages/federation-utils/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T003 Add `@enterprise-mfe/federation-utils` as a project entry in `vitest.config.mts`, following the pattern already used for `ui` and `auth`
+- [X] T004 Create `apps/shell/package.json` as `@enterprise-mfe/shell`, declaring `@rspack/core@^2.1.7`, `@rspack/cli@^2.1.7`, `@module-federation/enhanced@^2.8.1`, `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.25`, `postcss-loader@^8.2.1`, `react-router@^8.3.0`, plus `@enterprise-mfe/ui`, `@enterprise-mfe/auth`, `@enterprise-mfe/shared-types`, `@enterprise-mfe/federation-utils` as workspace dependencies — every import must be declared per ADR-0011
+- [X] T005 Create `apps/shell/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T006 Create `apps/shell/src/exposed/` and `apps/shell/src/internal/` — the same split a remote uses (Principle I, research D8)
+- [X] T007 Create `apps/shell/index.html` and `apps/shell/src/index.tsx` as the standalone entry point
+- [X] T008 [P] Create `apps/shell/src/bootstrap.tsx` mounting `apps/shell/src/exposed/App.tsx` into the DOM
+- [X] T009 Create `apps/shell/rspack.config.ts` with `ModuleFederationPlugin` configured as a host with an **empty `exposes` map**, carrying a comment explaining why it is empty (research D8) — `react`, `react-dom`, `@enterprise-mfe/auth`, `react-router` declared as `shared` singletons
+- [X] T010 Add `dev`/`build` scripts to `apps/shell/package.json` invoking `rspack serve` / `rspack build`
+- [X] T011 Verify `pnpm dev --filter shell` starts and serves a blank page with no errors — confirms the Rspack + MF host config is valid before anything is built on top of it
 
 **Checkpoint**: The shell exists, builds, and serves nothing yet
 
