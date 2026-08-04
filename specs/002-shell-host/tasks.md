@@ -211,13 +211,13 @@ even though the underlying plumbing is shared.
 
 ## Phase 9: Polish, documentation, and ADRs
 
-- [ ] T070 [P] `apps/shell/README.md` — what the shell does, how to run it standalone, and a pointer to the registry contract
-- [ ] T071 [P] `packages/federation-utils/README.md` — one paragraph on what it solves, noting it has no bundler or MF dependency (research D5)
-- [ ] T072 Update `docs/packages.md` — move `@enterprise-mfe/federation-utils` from "planned" to its real entry, matching the pattern of the sprint-2 packages
-- [ ] T073 Create `docs/architecture.md` section (or new file if none exists) documenting the registry format as the contract a team follows without reading shell source (`FR-010`) — content already drafted in [registry-contract.md](contracts/registry-contract.md), adapt rather than duplicate
-- [ ] T074 Write `docs/decisions/0012-runtime-registry-fetch.md` recording research D3 — one build, three deployments — per the Constitution Check's note that this decision outlives the sprint (plan.md, Constitution Check)
-- [ ] T075 Confirm whether T018's fallback ADR (`0013-tailwind-v3-fallback.md`) was needed; if not, remove the placeholder number from planning notes so it is not mistaken for a real decision later
-- [ ] T076 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
+- [X] T070 [P] `apps/shell/README.md` — what the shell does, how to run it standalone, and a pointer to the registry contract
+- [X] T071 [P] `packages/federation-utils/README.md` — one paragraph on what it solves, noting it has no bundler or MF dependency (research D5)
+- [X] T072 Update `docs/packages.md` — move `@enterprise-mfe/federation-utils` from "planned" to its real entry, matching the pattern of the sprint-2 packages
+- [X] T073 Create `docs/architecture.md` section (or new file if none exists) documenting the registry format as the contract a team follows without reading shell source (`FR-010`) — content already drafted in [registry-contract.md](contracts/registry-contract.md), adapt rather than duplicate
+- [X] T074 Write `docs/decisions/0012-runtime-registry-fetch.md` recording research D3 — one build, three deployments — per the Constitution Check's note that this decision outlives the sprint (plan.md, Constitution Check)
+- [X] T075 Confirmed not needed (T018) — Tailwind v4 compiled correctly under Rspack on the first attempt, verified two ways (built CSS inspection, real browser screenshot). No `0013-*` ADR was ever created; the only place that number appeared was this task's own description, now corrected so it can't be mistaken for a real decision.
+- [X] T076 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
 - [ ] T077 Write the pull request description with a **one-line justification for each of the seven new dependencies** — `@rspack/core`, `@rspack/cli`, `@module-federation/enhanced`, `tailwindcss`, `@tailwindcss/postcss`, `postcss` + `postcss-loader`, `react-router` (constitution Principle IX)
 - [ ] T078 Review the full diff against `.claude/agents/pr-reviewer.md` before opening the pull request
 

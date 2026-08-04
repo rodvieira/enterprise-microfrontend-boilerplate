@@ -11,7 +11,7 @@ later sprints.
 | [`@enterprise-mfe/shared-types`](../packages/shared-types) | TypeScript contracts between shell and remotes — `User`, `Permission`, exposed component prop types. | No |
 | [`@enterprise-mfe/config-typescript`](../packages/config-typescript) | Shared strict tsconfig, extended by every package and app. | No |
 | [`@enterprise-mfe/config-biome`](../packages/config-biome) | Shared lint and format rules. | No |
-| `@enterprise-mfe/federation-utils` | *Planned (sprint 3)* — a `useRemote()` hook wrapping `React.lazy` + Suspense + error boundary, so no remote hand-rolls federation loading. | No |
+| [`@enterprise-mfe/federation-utils`](../packages/federation-utils) | `useRemote()` + `RemoteBoundary` — remote loading and error containment, so no app hand-rolls federation loading mechanics. Bundler- and MF-agnostic by design (a loader function, not `React.lazy`/Suspense) — see research D5. | No |
 | `@enterprise-mfe/event-bus` | *Planned (sprint 6)* — typed pub/sub for cross-remote communication without direct coupling. | **Yes** |
 | `@enterprise-mfe/telemetry` | *Planned (sprint 8)* — thin observability wrapper. | No |
 | `@enterprise-mfe/testing-utils` | *Planned (sprint 6)* — mocks and helpers for testing federation-consuming components. | No |
@@ -25,11 +25,16 @@ config-biome      ──▶ (every package and app, via biome extends)
 shared-types ──▶ auth
       │
       └────────▶ ui
+
+federation-utils   (depends on nothing but react — no bundler, no MF runtime)
 ```
 
 `shared-types` depends on nothing. `ui` never depends on `auth` — the design
 system stays free of domain knowledge, so a component cannot start assuming a
-session exists.
+session exists. `federation-utils` depends on nothing in this workspace either
+— the federation-specific half of remote loading lives in the app that
+consumes it (`apps/shell/src/internal/federation/loader.ts`), not in the
+package, so the package itself stays testable with a plain loader function.
 
 ## Adding a package
 

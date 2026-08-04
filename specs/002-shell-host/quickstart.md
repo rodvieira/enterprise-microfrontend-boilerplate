@@ -35,10 +35,10 @@ Open the printed URL. Expected, with no file edited and no service running:
 ## 2. One build, three environments (SC-002)
 
 ```bash
-FEDERATION_ENV=staging pnpm build --filter shell
+FEDERATION_ENV=staging pnpm build --filter @enterprise-mfe/shell
 grep -o '"environment": *"[a-z]*"' apps/shell/dist/remotes.json
 
-FEDERATION_ENV=production pnpm build --filter shell
+FEDERATION_ENV=production pnpm build --filter @enterprise-mfe/shell
 grep -o '"environment": *"[a-z]*"' apps/shell/dist/remotes.json
 ```
 
@@ -100,17 +100,21 @@ failure of this criterion even if the outcome looks the same.
 pnpm check:boundaries          # passes, and now actually inspects apps/
 ```
 
-Then break it on purpose:
+Restoring `apps/` to this gate's scope immediately found 13 real violations —
+the original `no-reaching-into-internal` rule had no same-app carve-out and
+flagged an app importing its *own* `internal/`. Fixed by splitting it into two
+backreferenced rules; see `.dependency-cruiser.js` and the commit that closed
+issue #2. That in itself is organic proof the gate isn't vacuous.
 
-```bash
-# add to any file under apps/shell/src:
-#   import x from '../../../dashboard/src/exposed/App';
-pnpm check:boundaries          # must exit non-zero and name the rule
-```
-
-Revert and confirm it passes again. This rule has existed since the first commit
-and has never been able to fire. A guard rail that has never failed is unverified
-— the same reason the drift check was deliberately broken in sprint 2.
+A full CLI-level reproduction of a *new* deliberate cross-app violation is
+currently blocked by [issue #6](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/issues/6):
+dependency-cruiser fails to resolve any relative import needing 2+ `../`
+segments in this checkout specifically, though an isolated, config-identical
+reproduction resolves the same import correctly. In its place, the three
+rules' regex logic was verified directly against simulated resolved paths —
+see the T064/T065 notes in `tasks.md` for the full account. Once issue #6 is
+resolved, this section should be updated back to a live `pnpm check:boundaries`
+reproduction.
 
 ## 7. Every gate, clean checkout (SC-007)
 
