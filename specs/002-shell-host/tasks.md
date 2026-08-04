@@ -218,8 +218,8 @@ even though the underlying plumbing is shared.
 - [X] T074 Write `docs/decisions/0012-runtime-registry-fetch.md` recording research D3 — one build, three deployments — per the Constitution Check's note that this decision outlives the sprint (plan.md, Constitution Check)
 - [X] T075 Confirmed not needed (T018) — Tailwind v4 compiled correctly under Rspack on the first attempt, verified two ways (built CSS inspection, real browser screenshot). No `0013-*` ADR was ever created; the only place that number appeared was this task's own description, now corrected so it can't be mistaken for a real decision.
 - [X] T076 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
-- [ ] T077 Write the pull request description with a **one-line justification for each of the seven new dependencies** — `@rspack/core`, `@rspack/cli`, `@module-federation/enhanced`, `tailwindcss`, `@tailwindcss/postcss`, `postcss` + `postcss-loader`, `react-router` (constitution Principle IX)
-- [ ] T078 Review the full diff against `.claude/agents/pr-reviewer.md` before opening the pull request
+- [X] T077 Write the pull request description with a **one-line justification for each of the seven new dependencies** — `@rspack/core`, `@rspack/cli`, `@module-federation/enhanced`, `tailwindcss`, `@tailwindcss/postcss`, `postcss` + `postcss-loader`, `react-router` (constitution Principle IX)
+- [X] T078 Reviewed inline against .claude/agents/pr-reviewer.md (not via a spawned agent). Pass 1: no cross-app relative imports, no internal/ reached from outside, packages/auth untouched, shared-deps-guard clean. Pass 2: 103 tests across 23 files, error states (remote-load failure, origin refusal, registry validation) extensively covered. Zero blockers.
 
 ---
 
