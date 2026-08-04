@@ -138,21 +138,21 @@ even though the underlying plumbing is shared.
 
 ### Tests for User Story 3 — the four simulated failure modes, one test each
 
-- [ ] T041 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — a loader that **rejects** resolves `state` to `failed`, exposes the rejection reason in `error`, and the rest of the tree stays rendered (quickstart §4, row 1)
-- [ ] T042 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — a loader that **never settles** resolves `state` to `failed` after `timeoutMs`, not a permanent loading state (quickstart §4, row 2)
-- [ ] T043 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — a loader that resolves to a module **with no usable default export** resolves `state` to `failed`, not `loaded` with an empty region (quickstart §4, row 3; spec edge case 3)
-- [ ] T044 [P] [US3] `packages/federation-utils/tests/remote-boundary.test.tsx` — a component that **throws during render** (not during load) is contained by `RemoteBoundary`, not just by `useRemote`'s own state (quickstart §4, row 4)
-- [ ] T045 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — while `state` is `loading`, a distinct in-progress element renders, never a blank region (`FR-013`)
-- [ ] T046 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — `retry()` returns `state` from `failed` to `loading` without the calling component unmounting (`FR-014`)
-- [ ] T047 [US3] `apps/shell/tests/remote-region.test.tsx` — a failed region does not prevent navigation to other parts of the host (`FR-012`, the guard rail the whole story exists to prove)
+- [X] T041 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — a loader that **rejects** resolves `state` to `failed`, exposes the rejection reason in `error`, and the rest of the tree stays rendered (quickstart §4, row 1)
+- [X] T042 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — a loader that **never settles** resolves `state` to `failed` after `timeoutMs`, not a permanent loading state (quickstart §4, row 2)
+- [X] T043 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — a loader that resolves to a module **with no usable default export** resolves `state` to `failed`, not `loaded` with an empty region (quickstart §4, row 3; spec edge case 3)
+- [X] T044 [P] [US3] `packages/federation-utils/tests/remote-boundary.test.tsx` — a component that **throws during render** (not during load) is contained by `RemoteBoundary`, not just by `useRemote`'s own state (quickstart §4, row 4)
+- [X] T045 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — while `state` is `loading`, a distinct in-progress element renders, never a blank region (`FR-013`)
+- [X] T046 [P] [US3] `packages/federation-utils/tests/use-remote.test.tsx` — `retry()` returns `state` from `failed` to `loading` without the calling component unmounting (`FR-014`)
+- [X] T047 [US3] `apps/shell/tests/remote-region.test.tsx` — a failed region does not prevent navigation to other parts of the host (`FR-012`, the guard rail the whole story exists to prove)
 
 ### Implementation for User Story 3
 
-- [ ] T048 [US3] Create `packages/federation-utils/src/use-remote.ts` implementing the state machine from [data-model.md](data-model.md) `RemoteLoadState` (`idle → loading → loaded | failed`), driven by a `RemoteLoader<T>` function, with `timeoutMs` defaulting to 10000
-- [ ] T049 [US3] Create `packages/federation-utils/src/remote-boundary.tsx` as a class component (React has no hook equivalent for error boundaries) implementing `RemoteBoundaryProps` — `fallback`, optional `pending`, optional `onError`
-- [ ] T050 [US3] Create `packages/federation-utils/src/index.ts` exporting `useRemote`, `RemoteBoundary`, and their types
-- [ ] T051 [US3] Create `apps/shell/src/internal/federation/loader.ts` — the federation-specific `RemoteLoader` the shell supplies to `useRemote` (kept out of `federation-utils` itself, per research D5)
-- [ ] T052 [US3] Create `apps/shell/src/internal/routes/remote-region.tsx` composing `useRemote` + `RemoteBoundary` for a route entry from `remote-routes.tsx`
+- [X] T048 [US3] Create `packages/federation-utils/src/use-remote.ts` implementing the state machine from [data-model.md](data-model.md) `RemoteLoadState` (`idle → loading → loaded | failed`), driven by a `RemoteLoader<T>` function, with `timeoutMs` defaulting to 10000
+- [X] T049 [US3] Create `packages/federation-utils/src/remote-boundary.tsx` as a class component (React has no hook equivalent for error boundaries) implementing `RemoteBoundaryProps` — `fallback`, optional `pending`, optional `onError`
+- [X] T050 [US3] Create `packages/federation-utils/src/index.ts` exporting `useRemote`, `RemoteBoundary`, and their types
+- [X] T051 [US3] Create `apps/shell/src/internal/federation/loader.ts` — the federation-specific `RemoteLoader` the shell supplies to `useRemote` (kept out of `federation-utils` itself, per research D5)
+- [X] T052 [US3] Create `apps/shell/src/internal/routes/remote-region.tsx` composing `useRemote` + `RemoteBoundary` for a route entry from `remote-routes.tsx`
 
 **Checkpoint**: All four simulated failure modes are proven contained; `pnpm test -- --project @enterprise-mfe/federation-utils` and `--project shell` both pass
 
