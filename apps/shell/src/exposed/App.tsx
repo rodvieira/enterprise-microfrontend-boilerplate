@@ -1,7 +1,27 @@
-import { AuthProvider, ProtectedRoute } from '@enterprise-mfe/auth';
+import { AuthProvider } from '@enterprise-mfe/auth';
 import { useEffect } from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router';
 import { ShellLayout } from '../internal/chrome/layout';
 import { fetchRegistry } from '../internal/federation/manifest';
+import { HomeRoute } from '../internal/routes/home';
+import { HOST_OWNED_ROUTE_PATHS } from '../internal/routes/remote-routes';
+
+/**
+ * The host's own routes. Remote routes are not listed statically here — they
+ * are discovered from the registry at runtime and patched in via
+ * react-router's patchRoutesOnNavigation once a real remote exists (sprint 4;
+ * see research D6's addendum on why TanStack Router was not used instead).
+ */
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <ShellLayout>
+        <HomeRoute />
+      </ShellLayout>
+    ),
+  },
+]);
 
 /**
  * What bootstrap.tsx mounts. This is the shell's public entry, the same
@@ -13,18 +33,14 @@ export function App() {
     // Fire-and-forget: the frame renders immediately and never waits on this
     // (FR-001, research D3 consequences). Sprint 4 wires the result into
     // routing; this sprint proves the fetch-and-validate mechanism runs.
-    fetchRegistry().catch((error: unknown) => {
+    fetchRegistry(HOST_OWNED_ROUTE_PATHS).catch((error: unknown) => {
       console.error(error);
     });
   }, []);
 
   return (
     <AuthProvider>
-      <ShellLayout>
-        <ProtectedRoute fallback={<p>Sign in to see the welcome area.</p>}>
-          <p>Welcome back.</p>
-        </ProtectedRoute>
-      </ShellLayout>
+      <RouterProvider router={router} />
     </AuthProvider>
   );
 }

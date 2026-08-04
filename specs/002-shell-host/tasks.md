@@ -110,21 +110,21 @@ even though the underlying plumbing is shared.
 
 ### Tests for User Story 2
 
-- [ ] T032 [P] [US2] `apps/shell/tests/manifest.test.ts` — a missing registry file fails with a message naming the file and environment (`FR-009`)
-- [ ] T033 [P] [US2] `apps/shell/tests/manifest.test.ts` — a malformed (unparseable) registry fails the same way
-- [ ] T034 [P] [US2] `apps/shell/tests/manifest.test.ts` — two registrations sharing a `name` are reported as a conflict, never resolved last-wins (spec edge case 1)
-- [ ] T035 [P] [US2] `apps/shell/tests/manifest.test.ts` — a `routePath` colliding with a host-owned route is reported at startup, naming both (spec edge case, US2 scenario 3)
-- [ ] T036 [P] [US2] `apps/shell/tests/manifest.test.ts` — an environment with no matching registry file fails naming both the environment and the expected file, rather than falling back silently (spec edge case 4)
+- [X] T032 [P] [US2] `apps/shell/tests/manifest.test.ts` — a missing registry file fails with a message naming the file and environment (`FR-009`)
+- [X] T033 [P] [US2] `apps/shell/tests/manifest.test.ts` — a malformed (unparseable) registry fails the same way
+- [X] T034 [P] [US2] `apps/shell/tests/manifest.test.ts` — two registrations sharing a `name` are reported as a conflict, never resolved last-wins (spec edge case 1)
+- [X] T035 [P] [US2] `apps/shell/tests/manifest.test.ts` — a `routePath` colliding with a host-owned route is reported at startup, naming both (spec edge case, US2 scenario 3)
+- [X] T036 [P] [US2] `apps/shell/tests/manifest.test.ts` — an environment with no matching registry file fails naming both the environment and the expected file, rather than falling back silently (spec edge case 4)
 
 ### Implementation for User Story 2
 
-- [ ] T037 [US2] Create `apps/shell/src/internal/routes/remote-routes.tsx` — the host-owned route → remote mapping (research D9); starts with zero entries
-- [ ] T038 [US2] Wire `react-router` in `exposed/App.tsx` with the host's own routes plus the (currently empty) remote routes from T037
+- [X] T037 [US2] Create `apps/shell/src/internal/routes/remote-routes.tsx` — the host-owned route → remote mapping (research D9); starts with zero entries
+- [X] T038 [US2] Wire `react-router` in `exposed/App.tsx` with the host's own routes plus the (currently empty) remote routes from T037
 
 ### Verification for User Story 2 (SC-002, SC-003)
 
-- [ ] T039 [US2] **Prove SC-002**: run `FEDERATION_ENV=staging pnpm build --filter shell` then `FEDERATION_ENV=production pnpm build --filter shell`; confirm the deployed `remotes.json` differs between builds and `git status --porcelain apps/shell/src` is **empty** after both — zero host source files changed
-- [ ] T040 [US2] **Prove SC-003**: add one placeholder registration to `remotes.dev.json` plus its origin to `allowedOrigins`, confirm `git status --porcelain apps/shell` shows exactly one file changed, then revert
+- [X] T039 [US2] **Prove SC-002**: run `FEDERATION_ENV=staging pnpm build --filter shell` then `FEDERATION_ENV=production pnpm build --filter shell`; confirm the deployed `remotes.json` differs between builds and `git status --porcelain apps/shell/src` is **empty** after both — zero host source files changed
+- [X] T040 [US2] **Prove SC-003**: add one placeholder registration to `remotes.dev.json` plus its origin to `allowedOrigins`, confirm `git status --porcelain apps/shell` shows exactly one file changed, then revert
 
 **Checkpoint**: Moving environments and adding a remote registration are both provably file-only changes
 

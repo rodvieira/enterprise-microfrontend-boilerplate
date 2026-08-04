@@ -21,6 +21,7 @@ function fail(reason: string): never {
  * silent overwrite discovered by whichever route rendered last.
  */
 function assertNoRoutePathCollisions(
+  environment: string,
   remotes: readonly RemoteRegistration[],
   hostOwnedRoutePaths: readonly string[],
 ): void {
@@ -32,20 +33,19 @@ function assertNoRoutePathCollisions(
     const owner = seen.get(remote.routePath);
     if (owner) {
       fail(
-        `remote "${remote.name}" registers routePath "${remote.routePath}", ` +
-          `which is already owned by ${owner}.`,
+        `[environment: ${environment}] remote "${remote.name}" registers routePath "${remote.routePath}", which is already owned by ${owner}.`,
       );
     }
     seen.set(remote.routePath, `remote "${remote.name}"`);
   }
 }
 
-function assertNoDuplicateNames(remotes: readonly RemoteRegistration[]): void {
+function assertNoDuplicateNames(environment: string, remotes: readonly RemoteRegistration[]): void {
   const seen = new Set<string>();
   for (const remote of remotes) {
     if (seen.has(remote.name)) {
       fail(
-        `two remotes are both registered under the name "${remote.name}". Duplicate names are never resolved last-wins — rename one.`,
+        `[environment: ${environment}] two remotes are both registered under the name "${remote.name}". Duplicate names are never resolved last-wins — rename one.`,
       );
     }
     seen.add(remote.name);
@@ -64,10 +64,14 @@ function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): Re
     );
   }
   if (!Array.isArray(record.allowedOrigins)) {
-    fail('"allowedOrigins" must be an array (it may be empty).');
+    fail(
+      `[environment: ${record.environment}] "allowedOrigins" must be an array (it may be empty).`,
+    );
   }
   if (!Array.isArray(record.remotes)) {
-    fail('"remotes" must be an array (it may be empty — zero remotes is a valid state).');
+    fail(
+      `[environment: ${record.environment}] "remotes" must be an array (it may be empty — zero remotes is a valid state).`,
+    );
   }
 
   const registry: RemoteRegistry = {
@@ -76,8 +80,8 @@ function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): Re
     remotes: record.remotes as readonly RemoteRegistration[],
   };
 
-  assertNoDuplicateNames(registry.remotes);
-  assertNoRoutePathCollisions(registry.remotes, hostOwnedRoutePaths);
+  assertNoDuplicateNames(registry.environment, registry.remotes);
+  assertNoRoutePathCollisions(registry.environment, registry.remotes, hostOwnedRoutePaths);
 
   return registry;
 }
