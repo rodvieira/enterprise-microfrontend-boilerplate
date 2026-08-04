@@ -166,18 +166,18 @@ even though the underlying plumbing is shared.
 
 ### Tests for User Story 4 — the four origin-control cases, one test each
 
-- [ ] T053 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — an origin **absent from `allowedOrigins`** is refused with reason `origin-not-allowed` (quickstart §5, row 1)
-- [ ] T054 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — **insecure transport on a non-loopback origin** is refused with reason `insecure-transport` (quickstart §5, row 2)
-- [ ] T055 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — **insecure transport on loopback** (`http://localhost:3001`) is **allowed** — local development must keep working (quickstart §5, row 3; spec Assumptions)
-- [ ] T056 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — an **entry that is not a valid URL** is refused with reason `malformed-url` (quickstart §5, row 4)
-- [ ] T057 [US4] `apps/shell/tests/origin-guard.test.ts` — a refused remote is dropped before `registerRemotes()` is called and never enters `RemoteLoadState` at all (data-model.md `OriginDecision`, "never attempted")
-- [ ] T058 [US4] `apps/shell/tests/app.test.tsx` — with one refused and one allowed registration, the rest of the application renders unaffected by the refusal (`FR-018`, spec scenario 4.4)
+- [X] T053 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — an origin **absent from `allowedOrigins`** is refused with reason `origin-not-allowed` (quickstart §5, row 1)
+- [X] T054 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — **insecure transport on a non-loopback origin** is refused with reason `insecure-transport` (quickstart §5, row 2)
+- [X] T055 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — **insecure transport on loopback** (`http://localhost:3001`) is **allowed** — local development must keep working (quickstart §5, row 3; spec Assumptions)
+- [X] T056 [P] [US4] `apps/shell/tests/origin-guard.test.ts` — an **entry that is not a valid URL** is refused with reason `malformed-url` (quickstart §5, row 4)
+- [X] T057 [US4] `apps/shell/tests/origin-guard.test.ts` — a refused remote is dropped before `registerRemotes()` is called and never enters `RemoteLoadState` at all (data-model.md `OriginDecision`, "never attempted")
+- [X] T058 [US4] `apps/shell/tests/app.test.tsx` — with one refused and one allowed registration, the rest of the application renders unaffected by the refusal (`FR-018`, spec scenario 4.4)
 
 ### Implementation for User Story 4
 
-- [ ] T059 [US4] Create `apps/shell/src/internal/federation/origin-guard.ts` implementing the three rules from [data-model.md](data-model.md) `OriginDecision`: URL parses, origin is allow-listed, transport is secure unless loopback
-- [ ] T060 [US4] Create `apps/shell/src/internal/federation/register.ts` running every registration through `origin-guard.ts` before calling MF2's `registerRemotes()`, and reporting each refusal with origin and reason (`FR-018`)
-- [ ] T061 [US4] Wire `manifest.ts` (T021) → `register.ts` (T060) into `bootstrap.tsx`, so origin control runs before any remote code is fetched
+- [X] T059 [US4] Create `apps/shell/src/internal/federation/origin-guard.ts` implementing the three rules from [data-model.md](data-model.md) `OriginDecision`: URL parses, origin is allow-listed, transport is secure unless loopback
+- [X] T060 [US4] Create `apps/shell/src/internal/federation/register.ts` running every registration through `origin-guard.ts` before calling MF2's `registerRemotes()`, and reporting each refusal with origin and reason (`FR-018`)
+- [X] T061 [US4] Wire `manifest.ts` (T021) → `register.ts` (T060) into `bootstrap.tsx`, so origin control runs before any remote code is fetched
 
 **Checkpoint**: All four origin-control cases are proven; a refused remote never reaches the loading pipeline
 
