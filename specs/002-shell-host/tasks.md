@@ -68,11 +68,11 @@ even though the underlying plumbing is shared.
 
 ### Registry mechanism (types, fetch, validation) — used by both US1 and US2
 
-- [ ] T019 [P] Create `apps/shell/src/internal/federation/types.ts` defining `RemoteRegistry`, `RemoteRegistration`, `OriginDecision`, `Environment` per [data-model.md](data-model.md)
-- [ ] T020 [P] Create `apps/shell/src/internal/federation/remotes.dev.json`, `remotes.staging.json`, `remotes.production.json`, each with the correct `environment` field and an empty `remotes` array — no remote exists until sprint 4
-- [ ] T021 Create `apps/shell/src/internal/federation/manifest.ts` fetching `/remotes.json` at startup and validating it against `types.ts` — parse failure, wrong `environment`, and duplicate `name` all fail loudly naming the file and environment (`FR-009`)
-- [ ] T022 Wire the build to copy the environment-selected registry file to `remotes.json` beside the built assets — one build, three deployments (research D3)
-- [ ] T023 Confirm the environment selector defaults to `dev` when unset, satisfying `FR-005` (no configuration required to start)
+- [X] T019 [P] Create `apps/shell/src/internal/federation/types.ts` defining `RemoteRegistry`, `RemoteRegistration`, `OriginDecision`, `Environment` per [data-model.md](data-model.md)
+- [X] T020 [P] Create `apps/shell/src/internal/federation/remotes.dev.json`, `remotes.staging.json`, `remotes.production.json`, each with the correct `environment` field and an empty `remotes` array — no remote exists until sprint 4
+- [X] T021 Create `apps/shell/src/internal/federation/manifest.ts` fetching `/remotes.json` at startup and validating it against `types.ts` — parse failure, wrong `environment`, and duplicate `name` all fail loudly naming the file and environment (`FR-009`)
+- [X] T022 Wire the build to copy the environment-selected registry file to `remotes.json` beside the built assets — one build, three deployments (research D3)
+- [X] T023 Confirm the environment selector defaults to `dev` when unset, satisfying `FR-005` (no configuration required to start)
 
 **Checkpoint**: `pnpm dev --filter shell` renders a styled smoke component; the registry fetches, validates, and fails loudly when broken
 
