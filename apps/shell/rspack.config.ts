@@ -33,6 +33,13 @@ export default defineConfig({
         },
         type: 'javascript/auto',
       },
+      {
+        // Exact pattern from Tailwind's own Rspack + React guide:
+        // https://tailwindcss.com/docs/installation/framework-guides/rspack/react
+        test: /\.css$/,
+        use: ['postcss-loader'],
+        type: 'css',
+      },
     ],
   },
   plugins: [

@@ -58,13 +58,13 @@ even though the underlying plumbing is shared.
 
 ### Tailwind pipeline — issue #4, deliberately first
 
-- [ ] T012 Configure `postcss-loader` in `apps/shell/rspack.config.ts` for `.css` files, with `@tailwindcss/postcss` in the PostCSS plugin chain
-- [ ] T013 Create `apps/shell/src/internal/styles.css` importing `@enterprise-mfe/ui/styles.css` and declaring `@source '../../../../packages/ui/src'` — the workspace-relative path, not the `node_modules` symlink path (research D2)
-- [ ] T014 Import `internal/styles.css` from `bootstrap.tsx`
-- [ ] T015 Render one `@enterprise-mfe/ui` component (e.g. `Button`) in `exposed/App.tsx` as a smoke element
-- [ ] T016 **Prove issue #4 resolved**: run `pnpm build --filter shell`, inspect the built CSS output, and confirm the utility classes the smoke component actually uses (e.g. `bg-(--color-brand-600)`) are present in the generated stylesheet — not just that the build succeeds
-- [ ] T017 **Prove it visually**: run `pnpm dev --filter shell`, open the page, confirm the smoke component is visibly styled — unstyled output is a failure per the spec's edge case, not a cosmetic detail
-- [ ] T018 If T016/T017 fail: fall back to a Tailwind v3 shared preset contained to `tokens.css` and `styles.css`, and write `docs/decisions/0013-tailwind-v3-fallback.md` documenting why (Principle VII — supersedes nothing, ADR-0002 decided the bundler, not the Tailwind major)
+- [X] T012 Configure `postcss-loader` in `apps/shell/rspack.config.ts` for `.css` files, with `@tailwindcss/postcss` in the PostCSS plugin chain
+- [X] T013 Create `apps/shell/src/internal/styles.css` importing `@enterprise-mfe/ui/styles.css` and declaring `@source '../../../../packages/ui/src'` — the workspace-relative path, not the `node_modules` symlink path (research D2)
+- [X] T014 Import `internal/styles.css` from `bootstrap.tsx`
+- [X] T015 Render one `@enterprise-mfe/ui` component (e.g. `Button`) in `exposed/App.tsx` as a smoke element
+- [X] T016 **Prove issue #4 resolved**: run `pnpm build --filter shell`, inspect the built CSS output, and confirm the utility classes the smoke component actually uses (e.g. `bg-(--color-brand-600)`) are present in the generated stylesheet — not just that the build succeeds
+- [X] T017 **Prove it visually**: run `pnpm dev --filter shell`, open the page, confirm the smoke component is visibly styled — unstyled output is a failure per the spec's edge case, not a cosmetic detail
+- [X] T018 Not triggered — T016/T017 both passed. Tailwind v4 compiles under Rspack; verified by inspecting the built CSS (utility classes for components not even imported by the shell yet were present, confirming `@source` scans `packages/ui/src` broadly) and by a real headless-browser screenshot with computed styles matching the design tokens exactly (`background-color: oklch(0.55 0.19 255)`, `border-radius: 6px`). No fallback ADR needed.
 
 ### Registry mechanism (types, fetch, validation) — used by both US1 and US2
 

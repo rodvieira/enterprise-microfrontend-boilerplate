@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "@enterprise-mfe/ui/styles.css";
+
+/*
+ * Tailwind's scanner respects .gitignore, and the repository ignores
+ * node_modules/ — so even where node_modules/@enterprise-mfe/ui is a valid
+ * pnpm symlink, @source would skip everything under it. The workspace-relative
+ * path below is not a style preference, it is the only path the scanner
+ * actually walks (research D2).
+ */
+@source '../../../../packages/ui/src';
