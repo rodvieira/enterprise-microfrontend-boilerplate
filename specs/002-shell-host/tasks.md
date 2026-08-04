@@ -86,17 +86,17 @@ even though the underlying plumbing is shared.
 
 ### Tests for User Story 1
 
-- [ ] T024 [P] [US1] `apps/shell/tests/app.test.tsx` — the frame renders with navigation and layout from `@enterprise-mfe/ui`, not shell-defined components
-- [ ] T025 [P] [US1] `apps/shell/tests/app.test.tsx` — with an empty registry (`remotes: []`), the host renders normally and reports no error (spec scenario 1.2)
-- [ ] T026 [P] [US1] `apps/shell/tests/session.test.tsx` — signing in through the auth contract makes a protected area of the frame reachable and shows the current person's name (spec scenario 1.3)
+- [X] T024 [P] [US1] `apps/shell/tests/app.test.tsx` — the frame renders with navigation and layout from `@enterprise-mfe/ui`, not shell-defined components
+- [X] T025 [P] [US1] `apps/shell/tests/app.test.tsx` — with an empty registry (`remotes: []`), the host renders normally and reports no error (spec scenario 1.2)
+- [X] T026 [P] [US1] `apps/shell/tests/session.test.tsx` — signing in through the auth contract makes a protected area of the frame reachable and shows the current person's name (spec scenario 1.3)
 
 ### Implementation for User Story 1
 
-- [ ] T027 [US1] Create `apps/shell/src/internal/chrome/layout.tsx` composing `Layout` and `Nav` from `@enterprise-mfe/ui`
-- [ ] T028 [US1] Wrap `exposed/App.tsx` in `AuthProvider` from `@enterprise-mfe/auth`
-- [ ] T029 [US1] Add a session indicator to the chrome using `useAuth()` — shows the signed-in person's name, or a sign-in control
-- [ ] T030 [US1] Gate at least one area of the frame with `ProtectedRoute` from `@enterprise-mfe/auth` (`FR-003`)
-- [ ] T031 [US1] Remove the smoke `Button` from T015 now that real chrome exists
+- [X] T027 [US1] Create `apps/shell/src/internal/chrome/layout.tsx` composing `Layout` and `Nav` from `@enterprise-mfe/ui`
+- [X] T028 [US1] Wrap `exposed/App.tsx` in `AuthProvider` from `@enterprise-mfe/auth`
+- [X] T029 [US1] Add a session indicator to the chrome using `useAuth()` — shows the signed-in person's name, or a sign-in control
+- [X] T030 [US1] Gate at least one area of the frame with `ProtectedRoute` from `@enterprise-mfe/auth` (`FR-003`)
+- [X] T031 [US1] Remove the smoke `Button` from T015 now that real chrome exists
 
 **Checkpoint**: `pnpm dev --filter shell` shows a styled, navigable frame with a working session, and this is independently demoable — the MVP
 
