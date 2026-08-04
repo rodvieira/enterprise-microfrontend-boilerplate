@@ -144,6 +144,29 @@ dependencies — rejected: the remotes in sprints 4-5 need real routing, and
 building it twice is worse than depending on it once). Hash routing (rejected:
 worse URLs for no benefit here).
 
+**TanStack Router, reconsidered mid-sprint.** Investigated on request before
+implementation started, because it is a real contender on developer experience —
+fully type-safe routes, first-class search-param validation, and loaders. The
+disqualifying issue is architectural, not a preference: D3 requires remote routes
+to be *discovered at runtime* from `remotes.json`, fetched after the host has
+already started, and that is not an edge case here — it is the entire mechanism
+sprint 2's environment-as-a-file promise depends on. TanStack Router's own
+maintainers confirm the file-based (and code-based) route tree is fixed before
+the router is created; their documented workaround for "genuinely dynamic"
+routes is a splat segment (`/remote/$`) paired with a hand-written component
+registry — which reimplements, by hand, the exact mechanism `react-router`
+ships as a stable, named API: `patchRoutesOnNavigation` (confirmed stable, no
+`unstable_` prefix, in the `8.3.0` already selected). A real-world report of
+TanStack Router under Module Federation was also found; its difficulty was
+sharing the router itself as a federation singleton, not routing mechanics —
+an added cost with no offsetting benefit here, since TanStack's type-safety
+advantage cannot reach remote routes anyway: they arrive as untyped JSON at
+runtime, from a registry no code generator has ever seen. **Decision
+reaffirmed: `react-router`.** Sources: [TanStack Router discussion #7117](https://github.com/TanStack/router/discussions/7117),
+[TanStack Router code-based routing docs](https://tanstack.com/router/latest/docs/routing/code-based-routing),
+[react-router `patchRoutesOnNavigation` / lazy route discovery](https://reactrouter.com/api/data-routers/createBrowserRouter),
+[Module Federation + TanStack Router discussion #4309](https://github.com/module-federation/module-federation-examples/discussions/4309).
+
 ---
 
 ## D7 — Playwright and end-to-end tests are deferred to sprint 4
