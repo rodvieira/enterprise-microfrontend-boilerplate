@@ -29,6 +29,11 @@ const SINGLETONS = [
   'react',
   'react-dom',
   '@enterprise-mfe/auth',
+  // react-router holds routing context (history, matched routes) that will
+  // cross the federation boundary once a remote exists — two copies would
+  // produce two histories, the same class of bug as two Reacts. Added in
+  // sprint 3 alongside the shell (research D6, constitution Principle III).
+  'react-router',
   // '@enterprise-mfe/event-bus', // arrives with the typed event bus in sprint 6
 ] as const;
 

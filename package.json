@@ -13,7 +13,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "turbo typecheck",
-    "check:boundaries": "depcruise packages --config .dependency-cruiser.js",
+    "check:boundaries": "depcruise apps packages --config .dependency-cruiser.js",
     "check:shared-deps": "tsx scripts/check-shared-deps.ts",
     "gen": "turbo gen",
     "prepare": "lefthook install"
