@@ -250,8 +250,11 @@ fails and names the drift, then revert.
 **Shell composition**
 
 - **FR-017**: Registering the dashboard in the shell's development registry
-  MUST require editing only registry files — no file under `apps/shell/src`
-  changes.
+  MUST require editing only the registry file (`remotes.dev.json`) — no other
+  file under `apps/shell/src` changes. This is the registry contract's own
+  promise (sprint 3); it does not cover the one-time work of consuming the
+  registry to mount a route, which this sprint builds because sprint 3
+  deferred it (see Assumptions).
 - **FR-018**: When the shell composes the dashboard and the dashboard's data
   fetch fails, the failure MUST be contained to the dashboard's region using
   the error boundary built in sprint 3, and the rest of the shell MUST keep
@@ -320,6 +323,13 @@ fails and names the drift, then revert.
 - **Route ownership stays with the shell**, per the decision already recorded
   in `specs/002-shell-host/spec.md` — the dashboard does not register its own
   route.
+- **This sprint finishes the shell's route-patching mechanism.** `002-shell-host`
+  built `RemoteRegion` (loading a remote's component) but explicitly deferred
+  wiring registered remotes into the router's actual routes — its own source
+  comment says so ("sprint 4 work"). That one-time mechanism is this sprint's
+  responsibility, built once against the dashboard as its first real case.
+  `FR-017`'s "only a registry file changes" describes the registration act
+  once that mechanism exists, not this sprint's work to build it.
 
 ### Dependencies
 

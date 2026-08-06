@@ -33,8 +33,9 @@ In another terminal, register the dashboard (if not already committed — see
 `/dashboard`. Expected:
 
 - The dashboard's UI renders inside the shell's frame.
-- `git status --porcelain apps/shell/src` is **empty** — registering it
-  touched only `remotes.dev.json`.
+- `git status --porcelain apps/shell/src` shows exactly **one** changed file
+  — `remotes.dev.json` — once the one-time route-patching mechanism this
+  sprint builds is in place (see `research.md` addendum below).
 - Signed in through the shell's session, the dashboard reads that same
   session via the shared auth contract — no second sign-in.
 

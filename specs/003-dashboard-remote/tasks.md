@@ -39,19 +39,19 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 [P] Create `packages/ui/src/components/card.tsx` — `Card` component: `label`, `value`, `trend: 'up' | 'down' | 'flat'`, `className`, following the existing components' `WithClassName` pattern (research D4)
-- [ ] T002 [P] Export `Card` and `CardProps` from `packages/ui/src/index.ts`, following the pattern already used for `Table`
-- [ ] T003 [P] `packages/ui/tests/card.test.tsx` — renders label, value, and each of the three trend states
-- [ ] T004 Create `apps/dashboard/package.json` as `@enterprise-mfe/dashboard`, declaring `react@^19.2.8`, `react-dom@^19.2.8`, `react-router@^8.3.0`, `@enterprise-mfe/auth` at the shell's exact singleton versions (`FR-015`), plus `@enterprise-mfe/ui`, `@enterprise-mfe/shared-types` as workspace dependencies, `recharts@^3.10.1`, and devDependencies `@rspack/core@^2.1.7`, `@rspack/cli@^2.1.7`, `@rspack/dev-server@^2.2.0`, `@module-federation/enhanced@^2.8.1`, `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.25`, `postcss-loader@^8.2.1` — every import declared per ADR-0011
-- [ ] T005 Create `apps/dashboard/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
-- [ ] T006 Create `apps/dashboard/src/exposed/` and `apps/dashboard/src/internal/` — the same split `apps/shell` uses (Principle I)
-- [ ] T007 Create `apps/dashboard/index.html` and `apps/dashboard/src/index.tsx` as the standalone entry point (spec edge case: the dashboard must run with no shell present)
-- [ ] T008 [P] Create `apps/dashboard/src/bootstrap.tsx` mounting `apps/dashboard/src/exposed/App.tsx` into the DOM
-- [ ] T009 Create `apps/dashboard/rspack.config.ts` with `ModuleFederationPlugin` configured as a **remote**: `name: 'dashboard'`, `exposes: { './App': './src/exposed/App.tsx' }`, dev server port `3001` (research D1, D2), `shared` singletons matching `apps/shell/rspack.config.ts` exactly
-- [ ] T010 Add `dev`/`build` scripts to `apps/dashboard/package.json` invoking `rspack serve` / `rspack build`
-- [ ] T011 Verify `pnpm dev --filter @enterprise-mfe/dashboard` starts and serves a blank page with no errors — confirms the remote's Rspack + MF config is valid before anything is built on top of it
-- [ ] T012 Add `apps/dashboard` as a project entry in `vitest.config.mts` using the existing `browserProject` helper, following the pattern already used for `shell` (research D7)
-- [ ] T013 [P] Add `@playwright/test@^1.62.1` as a devDependency in `apps/shell/package.json`, create `apps/shell/playwright.config.ts`, and add an `"e2e": "playwright test"` script (research D6) — `turbo.json`'s `e2e` task already exists and picks this up unchanged
+- [X] T001 [P] Create `packages/ui/src/components/card.tsx` — `Card` component: `label`, `value`, `trend: 'up' | 'down' | 'flat'`, `className`, following the existing components' `WithClassName` pattern (research D4)
+- [X] T002 [P] Export `Card` and `CardProps` from `packages/ui/src/index.ts`, following the pattern already used for `Table`
+- [X] T003 [P] `packages/ui/tests/card.test.tsx` — renders label, value, and each of the three trend states
+- [X] T004 Create `apps/dashboard/package.json` as `@enterprise-mfe/dashboard`, declaring `react@^19.2.8`, `react-dom@^19.2.8`, `react-router@^8.3.0`, `@enterprise-mfe/auth` at the shell's exact singleton versions (`FR-015`), plus `@enterprise-mfe/ui`, `@enterprise-mfe/shared-types` as workspace dependencies, `recharts@^3.10.1`, and devDependencies `@rspack/core@^2.1.7`, `@rspack/cli@^2.1.7`, `@rspack/dev-server@^2.2.0`, `@module-federation/enhanced@^2.8.1`, `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.25`, `postcss-loader@^8.2.1` — every import declared per ADR-0011
+- [X] T005 Create `apps/dashboard/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T006 Create `apps/dashboard/src/exposed/` and `apps/dashboard/src/internal/` — the same split `apps/shell` uses (Principle I)
+- [X] T007 Create `apps/dashboard/index.html` and `apps/dashboard/src/index.tsx` as the standalone entry point (spec edge case: the dashboard must run with no shell present)
+- [X] T008 [P] Create `apps/dashboard/src/bootstrap.tsx` mounting `apps/dashboard/src/exposed/App.tsx` into the DOM
+- [X] T009 Create `apps/dashboard/rspack.config.ts` with `ModuleFederationPlugin` configured as a **remote**: `name: 'dashboard'`, `exposes: { './App': './src/exposed/App.tsx' }`, dev server port `3001` (research D1, D2), `shared` singletons matching `apps/shell/rspack.config.ts` exactly
+- [X] T010 Add `dev`/`build` scripts to `apps/dashboard/package.json` invoking `rspack serve` / `rspack build`
+- [X] T011 Verify `pnpm dev --filter @enterprise-mfe/dashboard` starts and serves a blank page with no errors — confirms the remote's Rspack + MF config is valid before anything is built on top of it
+- [X] T012 Add `apps/dashboard` as a project entry in `vitest.config.mts` using the existing `browserProject` helper, following the pattern already used for `shell` (research D7)
+- [X] T013 [P] Add `@playwright/test@^1.62.1` as a devDependency in `apps/shell/package.json`, create `apps/shell/playwright.config.ts`, and add an `"e2e": "playwright test"` script (research D6) — `turbo.json`'s `e2e` task already exists and picks this up unchanged
 
 ---
 
@@ -59,18 +59,18 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ### Tailwind pipeline on a second app — proving the pattern travels, not re-proving issue #4
 
-- [ ] T014 Configure `postcss-loader` in `apps/dashboard/rspack.config.ts` for `.css` files, with `@tailwindcss/postcss` in the PostCSS plugin chain — identical to `apps/shell`'s
-- [ ] T015 Create `apps/dashboard/src/internal/styles.css` importing `@enterprise-mfe/ui/styles.css` and declaring `@source '../../../../packages/ui/src'` — the workspace-relative path, same gotcha `apps/shell` already paid for (research D2 in `002-shell-host`)
-- [ ] T016 Import `internal/styles.css` from `bootstrap.tsx`
-- [ ] T017 Render the new `Card` component as a smoke element in `exposed/App.tsx`; run `pnpm dev --filter @enterprise-mfe/dashboard` and confirm it is visibly styled — the first confirmation that the Tailwind pipeline holds on a *second* app, not just the shell
+- [X] T014 Configure `postcss-loader` in `apps/dashboard/rspack.config.ts` for `.css` files, with `@tailwindcss/postcss` in the PostCSS plugin chain — identical to `apps/shell`'s
+- [X] T015 Create `apps/dashboard/src/internal/styles.css` importing `@enterprise-mfe/ui/styles.css` and declaring `@source '../../../../packages/ui/src'` — the workspace-relative path, same gotcha `apps/shell` already paid for (research D2 in `002-shell-host`)
+- [X] T016 Import `internal/styles.css` from `bootstrap.tsx`
+- [X] T017 Render the new `Card` component as a smoke element in `exposed/App.tsx`; run `pnpm dev --filter @enterprise-mfe/dashboard` and confirm it is visibly styled — the first confirmation that the Tailwind pipeline holds on a *second* app, not just the shell
 
 ### Data contract — the async source all three domain surfaces read from
 
-- [ ] T018 [P] Create `apps/dashboard/src/internal/data/fixtures.ts` — the in-module fixture data: 2 `KpiMetric`s (`active-users`, `usage-trend`), a chronological `ActivityDataPoint[]`, and ≤12 `ActivityFeedItem`s, reverse-chronological, per [data-model.md](data-model.md)
-- [ ] T019 [P] `apps/dashboard/tests/fetch-overview.test.ts` — default options resolve a `DashboardOverview` with exactly 2 `kpis`, `feed` reverse-chronological and ≤12 items, `activity` chronological (contracts/dashboard-data-contract.md)
-- [ ] T020 [P] `apps/dashboard/tests/fetch-overview.test.ts` — `forceFailure: true` rejects with an `Error` carrying a specific, non-generic message
-- [ ] T021 Create `apps/dashboard/src/internal/data/fetch-overview.ts` implementing `fetchDashboardOverview(options?: FetchOverviewOptions)` per [contracts/dashboard-data-contract.md](contracts/dashboard-data-contract.md), backed by `fixtures.ts` and an artificial `delayMs` (default 400)
-- [ ] T022 Create `apps/dashboard/src/internal/data/use-dashboard-overview.ts` — thin hook wrapping `fetch-overview.ts` in a `FetchState` (`idle → loading → loaded | failed`), per [data-model.md](data-model.md)
+- [X] T018 [P] Create `apps/dashboard/src/internal/data/fixtures.ts` — the in-module fixture data: 2 `KpiMetric`s (`active-users`, `usage-trend`), a chronological `ActivityDataPoint[]`, and ≤12 `ActivityFeedItem`s, reverse-chronological, per [data-model.md](data-model.md)
+- [X] T019 [P] `apps/dashboard/tests/fetch-overview.test.ts` — default options resolve a `DashboardOverview` with exactly 2 `kpis`, `feed` reverse-chronological and ≤12 items, `activity` chronological (contracts/dashboard-data-contract.md)
+- [X] T020 [P] `apps/dashboard/tests/fetch-overview.test.ts` — `forceFailure: true` rejects with an `Error` carrying a specific, non-generic message
+- [X] T021 Create `apps/dashboard/src/internal/data/fetch-overview.ts` implementing `fetchDashboardOverview(options?: FetchOverviewOptions)` per [contracts/dashboard-data-contract.md](contracts/dashboard-data-contract.md), backed by `fixtures.ts` and an artificial `delayMs` (default 400)
+- [X] T022 Create `apps/dashboard/src/internal/data/use-dashboard-overview.ts` — thin hook wrapping `fetch-overview.ts` in a `FetchState` (`idle → loading → loaded | failed`), per [data-model.md](data-model.md)
 
 ---
 
@@ -82,15 +82,16 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ### Tests for User Story 1
 
-- [ ] T023 [P] [US1] `apps/dashboard/tests/app.test.tsx` — `App` renders standalone (no shell context assumed) given a `RemoteAppProps.basePath`
-- [ ] T024 [P] [US1] `apps/dashboard/tests/app.test.tsx` — the current session is readable inside `App` via `useAuth()`, not a dashboard-local implementation (`FR-005`)
+- [X] T023 [P] [US1] `apps/dashboard/tests/app.test.tsx` — `App` renders standalone (no shell context assumed) given a `RemoteAppProps.basePath`
+- [X] T024 [P] [US1] `apps/dashboard/tests/app.test.tsx` — the current session is readable inside `App` via `useAuth()`, not a dashboard-local implementation (`FR-005`)
 - [ ] T025 [US1] `apps/shell/e2e/dashboard-composition.spec.ts` — starts the shell composed with the dashboard, navigates to `/dashboard`, and asserts the dashboard's UI renders inside the shell frame (`SC-001`) — the first real Playwright run in this project (research D6)
 
 ### Implementation for User Story 1
 
-- [ ] T026 [US1] Create `apps/dashboard/src/exposed/App.tsx` accepting `RemoteAppProps` (from `@enterprise-mfe/shared-types`), reading the session via `useAuth()` from `@enterprise-mfe/auth`
-- [ ] T027 [US1] Register the dashboard in `apps/shell/src/internal/federation/remotes.dev.json` exactly as [contracts/registry-entry.md](contracts/registry-entry.md) specifies — `name`, `entry`, `routePath`, `label`; confirm `allowedOrigins` already covers `http://localhost:3001` (sprint 3, no change needed)
-- [ ] T028 [US1] Confirm `git status --porcelain apps/shell/src` is **empty** after T027 — registering the remote touched only the registry file (`FR-017`)
+- [X] T026 [US1] Create `apps/dashboard/src/exposed/App.tsx` accepting `RemoteAppProps` (from `@enterprise-mfe/shared-types`), reading the session via `useAuth()` from `@enterprise-mfe/auth`
+- [X] T026a [US1] **Discovered during implementation, not in the original plan**: `apps/shell/src/exposed/App.tsx` never actually turns a registered remote into a route — `002-shell-host` built `RemoteRegion` but its own source comment defers wiring it in to "sprint 4." Implement it using react-router 8's imperative `router.patchRoutes(routeId, children)` (confirmed present on the installed `react-router@8.3.0` router instance): after `registerAllowedRemotes` resolves, patch one route per registered remote — `{ path: registration.routePath, element: <RemoteRegion remoteName={registration.name} basePath={registration.routePath} /> }` — into the router built in `apps/shell/src/exposed/App.tsx`. Chosen over the fog-of-war `patchRoutesOnNavigation` lazy-discovery API for being the simpler mechanism that still satisfies FR-001 (frame renders before this resolves)
+- [X] T027 [US1] Register the dashboard in `apps/shell/src/internal/federation/remotes.dev.json` exactly as [contracts/registry-entry.md](contracts/registry-entry.md) specifies — `name`, `entry`, `routePath`, `label`; confirm `allowedOrigins` already covers `http://localhost:3001` (sprint 3, no change needed)
+- [X] T028 [US1] Confirm `git status --porcelain apps/shell/src` shows exactly **one** changed file (`remotes.dev.json`) after T027, now that T026a's mechanism exists — registering the remote touches only the registry file (`FR-017`)
 - [ ] T029 [US1] Manually verify composition: `pnpm dev` (shell) + `pnpm dev --filter @enterprise-mfe/dashboard`, navigate to `/dashboard`, confirm the dashboard renders inside the shell's chrome
 
 ---
