@@ -6,9 +6,18 @@ Module Federation 2.0, configured as a host that exposes nothing of its own
 (`ModuleFederationPlugin`'s `exposes` map is deliberately empty — the shell
 composes, it doesn't get composed into).
 
-It runs standalone with zero remotes registered. That is a valid, tested state
-— no remote exists until sprint 4, and even once one does, an empty registry
-must never be an error.
+It runs standalone with zero remotes registered — that has always been a
+valid, tested state. As of sprint 4, `apps/dashboard` is registered in the
+development registry (`src/internal/federation/remotes.dev.json`) and
+composed at `/dashboard`, the first real remote this host has ever loaded
+across a real network boundary.
+
+Registered remotes are patched into the router lazily, via react-router 8's
+`patchRoutesOnNavigation` (`src/exposed/App.tsx`) — not the simpler
+imperative `router.patchRoutes` — because a hard navigation straight to a
+remote's path needs the route to exist *before* the router decides there's
+no match, not after. Origin control and MF registration still run eagerly at
+startup regardless of navigation (`FR-016`–`FR-018`).
 
 ## Running it
 
@@ -56,3 +65,16 @@ The shell refuses to load a remote from an origin that isn't on the
 registry's `allowedOrigins` list, and refuses insecure transport outside
 local development. This runs before any remote code is fetched — see
 `src/internal/federation/origin-guard.ts`.
+
+## End-to-end tests
+
+`e2e/` holds this project's first real Playwright suite — the shell composing
+`apps/dashboard` across a real network boundary, not a simulated one
+(`002-shell-host`'s research D7 deferred this until a real remote existed).
+
+```bash
+pnpm --filter @enterprise-mfe/shell run e2e
+```
+
+`playwright.config.ts` starts both the shell's and the dashboard's dev
+servers itself; no manual setup is required.
