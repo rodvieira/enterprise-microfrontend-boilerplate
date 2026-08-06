@@ -125,16 +125,16 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ### Tests for User Story 3
 
-- [ ] T037 [P] [US3] `apps/dashboard/tests/activity-chart.test.tsx` — renders correctly against a real (fixture) time-series data set (spec scenario 3.2)
-- [ ] T038 [P] [US3] `apps/dashboard/tests/activity-chart.test.tsx` — a zero-point and a one-point `activity` array each render a defined empty/minimal state, not an error (spec Edge Cases)
-- [ ] T039 [US3] `apps/shell/e2e/dashboard-composition.spec.ts` — the shell's chrome and navigation DOM/computed styles are identical before and after the dashboard's chart mounts (`SC-003`)
-- [ ] T040 [US3] `apps/dashboard/tests/activity-chart.test.tsx` — unmounting and remounting the chart leaves no listeners or rendering resources from the previous mount (`FR-011`)
+- [X] T037 [P] [US3] `apps/dashboard/tests/activity-chart.test.tsx` — renders correctly against a real (fixture) time-series data set (spec scenario 3.2)
+- [X] T038 [P] [US3] `apps/dashboard/tests/activity-chart.test.tsx` — a zero-point and a one-point `activity` array each render a defined empty/minimal state, not an error (spec Edge Cases)
+- [X] T039 [US3] `apps/shell/e2e/dashboard-composition.spec.ts` — the shell's chrome and navigation DOM/computed styles are identical before and after the dashboard's chart mounts (`SC-003`)
+- [X] T040 [US3] `apps/dashboard/tests/activity-chart.test.tsx` — unmounting and remounting the chart leaves no listeners or rendering resources from the previous mount (`FR-011`)
 
 ### Implementation for User Story 3
 
-- [ ] T041 [US3] Add `recharts@^3.10.1` to `apps/dashboard/package.json` dependencies (research D3)
-- [ ] T042 [US3] Create `apps/dashboard/src/internal/chart/activity-chart.tsx` rendering `DashboardOverview.activity` as a time-series chart, with a defined state for zero or one data points
-- [ ] T043 [US3] Wire `activity-chart.tsx` into `exposed/App.tsx`, driven by `useDashboardOverview`'s `FetchState`
+- [X] T041 [US3] Add `recharts@^3.10.1` to `apps/dashboard/package.json` dependencies (research D3)
+- [X] T042 [US3] Create `apps/dashboard/src/internal/chart/activity-chart.tsx` rendering `DashboardOverview.activity` as a time-series chart, with a defined state for zero or one data points
+- [X] T043 [US3] Wire `activity-chart.tsx` into `exposed/App.tsx`, driven by `useDashboardOverview`'s `FetchState`
 
 ---
 

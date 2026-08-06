@@ -1,12 +1,23 @@
 import { useAuth } from '@enterprise-mfe/auth';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
+import { ActivityChart } from '../internal/chart/activity-chart';
 import { shouldForceOverviewFailure } from '../internal/data/force-failure';
 import { useDashboardOverview } from '../internal/data/use-dashboard-overview';
 import { KpiCards } from '../internal/kpi/kpi-cards';
+import '../internal/styles.css';
 
 /**
  * What the shell mounts at `/dashboard` (via RemoteRegion, "dashboard/App").
  * This app's public exposed surface — everything else lives in `internal/`.
+ *
+ * The styles.css import matters *here*, not only in bootstrap.tsx: when the
+ * shell loads this module via federation, it fetches only the chunks in
+ * `./App`'s own dependency graph — `main`'s chunk (which bootstrap.tsx
+ * belongs to) is never requested. Without this import, every dashboard-owned
+ * Tailwind class (this file's own `flex`, `gap-6`, `ActivityChart`'s `h-64`,
+ * …) resolved to no generated CSS at all when composed, collapsing the chart
+ * to a 0×0 container — found only by inspecting the composed page's actual
+ * stylesheets in a real browser, not by a passing accessibility-tree assertion.
  *
  * Deliberately no <AuthProvider> here: when composed inside the shell, this
  * component renders inside the shell's own <AuthProvider> (React context is
@@ -29,6 +40,7 @@ export function App({ basePath }: RemoteAppProps) {
         </p>
       </header>
       <KpiCards state={overview} />
+      <ActivityChart state={overview} />
     </div>
   );
 }

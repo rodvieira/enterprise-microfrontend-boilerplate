@@ -43,4 +43,25 @@ test.describe('dashboard composition', () => {
     await page.getByRole('link', { name: 'Home' }).click();
     await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
   });
+
+  test("the activity chart doesn't affect the shell's chrome (SC-003)", async ({ page }) => {
+    await page.goto('/');
+    const navBefore = await page.getByRole('navigation').evaluate((el) => el.outerHTML);
+    const bannerBefore = await page.getByRole('banner').evaluate((el) => el.outerHTML);
+
+    await page.goto('/dashboard');
+    // Wait for the real chart (not the loading placeholder) to mount.
+    await expect(page.locator('.recharts-wrapper')).toBeVisible();
+
+    const navAfter = await page.getByRole('navigation').evaluate((el) => el.outerHTML);
+    const bannerAfter = await page.getByRole('banner').evaluate((el) => el.outerHTML);
+    expect(navAfter).toBe(navBefore);
+    expect(bannerAfter).toBe(bannerBefore);
+
+    // Navigate away and back: no leaked chart resources from the previous mount (FR-011).
+    await page.getByRole('link', { name: 'Home' }).click();
+    await expect(page.locator('.recharts-wrapper')).toHaveCount(0);
+    await page.goBack();
+    await expect(page.locator('.recharts-wrapper')).toHaveCount(1);
+  });
 });
