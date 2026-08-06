@@ -1,0 +1,37 @@
+{
+  "name": "@enterprise-mfe/dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The analytics/overview remote: KPI cards, an activity chart, and a recent activity feed, exposed over Module Federation as ./App.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "rspack serve",
+    "build": "rspack build",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@enterprise-mfe/auth": "workspace:*",
+    "@enterprise-mfe/shared-types": "workspace:*",
+    "@enterprise-mfe/ui": "workspace:*",
+    "@module-federation/enhanced": "^2.8.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^8.3.0",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@enterprise-mfe/config-typescript": "workspace:*",
+    "@rspack/cli": "^2.1.7",
+    "@rspack/core": "^2.1.7",
+    "@rspack/dev-server": "^2.2.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "postcss": "^8.5.25",
+    "postcss-loader": "^8.2.1",
+    "tailwindcss": "^4.3.3",
+    "vitest": "^4.1.10"
+  }
+}
