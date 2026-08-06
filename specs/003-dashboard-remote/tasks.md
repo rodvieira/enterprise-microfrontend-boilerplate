@@ -181,13 +181,13 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ## Phase 9: Polish, documentation
 
-- [ ] T057 [P] `apps/dashboard/README.md` — what the dashboard does, how to run it standalone, and a pointer to [contracts/registry-entry.md](contracts/registry-entry.md)
-- [ ] T058 [P] Update `docs/packages.md` — add `packages/ui`'s new `Card` component to its existing entry
-- [ ] T059 Update `docs/packages.md` (or `docs/architecture.md`, whichever currently lists `apps/*`) — add `apps/dashboard` as a real entry, matching the pattern used for `apps/shell`
-- [ ] T060 Confirm `docs/architecture.md` doesn't describe "one application" or otherwise imply the shell is the only app; correct if it does
-- [ ] T061 Run every step of [quickstart.md](quickstart.md) §1–§8 end to end on a clean checkout
-- [ ] T062 Write the pull request description with a one-line justification for each new dependency — `recharts` (research D3) and `@playwright/test` (research D6) — per constitution Principle IX
-- [ ] T063 Review the diff against `.claude/agents/pr-reviewer.md`'s checks (exposed/internal boundary, singleton versions, no cross-app relative imports) before opening the PR
+- [X] T057 [P] `apps/dashboard/README.md` — what the dashboard does, how to run it standalone, and a pointer to [contracts/registry-entry.md](contracts/registry-entry.md)
+- [X] T058 [P] Update `docs/packages.md` — add `packages/ui`'s new `Card` component to its existing entry
+- [X] T059 Update `docs/packages.md` (or `docs/architecture.md`, whichever currently lists `apps/*`) — add `apps/dashboard` as a real entry, matching the pattern used for `apps/shell`
+- [X] T060 Confirm `docs/architecture.md` doesn't describe "one application" or otherwise imply the shell is the only app; correct if it does
+- [X] T061 Run every step of [quickstart.md](quickstart.md) §1–§8 end to end on a clean checkout
+- [X] T062 Write the pull request description with a one-line justification for each new dependency — `recharts` (research D3) and `@playwright/test` (research D6) — per constitution Principle IX
+- [X] T063 Review the diff against `.claude/agents/pr-reviewer.md`'s checks (exposed/internal boundary, singleton versions, no cross-app relative imports) before opening the PR
 
 ---
 
