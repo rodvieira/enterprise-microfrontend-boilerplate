@@ -1,5 +1,12 @@
 {
   "environment": "dev",
   "allowedOrigins": ["http://localhost:3001", "http://localhost:3002"],
-  "remotes": []
+  "remotes": [
+    {
+      "name": "dashboard",
+      "entry": "http://localhost:3001/mf-manifest.json",
+      "routePath": "/dashboard",
+      "label": "Dashboard"
+    }
+  ]
 }
