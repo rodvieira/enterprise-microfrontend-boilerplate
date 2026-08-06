@@ -5,8 +5,9 @@ import { defineConfig } from '@playwright/test';
  * 003-dashboard-remote) — deferred by 002-shell-host's research D7 until a
  * real remote existed to compose across a real network boundary.
  *
- * Both dev servers are started from the repository root so pnpm's workspace
- * filtering resolves correctly regardless of the shell where this runs from.
+ * All three dev servers are started from the repository root so pnpm's
+ * workspace filtering resolves correctly regardless of the shell where this
+ * runs from.
  */
 export default defineConfig({
   testDir: './e2e',
@@ -28,6 +29,12 @@ export default defineConfig({
     {
       command: 'pnpm --filter @enterprise-mfe/dashboard dev',
       url: 'http://localhost:3001',
+      cwd: '../..',
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: 'pnpm --filter @enterprise-mfe/admin dev',
+      url: 'http://localhost:3002',
       cwd: '../..',
       reuseExistingServer: !process.env.CI,
     },

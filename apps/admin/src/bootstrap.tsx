@@ -16,6 +16,6 @@ if (!container) {
  */
 createRoot(container).render(
   <AuthProvider>
-    <App />
+    <App basePath="/" />
   </AuthProvider>,
 );

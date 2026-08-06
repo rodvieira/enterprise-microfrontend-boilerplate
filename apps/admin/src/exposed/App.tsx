@@ -1,18 +1,35 @@
-import { Button } from '@enterprise-mfe/ui';
+import { useAuth } from '@enterprise-mfe/auth';
+import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
 import '../internal/styles.css';
 
 /**
- * Placeholder smoke element proving the Tailwind pipeline holds on a third
- * app (T016). Replaced with the real exposed component (RemoteAppProps,
- * useAuth, the user table, the invite/edit modal) in later phases.
+ * What the shell mounts at `/admin` (via RemoteRegion, "admin/App").
+ * This app's public exposed surface — everything else lives in `internal/`.
  *
- * The styles.css import lives here, not only in bootstrap.tsx, and this
- * file already has a default export — both are 003-dashboard-remote
- * findings applied from day one (docs/architecture.md "Remotes" section),
- * not rediscovered.
+ * The styles.css import and this file's default export both matter *here*,
+ * not only in bootstrap.tsx/as an afterthought — see
+ * apps/dashboard/src/exposed/App.tsx and docs/architecture.md's "Remotes"
+ * section for why (003-dashboard-remote's CSS-federation and default-export
+ * findings, applied from day one in this app).
+ *
+ * Deliberately no <AuthProvider> here: when composed inside the shell, this
+ * component renders inside the shell's own <AuthProvider> (React context is
+ * shared because @enterprise-mfe/auth is an MF singleton — FR-005). Only the
+ * standalone dev entry (bootstrap.tsx) needs its own provider.
  */
-export function App() {
-  return <Button>Admin</Button>;
+export function App({ basePath }: RemoteAppProps) {
+  const { user, isAuthenticated } = useAuth();
+
+  return (
+    <div className="flex flex-col gap-6 p-6" data-base-path={basePath}>
+      <header>
+        <h1 className="text-xl font-medium text-(--color-text)">Admin</h1>
+        <p className="text-sm text-(--color-text-muted)">
+          {isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}
+        </p>
+      </header>
+    </div>
+  );
 }
 
 export default App;

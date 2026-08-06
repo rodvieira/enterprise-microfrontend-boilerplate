@@ -95,16 +95,16 @@ architecture rather than delivering domain behavior — the same shape
 
 ### Tests for User Story 1
 
-- [ ] T032 [P] [US1] `apps/admin/tests/app.test.tsx` — `App` renders standalone given a `RemoteAppProps.basePath`
-- [ ] T033 [P] [US1] `apps/admin/tests/app.test.tsx` — the current session is readable inside `App` via `useAuth()` (`FR-005`)
-- [ ] T034 [US1] `apps/shell/e2e/admin-composition.spec.ts` — starts the shell composed with both remotes, navigates to `/admin`, asserts the admin remote's UI renders inside the shell frame; navigates to `/dashboard` and back, confirms no leftover state from the other remote (`SC-001`, User Story 1 scenario 2)
+- [X] T032 [P] [US1] `apps/admin/tests/app.test.tsx` — `App` renders standalone given a `RemoteAppProps.basePath`
+- [X] T033 [P] [US1] `apps/admin/tests/app.test.tsx` — the current session is readable inside `App` via `useAuth()` (`FR-005`)
+- [X] T034 [US1] `apps/shell/e2e/admin-composition.spec.ts` — starts the shell composed with both remotes, navigates to `/admin`, asserts the admin remote's UI renders inside the shell frame; navigates to `/dashboard` and back, confirms no leftover state from the other remote (`SC-001`, User Story 1 scenario 2)
 
 ### Implementation for User Story 1
 
-- [ ] T035 [US1] Create `apps/admin/src/exposed/App.tsx` accepting `RemoteAppProps`, reading the session via `useAuth()`
-- [ ] T036 [US1] Register the admin remote in `apps/shell/src/internal/federation/remotes.dev.json` exactly as [contracts/registry-entry.md](contracts/registry-entry.md) specifies
-- [ ] T037 [US1] Confirm `git status --porcelain apps/shell/src` shows exactly **one** changed file (`remotes.dev.json`) — the route-patching mechanism `003-dashboard-remote` built needs no further change to support a second remote (`FR-020`)
-- [ ] T038 [US1] Manually verify three-way composition: `pnpm dev` (starts shell, dashboard, and admin together), navigate to `/dashboard` and `/admin` in turn, confirm each renders correctly inside the shell's chrome
+- [X] T035 [US1] Create `apps/admin/src/exposed/App.tsx` accepting `RemoteAppProps`, reading the session via `useAuth()`
+- [X] T036 [US1] Register the admin remote in `apps/shell/src/internal/federation/remotes.dev.json` exactly as [contracts/registry-entry.md](contracts/registry-entry.md) specifies
+- [X] T037 [US1] Confirm `git status --porcelain apps/shell/src` shows exactly **one** changed file (`remotes.dev.json`) — the route-patching mechanism `003-dashboard-remote` built needs no further change to support a second remote (`FR-020`)
+- [X] T038 [US1] Manually verify three-way composition: `pnpm dev` (starts shell, dashboard, and admin together), navigate to `/dashboard` and `/admin` in turn, confirm each renders correctly inside the shell's chrome
 
 ---
 
