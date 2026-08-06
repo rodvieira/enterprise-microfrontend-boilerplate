@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@enterprise-mfe/auth": "workspace:*",
+    "@enterprise-mfe/event-bus": "workspace:*",
     "@enterprise-mfe/shared-types": "workspace:*",
     "@enterprise-mfe/ui": "workspace:*",
     "@module-federation/enhanced": "^2.8.1",

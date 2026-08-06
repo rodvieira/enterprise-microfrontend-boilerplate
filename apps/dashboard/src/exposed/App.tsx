@@ -1,5 +1,7 @@
 import { useAuth } from '@enterprise-mfe/auth';
+import { useEventSubscription } from '@enterprise-mfe/event-bus';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
+import { useMemo, useState } from 'react';
 import { ActivityChart } from '../internal/chart/activity-chart';
 import { shouldForceOverviewFailure } from '../internal/data/force-failure';
 import { useDashboardOverview } from '../internal/data/use-dashboard-overview';
@@ -32,6 +34,31 @@ export function App({ basePath }: RemoteAppProps) {
   // independent ones.
   const overview = useDashboardOverview({ forceFailure: shouldForceOverviewFailure() });
 
+  // 004-admin-remote's headline proof: a role change in admin bumps this
+  // count live, with no reload and no direct coupling — the update travels
+  // only through packages/event-bus (research D3: a simple increment
+  // against whatever the last fetch resolved, not a recomputation from
+  // admin's user list, which this remote has no reason to know about).
+  const [roleChangeBumps, setRoleChangeBumps] = useState(0);
+  useEventSubscription('user:role-changed', () => {
+    setRoleChangeBumps((count) => count + 1);
+  });
+
+  const adjustedOverview = useMemo(() => {
+    if (overview.status !== 'loaded' || roleChangeBumps === 0) {
+      return overview;
+    }
+    return {
+      ...overview,
+      data: {
+        ...overview.data,
+        kpis: overview.data.kpis.map((kpi) =>
+          kpi.id === 'active-users' ? { ...kpi, value: kpi.value + roleChangeBumps } : kpi,
+        ),
+      },
+    };
+  }, [overview, roleChangeBumps]);
+
   return (
     <div className="flex flex-col gap-6 p-6" data-base-path={basePath}>
       <header>
@@ -40,7 +67,7 @@ export function App({ basePath }: RemoteAppProps) {
           {isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}
         </p>
       </header>
-      <KpiCards state={overview} />
+      <KpiCards state={adjustedOverview} />
       <ActivityChart state={overview} />
       <RecentActivity state={overview} />
     </div>

@@ -158,15 +158,15 @@ architecture rather than delivering domain behavior — the same shape
 
 ### Tests for User Story 4
 
-- [ ] T053 [US4] `apps/dashboard/tests/app.test.tsx` — the active-users KPI increments by 1 when a `user:role-changed` event is received (published directly by the test, not through admin) (`FR-014`)
-- [ ] T054 [US4] `apps/shell/e2e/admin-composition.spec.ts` — **two browser contexts/pages in the same test**, one on `/dashboard`, one on `/admin`: a role change submitted on the admin page updates the dashboard page's KPI with no reload (`SC-005`, the scenario `BroadcastChannel` exists for — research D2)
-- [ ] T055 [US4] `apps/shell/e2e/admin-composition.spec.ts` — the dashboard page mounted *after* the role change shows its own freshly-fetched state, not a replayed increment (`FR-016`, spec Edge Cases)
+- [X] T053 [US4] `apps/dashboard/tests/app.test.tsx` — the active-users KPI increments by 1 when a `user:role-changed` event is received (published directly by the test, not through admin) (`FR-014`)
+- [X] T054 [US4] `apps/shell/e2e/admin-composition.spec.ts` — **two browser contexts/pages in the same test**, one on `/dashboard`, one on `/admin`: a role change submitted on the admin page updates the dashboard page's KPI with no reload (`SC-005`, the scenario `BroadcastChannel` exists for — research D2)
+- [X] T055 [US4] `apps/shell/e2e/admin-composition.spec.ts` — the dashboard page mounted *after* the role change shows its own freshly-fetched state, not a replayed increment (`FR-016`, spec Edge Cases)
 
 ### Implementation for User Story 4
 
-- [ ] T056 [US4] Publish `'user:role-changed'` from `use-user-list.ts`'s `changeRole`, only after the fixture mutation succeeds — never on a rejected/invalid submission (`FR-013`)
-- [ ] T057 [US4] Subscribe in `apps/dashboard/src/exposed/App.tsx` via `useEventSubscription('user:role-changed', …)`, incrementing the locally-held KPI adjustment (`FR-014`, research D3)
-- [ ] T058 [US4] Add `@enterprise-mfe/event-bus` as a dependency of `apps/dashboard/package.json`, at the same version range every other manifest declares
+- [X] T056 [US4] Publish `'user:role-changed'` from `use-user-list.ts`'s `changeRole`, only after the fixture mutation succeeds — never on a rejected/invalid submission (`FR-013`)
+- [X] T057 [US4] Subscribe in `apps/dashboard/src/exposed/App.tsx` via `useEventSubscription('user:role-changed', …)`, incrementing the locally-held KPI adjustment (`FR-014`, research D3)
+- [X] T058 [US4] Add `@enterprise-mfe/event-bus` as a dependency of `apps/dashboard/package.json`, at the same version range every other manifest declares
 
 ---
 

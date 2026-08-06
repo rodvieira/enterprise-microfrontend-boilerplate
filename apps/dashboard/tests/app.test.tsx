@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from '@enterprise-mfe/auth';
+import { publish } from '@enterprise-mfe/event-bus';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
@@ -37,5 +38,18 @@ describe('App', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
 
     await waitFor(() => expect(screen.getByText('Signed in as Ada Lovelace')).toBeInTheDocument());
+  });
+
+  it('increments the active-users KPI when a user:role-changed event is received (FR-014)', async () => {
+    render(
+      <AuthProvider>
+        <App basePath="/dashboard" />
+      </AuthProvider>,
+    );
+    await waitFor(() => expect(screen.getByText('1,204')).toBeInTheDocument());
+
+    publish('user:role-changed', { userId: 'user-1', newRole: 'editor' });
+
+    await waitFor(() => expect(screen.getByText('1,205')).toBeInTheDocument());
   });
 });

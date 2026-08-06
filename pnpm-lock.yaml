@@ -138,6 +138,9 @@ importers:
       '@enterprise-mfe/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@enterprise-mfe/event-bus':
+        specifier: workspace:*
+        version: link:../../packages/event-bus
       '@enterprise-mfe/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
