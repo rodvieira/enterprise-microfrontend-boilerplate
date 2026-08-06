@@ -2,6 +2,7 @@ import { useAuth } from '@enterprise-mfe/auth';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
 import { PaginationControls } from '../internal/users/pagination-controls';
 import { useUserList } from '../internal/users/use-user-list';
+import { UserFormModal } from '../internal/users/user-form-modal';
 import { UserTable } from '../internal/users/user-table';
 import '../internal/styles.css';
 
@@ -43,6 +44,11 @@ export function App({ basePath }: RemoteAppProps) {
         pageCount={userList.pageCount}
         onNext={userList.nextPage}
         onPrevious={userList.previousPage}
+      />
+      <UserFormModal
+        users={userList.allUsers}
+        onInvite={userList.addUser}
+        onChangeRole={userList.changeRole}
       />
     </div>
   );

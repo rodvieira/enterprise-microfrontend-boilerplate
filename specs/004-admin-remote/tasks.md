@@ -136,17 +136,17 @@ architecture rather than delivering domain behavior — the same shape
 
 ### Tests for User Story 3
 
-- [ ] T045 [P] [US3] `apps/admin/tests/use-can-write-users.test.ts` — `true` for a mocked user whose `permissions` include `users:write`, `false` otherwise (research D5)
-- [ ] T046 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — a session with `users:write` can submit a new user, and it appears in the table (`FR-009`)
-- [ ] T047 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — a session with `users:write` can submit a role change, and it's reflected in the table (`FR-010`)
-- [ ] T048 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — a mocked session **without** `users:write` never sees the action offered at all (`FR-008`, `SC-004`)
-- [ ] T049 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — an invalid submission (missing required field, duplicate email) is rejected with a visible, specific reason, and no user is added or changed (`FR-011`)
+- [X] T045 [P] [US3] `apps/admin/tests/use-can-write-users.test.ts` — `true` for a mocked user whose `permissions` include `users:write`, `false` otherwise (research D5)
+- [X] T046 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — a session with `users:write` can submit a new user, and it appears in the table (`FR-009`)
+- [X] T047 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — a session with `users:write` can submit a role change, and it's reflected in the table (`FR-010`)
+- [X] T048 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — a mocked session **without** `users:write` never sees the action offered at all (`FR-008`, `SC-004`)
+- [X] T049 [P] [US3] `apps/admin/tests/user-form-modal.test.tsx` — an invalid submission (missing required field, duplicate email) is rejected with a visible, specific reason, and no user is added or changed (`FR-011`)
 
 ### Implementation for User Story 3
 
-- [ ] T050 [US3] Create `apps/admin/src/internal/permissions/use-can-write-users.ts` (research D4) — reads `useAuth()`'s `user.permissions`, no `packages/auth` change
-- [ ] T051 [US3] Create `apps/admin/src/internal/users/user-form-modal.tsx` wrapping `Modal`, using `Input` for name/email and a native `<select>` for role, with validation
-- [ ] T052 [US3] Wire `user-form-modal.tsx` into `exposed/App.tsx`, its trigger gated by `use-can-write-users`
+- [X] T050 [US3] Create `apps/admin/src/internal/permissions/use-can-write-users.ts` (research D4) — reads `useAuth()`'s `user.permissions`, no `packages/auth` change
+- [X] T051 [US3] Create `apps/admin/src/internal/users/user-form-modal.tsx` wrapping `Modal`, using `Input` for name/email and a native `<select>` for role, with validation
+- [X] T052 [US3] Wire `user-form-modal.tsx` into `exposed/App.tsx`, its trigger gated by `use-can-write-users`
 
 ---
 
