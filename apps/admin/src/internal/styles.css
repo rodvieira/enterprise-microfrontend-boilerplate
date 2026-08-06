@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "@enterprise-mfe/ui/styles.css";
+
+/*
+ * Same gotcha every app in this repo pays for once (research D2,
+ * 002-shell-host): Tailwind's scanner respects .gitignore, which ignores
+ * node_modules/, so @source must use the workspace-relative path.
+ */
+@source '../../../../packages/ui/src';

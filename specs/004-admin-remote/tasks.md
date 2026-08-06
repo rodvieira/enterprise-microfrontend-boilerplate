@@ -40,18 +40,18 @@ architecture rather than delivering domain behavior — the same shape
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 [P] Create `packages/event-bus/package.json` as `@enterprise-mfe/event-bus`, `react` as a peerDependency (for the hook only — `publish`/`subscribe` themselves have no React dependency)
-- [ ] T002 [P] Create `packages/event-bus/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
-- [ ] T003 [P] Add `@enterprise-mfe/event-bus` as a project entry in `vitest.config.mts`, following the `browserProject` pattern
-- [ ] T004 Create `apps/admin/package.json` as `@enterprise-mfe/admin`, declaring `react@^19.2.8`, `react-dom@^19.2.8`, `react-router@^8.3.0`, `@enterprise-mfe/auth` at the shell's exact singleton versions, `@enterprise-mfe/event-bus@workspace:*`, plus `@enterprise-mfe/ui`, `@enterprise-mfe/shared-types` as workspace dependencies, and the same devDependencies `apps/dashboard/package.json` declares (`@rspack/core@^2.1.7`, `@rspack/cli@^2.1.7`, `@rspack/dev-server@^2.2.0`, `@module-federation/enhanced@^2.8.1`, `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.25`, `postcss-loader@^8.2.1`) — every import declared per ADR-0011
-- [ ] T005 Create `apps/admin/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
-- [ ] T006 Create `apps/admin/src/exposed/` and `apps/admin/src/internal/` — the same split every app in this repository uses (Principle I)
-- [ ] T007 Create `apps/admin/index.html` and `apps/admin/src/index.tsx` as the standalone entry point
-- [ ] T008 [P] Create `apps/admin/src/bootstrap.tsx` mounting `apps/admin/src/exposed/App.tsx` into the DOM, wrapped in its own `<AuthProvider>` (standalone-only — mirrors `apps/dashboard/src/bootstrap.tsx`)
-- [ ] T009 Create `apps/admin/rspack.config.ts` with `ModuleFederationPlugin` configured as a **remote**: `name: 'admin'`, `exposes: { './App': './src/exposed/App.tsx' }`, dev server port `3002` (already reserved in `remotes.dev.json`'s `allowedOrigins`, sprint 3), `postcss-loader` wired into the CSS rule from the start (`003-dashboard-remote`'s pipeline, not rediscovered), `shared` singletons matching every other manifest exactly, including `@enterprise-mfe/event-bus`
-- [ ] T010 Add `dev`/`build` scripts to `apps/admin/package.json` invoking `rspack serve` / `rspack build`
-- [ ] T011 Verify `pnpm dev --filter @enterprise-mfe/admin` starts and serves a blank page with no errors
-- [ ] T012 Add `apps/admin` as a project entry in `vitest.config.mts`
+- [X] T001 [P] Create `packages/event-bus/package.json` as `@enterprise-mfe/event-bus`, `react` as a peerDependency (for the hook only — `publish`/`subscribe` themselves have no React dependency)
+- [X] T002 [P] Create `packages/event-bus/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T003 [P] Add `@enterprise-mfe/event-bus` as a project entry in `vitest.config.mts`, following the `browserProject` pattern
+- [X] T004 Create `apps/admin/package.json` as `@enterprise-mfe/admin`, declaring `react@^19.2.8`, `react-dom@^19.2.8`, `react-router@^8.3.0`, `@enterprise-mfe/auth` at the shell's exact singleton versions, `@enterprise-mfe/event-bus@workspace:*`, plus `@enterprise-mfe/ui`, `@enterprise-mfe/shared-types` as workspace dependencies, and the same devDependencies `apps/dashboard/package.json` declares (`@rspack/core@^2.1.7`, `@rspack/cli@^2.1.7`, `@rspack/dev-server@^2.2.0`, `@module-federation/enhanced@^2.8.1`, `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.25`, `postcss-loader@^8.2.1`) — every import declared per ADR-0011
+- [X] T005 Create `apps/admin/tsconfig.json` extending `@enterprise-mfe/config-typescript/tsconfig.react.json`
+- [X] T006 Create `apps/admin/src/exposed/` and `apps/admin/src/internal/` — the same split every app in this repository uses (Principle I)
+- [X] T007 Create `apps/admin/index.html` and `apps/admin/src/index.tsx` as the standalone entry point
+- [X] T008 [P] Create `apps/admin/src/bootstrap.tsx` mounting `apps/admin/src/exposed/App.tsx` into the DOM, wrapped in its own `<AuthProvider>` (standalone-only — mirrors `apps/dashboard/src/bootstrap.tsx`)
+- [X] T009 Create `apps/admin/rspack.config.ts` with `ModuleFederationPlugin` configured as a **remote**: `name: 'admin'`, `exposes: { './App': './src/exposed/App.tsx' }`, dev server port `3002` (already reserved in `remotes.dev.json`'s `allowedOrigins`, sprint 3), `postcss-loader` wired into the CSS rule from the start (`003-dashboard-remote`'s pipeline, not rediscovered), `shared` singletons matching every other manifest exactly, including `@enterprise-mfe/event-bus`
+- [X] T010 Add `dev`/`build` scripts to `apps/admin/package.json` invoking `rspack serve` / `rspack build`
+- [X] T011 Verify `pnpm dev --filter @enterprise-mfe/admin` starts and serves a blank page with no errors
+- [X] T012 Add `apps/admin` as a project entry in `vitest.config.mts`
 
 ---
 
@@ -59,10 +59,10 @@ architecture rather than delivering domain behavior — the same shape
 
 ### Tailwind pipeline — applying `003-dashboard-remote`'s lesson from day one
 
-- [ ] T013 Create `apps/admin/postcss.config.mjs` — identical to `apps/dashboard`'s
-- [ ] T014 Create `apps/admin/src/internal/styles.css` importing `@enterprise-mfe/ui/styles.css` and declaring `@source '../../../../packages/ui/src'`
-- [ ] T015 Create `apps/admin/src/exposed/App.tsx` importing `../internal/styles.css` **directly** (not only from `bootstrap.tsx`) and giving it a **default export** from the start — both `003-dashboard-remote` findings applied up front, not rediscovered; render a smoke `Button` and confirm `pnpm dev --filter @enterprise-mfe/admin` shows it styled
-- [ ] T016 **Prove it on a third app**: run `pnpm build --filter @enterprise-mfe/admin`, inspect the generated CSS for the smoke component's utility classes — confirms the pipeline holds without per-app fragility
+- [X] T013 Create `apps/admin/postcss.config.mjs` — identical to `apps/dashboard`'s
+- [X] T014 Create `apps/admin/src/internal/styles.css` importing `@enterprise-mfe/ui/styles.css` and declaring `@source '../../../../packages/ui/src'`
+- [X] T015 Create `apps/admin/src/exposed/App.tsx` importing `../internal/styles.css` **directly** (not only from `bootstrap.tsx`) and giving it a **default export** from the start — both `003-dashboard-remote` findings applied up front, not rediscovered; render a smoke `Button` and confirm `pnpm dev --filter @enterprise-mfe/admin` shows it styled
+- [X] T016 **Prove it on a third app**: run `pnpm build --filter @enterprise-mfe/admin`, inspect the generated CSS for the smoke component's utility classes — confirms the pipeline holds without per-app fragility
 
 ### `packages/event-bus` core — unblocks both US3 (publish) and US4 (subscribe)
 
