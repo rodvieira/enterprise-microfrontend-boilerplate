@@ -162,13 +162,13 @@ same shape 002's US5 (P3, boundary gate) took.
 
 **Independent Test**: Introduce a deliberate cross-app relative import touching `apps/dashboard`, confirm `pnpm check:boundaries` fails and names it, then revert. Separately, introduce a deliberate singleton version mismatch in `apps/dashboard/package.json`, confirm `pnpm check:shared-deps` fails and names it, then revert.
 
-- [ ] T048 [US5] Confirm `pnpm check:boundaries` passes against real `apps/dashboard` source with **no change** to `.dependency-cruiser.js` — its rules are already `apps/*` pattern-based (`FR-014` first half)
-- [ ] T049 [US5] Deliberately add a relative import from an `apps/dashboard` file reaching into `apps/shell/src/internal/chrome`; run `pnpm check:boundaries` and record whether it fails and names the violated rule — the real second-app retest of [issue #6](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/issues/6) (`FR-014` second half, `SC-005`)
-- [ ] T050 [US5] Revert T049's deliberate import; confirm `pnpm check:boundaries` passes again
-- [ ] T051 [US5] Update issue #6 with T049's result — whether the deliberate violation was caught correctly against this real second app (evidence the sprint-3 bug was fixture- or environment-specific) or reproduced the same unresolved-import failure (evidence it is broader). Either outcome is new information; record it either way
-- [ ] T052 [US5] Confirm `apps/dashboard/package.json`'s `react`/`react-dom`/`react-router`/`@enterprise-mfe/auth` versions already match `scripts/check-shared-deps.ts`'s `SINGLETONS` exactly (`FR-015`), and `pnpm check:shared-deps` passes
-- [ ] T053 [US5] Deliberately mismatch one singleton's version range in `apps/dashboard/package.json`; run `pnpm check:shared-deps` and confirm it fails, naming the package and the mismatched versions (`FR-016`, `SC-006`)
-- [ ] T054 [US5] Revert T053's mismatch; confirm `pnpm check:shared-deps` passes again
+- [X] T048 [US5] Confirm `pnpm check:boundaries` passes against real `apps/dashboard` source with **no change** to `.dependency-cruiser.js` — its rules are already `apps/*` pattern-based (`FR-014` first half)
+- [X] T049 [US5] Deliberately add a relative import from an `apps/dashboard` file reaching into `apps/shell/src/internal/chrome`; run `pnpm check:boundaries` and record whether it fails and names the violated rule — the real second-app retest of [issue #6](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/issues/6) (`FR-014` second half, `SC-005`)
+- [X] T050 [US5] Revert T049's deliberate import; confirm `pnpm check:boundaries` passes again
+- [X] T051 [US5] Update issue #6 with T049's result — whether the deliberate violation was caught correctly against this real second app (evidence the sprint-3 bug was fixture- or environment-specific) or reproduced the same unresolved-import failure (evidence it is broader). Either outcome is new information; record it either way
+- [X] T052 [US5] Confirm `apps/dashboard/package.json`'s `react`/`react-dom`/`react-router`/`@enterprise-mfe/auth` versions already match `scripts/check-shared-deps.ts`'s `SINGLETONS` exactly (`FR-015`), and `pnpm check:shared-deps` passes
+- [X] T053 [US5] Deliberately mismatch one singleton's version range in `apps/dashboard/package.json`; run `pnpm check:shared-deps` and confirm it fails, naming the package and the mismatched versions (`FR-016`, `SC-006`)
+- [X] T054 [US5] Revert T053's mismatch; confirm `pnpm check:shared-deps` passes again
 
 ---
 
