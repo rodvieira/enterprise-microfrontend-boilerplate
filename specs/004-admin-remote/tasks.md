@@ -66,24 +66,24 @@ architecture rather than delivering domain behavior — the same shape
 
 ### `packages/event-bus` core — unblocks both US3 (publish) and US4 (subscribe)
 
-- [ ] T017 [P] Create `packages/event-bus/src/event-map.ts` — `EventMap`, `RoleChangedEvent` (`data-model.md`)
-- [ ] T018 [P] `packages/event-bus/tests/bus.test.ts` — `publish` calls every currently-subscribed handler for a topic, in subscription order
-- [ ] T019 [P] `packages/event-bus/tests/bus.test.ts` — a handler that throws does not prevent other handlers for the same event from running
-- [ ] T020 [P] `packages/event-bus/tests/bus.test.ts` — calling the function `subscribe()` returns removes exactly that handler, no others
-- [ ] T021 [P] `packages/event-bus/tests/bus.test.ts` — an event published with zero subscribers is not queued or replayed to a later subscriber (`FR-016`)
-- [ ] T022 [P] `packages/event-bus/tests/bus.test.ts` — a `publish()` call is received by a subscriber connected only through the `BroadcastChannel` relay (simulating a second browser tab), not only by same-module subscribers (research D2)
-- [ ] T023 Create `packages/event-bus/src/bus.ts` implementing `publish`/`subscribe` over a `Map<topic, Set<handler>>` plus a `BroadcastChannel` relay, per [contracts/event-bus-contract.md](contracts/event-bus-contract.md)
-- [ ] T024 [P] `packages/event-bus/tests/use-event-subscription.test.tsx` — subscribes on mount, unsubscribes on unmount
-- [ ] T025 Create `packages/event-bus/src/use-event-subscription.ts`
-- [ ] T026 Create `packages/event-bus/src/index.ts` exporting `publish`, `subscribe`, `useEventSubscription`, `EventMap`, `RoleChangedEvent`
+- [X] T017 [P] Create `packages/event-bus/src/event-map.ts` — `EventMap`, `RoleChangedEvent` (`data-model.md`)
+- [X] T018 [P] `packages/event-bus/tests/bus.test.ts` — `publish` calls every currently-subscribed handler for a topic, in subscription order
+- [X] T019 [P] `packages/event-bus/tests/bus.test.ts` — a handler that throws does not prevent other handlers for the same event from running
+- [X] T020 [P] `packages/event-bus/tests/bus.test.ts` — calling the function `subscribe()` returns removes exactly that handler, no others
+- [X] T021 [P] `packages/event-bus/tests/bus.test.ts` — an event published with zero subscribers is not queued or replayed to a later subscriber (`FR-016`)
+- [X] T022 [P] `packages/event-bus/tests/bus.test.ts` — a `publish()` call is received by a subscriber connected only through the `BroadcastChannel` relay (simulating a second browser tab), not only by same-module subscribers (research D2)
+- [X] T023 Create `packages/event-bus/src/bus.ts` implementing `publish`/`subscribe` over a `Map<topic, Set<handler>>` plus a `BroadcastChannel` relay, per [contracts/event-bus-contract.md](contracts/event-bus-contract.md)
+- [X] T024 [P] `packages/event-bus/tests/use-event-subscription.test.tsx` — subscribes on mount, unsubscribes on unmount
+- [X] T025 Create `packages/event-bus/src/use-event-subscription.ts`
+- [X] T026 Create `packages/event-bus/src/index.ts` exporting `publish`, `subscribe`, `useEventSubscription`, `EventMap`, `RoleChangedEvent`
 
 ### User fixture and list state — used by US2 and US3
 
-- [ ] T027 [P] Create `apps/admin/src/internal/users/fixtures.ts` — 25+ seeded `User` rows (enough to force pagination, `data-model.md`)
-- [ ] T028 [P] `apps/admin/tests/use-user-list.test.ts` — paginates a fixture set larger than one page, bounded (`FR-006`)
-- [ ] T029 [P] `apps/admin/tests/use-user-list.test.ts` — sorting by a chosen column reorders the visible rows (`FR-007`)
-- [ ] T030 [P] `apps/admin/tests/use-user-list.test.ts` — adding a user resets to the first page, so it's always reachable without hunting (`data-model.md`)
-- [ ] T031 Create `apps/admin/src/internal/users/use-user-list.ts` — pagination + sort state, owns the mutable fixture, exposes `addUser`/`changeRole`
+- [X] T027 [P] Create `apps/admin/src/internal/users/fixtures.ts` — 25+ seeded `User` rows (enough to force pagination, `data-model.md`)
+- [X] T028 [P] `apps/admin/tests/use-user-list.test.ts` — paginates a fixture set larger than one page, bounded (`FR-006`)
+- [X] T029 [P] `apps/admin/tests/use-user-list.test.ts` — sorting by a chosen column reorders the visible rows (`FR-007`)
+- [X] T030 [P] `apps/admin/tests/use-user-list.test.ts` — adding a user resets to the first page, so it's always reachable without hunting (`data-model.md`)
+- [X] T031 Create `apps/admin/src/internal/users/use-user-list.ts` — pagination + sort state, owns the mutable fixture, exposes `addUser`/`changeRole`
 
 ---
 
