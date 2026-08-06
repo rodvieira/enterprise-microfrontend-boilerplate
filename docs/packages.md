@@ -6,7 +6,7 @@ later sprints.
 
 | Package | Solves | Singleton |
 |---|---|---|
-| [`@enterprise-mfe/ui`](../packages/ui) | Working design system — Button, Input, Modal, Table, Toast, Layout, Nav. Not empty; something real renders on clone. | No |
+| [`@enterprise-mfe/ui`](../packages/ui) | Working design system — Button, Card, Input, Modal, Table, Toast, Layout, Nav. Not empty; something real renders on clone. | No |
 | [`@enterprise-mfe/auth`](../packages/auth) | Shared session contract: `useAuth()`, `<ProtectedRoute>`, `<AuthProvider>`. Stub implementation by default — see ADR-0009. | **Yes** |
 | [`@enterprise-mfe/shared-types`](../packages/shared-types) | TypeScript contracts between shell and remotes — `User`, `Permission`, exposed component prop types. | No |
 | [`@enterprise-mfe/config-typescript`](../packages/config-typescript) | Shared strict tsconfig, extended by every package and app. | No |

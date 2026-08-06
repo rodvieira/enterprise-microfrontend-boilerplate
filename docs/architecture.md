@@ -52,6 +52,32 @@ federation-specific loader that bridges this to the real MF runtime
 `apps/shell/src/internal/federation/loader.ts`, the only file in the repo
 that imports it directly.
 
+A registered, allowed remote is turned into an actual route via react-router
+8's `patchRoutesOnNavigation` (`apps/shell/src/exposed/App.tsx`) — chosen
+over the simpler imperative `router.patchRoutes` because a *hard* navigation
+straight to a remote's path needs the route to exist before the router
+decides there's no match, not after. This mechanism (built in
+`003-dashboard-remote`, against `apps/dashboard`) is a one-time addition to
+the shell; registering a further remote afterward touches only its registry
+entry, exactly as the registry contract promises.
+
+## Remotes
+
+`apps/dashboard` (sprint 4) is the first real remote, proving the shell's
+composition mechanism end to end. `apps/admin` (sprint 5) is the second; the
+scaffolding generator (ADR-0008) is extracted from what the two turn out to
+share, not designed before then.
+
+**A remote's `src/exposed/` entry must import its own stylesheet directly —
+not only its standalone `bootstrap.tsx`.** When the shell loads a remote via
+federation, it fetches only the chunks reachable from the exposed module's
+own dependency graph; a standalone entry's chunk is never requested. A remote
+whose Tailwind classes are wired up only through `bootstrap.tsx` renders with
+no CSS at all once composed — found while building `apps/dashboard`'s
+activity chart, which silently collapsed to a 0×0 container. See
+`apps/dashboard/src/exposed/App.tsx` for the pattern every future remote
+should copy.
+
 ## Boundary enforcement
 
 `dependency-cruiser` (`pnpm check:boundaries`) enforces two structural rules
