@@ -187,9 +187,9 @@ architecture rather than delivering domain behavior — the same shape
 
 ## Phase 8: Guard rails and cross-cutting verification
 
-- [ ] T065 Confirm no relative import crosses between `apps/admin` and `apps/dashboard` as a standing state, not only the reverted deliberate violation from Phase 7 (`FR-015`)
-- [ ] T066 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm e2e`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence on a clean checkout and confirm all seven exit `0` (`SC-008`)
-- [ ] T067 Confirm `apps/admin/package.json` and `packages/event-bus/package.json` each declare every package they import, including test tooling, per ADR-0011
+- [X] T065 Confirm no relative import crosses between `apps/admin` and `apps/dashboard` as a standing state, not only the reverted deliberate violation from Phase 7 (`FR-015`)
+- [X] T066 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm e2e`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence on a clean checkout and confirm all seven exit `0` (`SC-008`)
+- [X] T067 Confirm `apps/admin/package.json` and `packages/event-bus/package.json` each declare every package they import, including test tooling, per ADR-0011
 
 ---
 
