@@ -116,15 +116,15 @@ architecture rather than delivering domain behavior — the same shape
 
 ### Tests for User Story 2
 
-- [ ] T039 [P] [US2] `apps/admin/tests/user-table.test.tsx` — renders a bounded page when more users exist than fit on one page (`FR-006`)
-- [ ] T040 [P] [US2] `apps/admin/tests/user-table.test.tsx` — choosing a sortable column reorders the visible rows (`FR-007`)
-- [ ] T041 [P] [US2] `apps/admin/tests/user-table.test.tsx` — uses `@enterprise-mfe/ui`'s `Table`, not a bespoke element (`FR-002`)
+- [X] T039 [P] [US2] `apps/admin/tests/user-table.test.tsx` — renders a bounded page when more users exist than fit on one page (`FR-006`)
+- [X] T040 [P] [US2] `apps/admin/tests/user-table.test.tsx` — choosing a sortable column reorders the visible rows (`FR-007`)
+- [X] T041 [P] [US2] `apps/admin/tests/user-table.test.tsx` — uses `@enterprise-mfe/ui`'s `Table`, not a bespoke element (`FR-002`)
 
 ### Implementation for User Story 2
 
-- [ ] T042 [US2] Create `apps/admin/src/internal/users/pagination-controls.tsx` — `Button`-based prev/next, admin-local (research D6)
-- [ ] T043 [US2] Create `apps/admin/src/internal/users/user-table.tsx` wrapping `Table`, driven by `use-user-list.ts`
-- [ ] T044 [US2] Wire `user-table.tsx` and `pagination-controls.tsx` into `exposed/App.tsx`
+- [X] T042 [US2] Create `apps/admin/src/internal/users/pagination-controls.tsx` — `Button`-based prev/next, admin-local (research D6)
+- [X] T043 [US2] Create `apps/admin/src/internal/users/user-table.tsx` wrapping `Table`, driven by `use-user-list.ts`
+- [X] T044 [US2] Wire `user-table.tsx` and `pagination-controls.tsx` into `exposed/App.tsx`
 
 ---
 

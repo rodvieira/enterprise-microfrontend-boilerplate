@@ -1,5 +1,8 @@
 import { useAuth } from '@enterprise-mfe/auth';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
+import { PaginationControls } from '../internal/users/pagination-controls';
+import { useUserList } from '../internal/users/use-user-list';
+import { UserTable } from '../internal/users/user-table';
 import '../internal/styles.css';
 
 /**
@@ -19,6 +22,7 @@ import '../internal/styles.css';
  */
 export function App({ basePath }: RemoteAppProps) {
   const { user, isAuthenticated } = useAuth();
+  const userList = useUserList();
 
   return (
     <div className="flex flex-col gap-6 p-6" data-base-path={basePath}>
@@ -28,6 +32,18 @@ export function App({ basePath }: RemoteAppProps) {
           {isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}
         </p>
       </header>
+      <UserTable
+        users={userList.users}
+        sortColumn={userList.sortColumn}
+        sortDirection={userList.sortDirection}
+        onSort={userList.setSort}
+      />
+      <PaginationControls
+        page={userList.page}
+        pageCount={userList.pageCount}
+        onNext={userList.nextPage}
+        onPrevious={userList.previousPage}
+      />
     </div>
   );
 }
