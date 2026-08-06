@@ -176,12 +176,12 @@ architecture rather than delivering domain behavior — the same shape
 
 **Independent Test**: Introduce a deliberate cross-app import touching `apps/admin`, confirm `pnpm check:boundaries` fails and names it, then revert. Separately, introduce a deliberate `@enterprise-mfe/event-bus` version mismatch, confirm `pnpm check:shared-deps` fails and names it, then revert.
 
-- [ ] T059 [US5] Confirm `pnpm check:boundaries` passes against real `apps/admin` source with **no change** to `.dependency-cruiser.js`
-- [ ] T060 [US5] Deliberately add a relative import from an `apps/admin` file reaching into `apps/dashboard/src/internal` or `apps/shell/src/internal`; run `pnpm check:boundaries` and confirm it fails, naming the violated rule (`FR-017`, `SC-006`)
-- [ ] T061 [US5] Revert T060's deliberate import; confirm `pnpm check:boundaries` passes again
-- [ ] T062 [US5] Uncomment `@enterprise-mfe/event-bus` in `scripts/check-shared-deps.ts`'s `SINGLETONS`, removing the stale "arrives ... in sprint 6" comment (research D7); confirm `apps/admin`'s and `apps/dashboard`'s declared `@enterprise-mfe/event-bus` ranges already match and `pnpm check:shared-deps` passes
-- [ ] T063 [US5] Deliberately mismatch `@enterprise-mfe/event-bus`'s version range in `apps/admin/package.json`; run `pnpm check:shared-deps` and confirm it fails, naming the package and both manifests (`FR-019`, `SC-007`)
-- [ ] T064 [US5] Revert T063's mismatch; confirm `pnpm check:shared-deps` passes again
+- [X] T059 [US5] Confirm `pnpm check:boundaries` passes against real `apps/admin` source with **no change** to `.dependency-cruiser.js`
+- [X] T060 [US5] Deliberately add a relative import from an `apps/admin` file reaching into `apps/dashboard/src/internal` or `apps/shell/src/internal`; run `pnpm check:boundaries` and confirm it fails, naming the violated rule (`FR-017`, `SC-006`)
+- [X] T061 [US5] Revert T060's deliberate import; confirm `pnpm check:boundaries` passes again
+- [X] T062 [US5] Uncomment `@enterprise-mfe/event-bus` in `scripts/check-shared-deps.ts`'s `SINGLETONS`, removing the stale "arrives ... in sprint 6" comment (research D7); confirm `apps/admin`'s and `apps/dashboard`'s declared `@enterprise-mfe/event-bus` ranges already match and `pnpm check:shared-deps` passes
+- [X] T063 [US5] Deliberately mismatch `@enterprise-mfe/event-bus`'s version range in `apps/admin/package.json`; run `pnpm check:shared-deps` and confirm it fails, naming the package and both manifests (`FR-019`, `SC-007`)
+- [X] T064 [US5] Revert T063's mismatch; confirm `pnpm check:shared-deps` passes again
 
 ---
 

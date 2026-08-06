@@ -34,7 +34,11 @@ const SINGLETONS = [
   // produce two histories, the same class of bug as two Reacts. Added in
   // sprint 3 alongside the shell (research D6, constitution Principle III).
   'react-router',
-  // '@enterprise-mfe/event-bus', // arrives with the typed event bus in sprint 6
+  // The pub/sub registry a publisher and subscriber must actually share —
+  // two copies would mean admin's role-change events never reach
+  // dashboard's subscriber at all. Added in sprint 5 alongside apps/admin
+  // (004-admin-remote research D2, constitution Principle III).
+  '@enterprise-mfe/event-bus',
 ] as const;
 
 const MANIFEST_DIRS = ['apps', 'packages'];
