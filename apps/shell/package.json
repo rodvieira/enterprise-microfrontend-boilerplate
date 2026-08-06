@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "rspack serve",
     "build": "rspack build",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@enterprise-mfe/auth": "workspace:*",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@enterprise-mfe/config-typescript": "workspace:*",
+    "@playwright/test": "^1.62.1",
     "@rspack/cli": "^2.1.7",
     "@rspack/core": "^2.1.7",
     "@rspack/dev-server": "^2.2.0",

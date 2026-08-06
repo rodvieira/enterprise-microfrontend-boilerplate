@@ -5,13 +5,16 @@ import { ShellLayout } from '../internal/chrome/layout';
 import { fetchRegistry } from '../internal/federation/manifest';
 import { registerAllowedRemotes } from '../internal/federation/register';
 import { HomeRoute } from '../internal/routes/home';
+import { RemoteRegion } from '../internal/routes/remote-region';
 import { HOST_OWNED_ROUTE_PATHS } from '../internal/routes/remote-routes';
 
 /**
  * The host's own routes. Remote routes are not listed statically here — they
- * are discovered from the registry at runtime and patched in via
- * react-router's patchRoutesOnNavigation once a real remote exists (sprint 4;
- * see research D6's addendum on why TanStack Router was not used instead).
+ * are discovered from the registry at runtime and patched in once known (see
+ * the effect below). Patched with react-router 8's imperative
+ * `router.patchRoutes(routeId, children)` rather than `patchRoutesOnNavigation`
+ * — the frame still renders before this resolves (FR-001), but the simpler
+ * imperative API needs no lazy-discovery callback wired through every route.
  */
 const router = createBrowserRouter([
   {
@@ -35,10 +38,24 @@ export function App() {
     // (FR-001, research D3 consequences). registerAllowedRemotes runs origin
     // control (origin-guard.ts) before any remote code is fetched — a refused
     // remote never reaches the MF runtime, let alone a RemoteLoadState.
-    // Patching the survivors into the router as real routes is sprint 4 work,
-    // once a real remote exists to route to.
     fetchRegistry(HOST_OWNED_ROUTE_PATHS)
       .then((registry) => registerAllowedRemotes(registry))
+      .then(({ registered }) => {
+        if (registered.length === 0) {
+          return;
+        }
+        router.patchRoutes(
+          null,
+          registered.map((registration) => ({
+            path: registration.routePath,
+            element: (
+              <ShellLayout>
+                <RemoteRegion remoteName={registration.name} basePath={registration.routePath} />
+              </ShellLayout>
+            ),
+          })),
+        );
+      })
       .catch((error: unknown) => {
         console.error(error);
       });
