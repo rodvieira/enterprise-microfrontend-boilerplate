@@ -174,8 +174,8 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ## Phase 8: Guard rails and cross-cutting verification
 
-- [ ] T055 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm e2e`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence on a clean checkout and confirm all seven exit `0` (`SC-007`)
-- [ ] T056 Confirm `apps/dashboard/package.json` declares every package it imports, including test tooling, per ADR-0011's `no-undeclared-dependencies` rule
+- [X] T055 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm e2e`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence on a clean checkout and confirm all seven exit `0` (`SC-007`)
+- [X] T056 Confirm `apps/dashboard/package.json` declares every package it imports, including test tooling, per ADR-0011's `no-undeclared-dependencies` rule
 
 ---
 
