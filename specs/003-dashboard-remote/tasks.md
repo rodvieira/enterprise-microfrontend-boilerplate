@@ -84,7 +84,7 @@ same shape 002's US5 (P3, boundary gate) took.
 
 - [X] T023 [P] [US1] `apps/dashboard/tests/app.test.tsx` — `App` renders standalone (no shell context assumed) given a `RemoteAppProps.basePath`
 - [X] T024 [P] [US1] `apps/dashboard/tests/app.test.tsx` — the current session is readable inside `App` via `useAuth()`, not a dashboard-local implementation (`FR-005`)
-- [ ] T025 [US1] `apps/shell/e2e/dashboard-composition.spec.ts` — starts the shell composed with the dashboard, navigates to `/dashboard`, and asserts the dashboard's UI renders inside the shell frame (`SC-001`) — the first real Playwright run in this project (research D6)
+- [X] T025 [US1] `apps/shell/e2e/dashboard-composition.spec.ts` — starts the shell composed with the dashboard, navigates to `/dashboard`, and asserts the dashboard's UI renders inside the shell frame (`SC-001`) — the first real Playwright run in this project (research D6)
 
 ### Implementation for User Story 1
 
@@ -92,7 +92,7 @@ same shape 002's US5 (P3, boundary gate) took.
 - [X] T026a [US1] **Discovered during implementation, not in the original plan**: `apps/shell/src/exposed/App.tsx` never actually turns a registered remote into a route — `002-shell-host` built `RemoteRegion` but its own source comment defers wiring it in to "sprint 4." Implement it using react-router 8's imperative `router.patchRoutes(routeId, children)` (confirmed present on the installed `react-router@8.3.0` router instance): after `registerAllowedRemotes` resolves, patch one route per registered remote — `{ path: registration.routePath, element: <RemoteRegion remoteName={registration.name} basePath={registration.routePath} /> }` — into the router built in `apps/shell/src/exposed/App.tsx`. Chosen over the fog-of-war `patchRoutesOnNavigation` lazy-discovery API for being the simpler mechanism that still satisfies FR-001 (frame renders before this resolves)
 - [X] T027 [US1] Register the dashboard in `apps/shell/src/internal/federation/remotes.dev.json` exactly as [contracts/registry-entry.md](contracts/registry-entry.md) specifies — `name`, `entry`, `routePath`, `label`; confirm `allowedOrigins` already covers `http://localhost:3001` (sprint 3, no change needed)
 - [X] T028 [US1] Confirm `git status --porcelain apps/shell/src` shows exactly **one** changed file (`remotes.dev.json`) after T027, now that T026a's mechanism exists — registering the remote touches only the registry file (`FR-017`)
-- [ ] T029 [US1] Manually verify composition: `pnpm dev` (shell) + `pnpm dev --filter @enterprise-mfe/dashboard`, navigate to `/dashboard`, confirm the dashboard renders inside the shell's chrome
+- [X] T029 [US1] Manually verify composition: `pnpm dev` (shell) + `pnpm dev --filter @enterprise-mfe/dashboard`, navigate to `/dashboard`, confirm the dashboard renders inside the shell's chrome
 
 ---
 

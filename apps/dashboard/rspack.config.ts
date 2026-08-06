@@ -61,5 +61,11 @@ export default defineConfig({
     open: false,
     hot: true,
     historyApiFallback: true,
+    // Module Federation loads this remote's manifest and remoteEntry.js
+    // cross-origin from the shell (port 3000). Without this, the browser's
+    // CORS policy blocks the fetch outright — found by actually running the
+    // composed shell + dashboard in a real browser (Playwright), not by
+    // inspecting the config.
+    headers: { 'Access-Control-Allow-Origin': '*' },
   },
 });

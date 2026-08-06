@@ -25,3 +25,11 @@ export function App({ basePath }: RemoteAppProps) {
     </div>
   );
 }
+
+/**
+ * `createFederationLoader` (apps/shell/src/internal/federation/loader.ts)
+ * requires a default export — found by actually loading this remote in a
+ * real browser, where a named-export-only module surfaced as "has no usable
+ * default export" instead of rendering.
+ */
+export default App;
