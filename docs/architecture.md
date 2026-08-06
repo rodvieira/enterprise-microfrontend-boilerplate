@@ -64,9 +64,12 @@ entry, exactly as the registry contract promises.
 ## Remotes
 
 `apps/dashboard` (sprint 4) is the first real remote, proving the shell's
-composition mechanism end to end. `apps/admin` (sprint 5) is the second; the
-scaffolding generator (ADR-0008) is extracted from what the two turn out to
-share, not designed before then.
+composition mechanism end to end. `apps/admin` (sprint 5) is the second — and
+proved the mechanism actually generalizes: registering it required editing
+only the registry file, no further change to
+`apps/shell/src/exposed/App.tsx`'s route-patching. The scaffolding generator
+(ADR-0008) is extracted from what the two turn out to share, now that both
+exist.
 
 **A remote's `src/exposed/` entry must import its own stylesheet directly —
 not only its standalone `bootstrap.tsx`.** When the shell loads a remote via
@@ -74,9 +77,29 @@ federation, it fetches only the chunks reachable from the exposed module's
 own dependency graph; a standalone entry's chunk is never requested. A remote
 whose Tailwind classes are wired up only through `bootstrap.tsx` renders with
 no CSS at all once composed — found while building `apps/dashboard`'s
-activity chart, which silently collapsed to a 0×0 container. See
+activity chart, which silently collapsed to a 0×0 container. `apps/admin`
+applied this pattern from its first commit rather than rediscovering it. See
 `apps/dashboard/src/exposed/App.tsx` for the pattern every future remote
 should copy.
+
+## Cross-remote communication
+
+`packages/event-bus` is how one remote reacts to something that happened in
+another without either importing the other — `apps/admin` publishes a role
+change, `apps/dashboard` subscribes and updates its "active users" KPI live.
+Same-tab delivery is a plain in-memory registry; cross-tab delivery (two
+separate browser tabs, both composed by the same shell) goes through a
+same-origin `BroadcastChannel` relay, since separate tabs share no
+JavaScript memory to deliver into directly. See
+[packages/event-bus/README.md](../packages/event-bus/README.md) and
+[specs/004-admin-remote/research.md D2](../specs/004-admin-remote/research.md)
+for the full design, including why an in-memory-only bus was rejected mid-design
+— it couldn't satisfy the spec's own cross-tab scenario.
+
+The event set is a closed, typed union
+(`packages/event-bus/src/event-map.ts`) — a topic not listed there fails to
+type-check at both `publish()` and `subscribe()`, the same discipline
+`Role` and `Permission` already use in `packages/shared-types`.
 
 ## Boundary enforcement
 

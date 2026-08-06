@@ -195,13 +195,13 @@ architecture rather than delivering domain behavior — the same shape
 
 ## Phase 9: Polish, documentation
 
-- [ ] T068 [P] `apps/admin/README.md` — what the admin remote does, how to run it standalone, and a pointer to [contracts/registry-entry.md](contracts/registry-entry.md)
-- [ ] T069 [P] `packages/event-bus/README.md` — one paragraph on what it solves, noting the `BroadcastChannel` relay and why (research D2)
-- [ ] T070 Update `docs/packages.md` — move `@enterprise-mfe/event-bus` from "planned" to its real entry
-- [ ] T071 Update `docs/architecture.md`'s "Remotes" section — `apps/admin` joins `apps/dashboard`; document the cross-remote live-update mechanism as a pattern, not just this sprint's specific feature
-- [ ] T072 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
-- [ ] T073 Write the pull request description — **zero new dependencies** is itself worth stating explicitly (Principle IX: the justification for not adding one), plus the two real corrections found during research (`BroadcastChannel` needed for the spec's own cross-tab scenario; the stale "sprint 6" comment)
-- [ ] T074 Review the diff against `.claude/agents/pr-reviewer.md`'s checks (exposed/internal boundary, singleton versions, no cross-app relative imports, and this time also: does the new remote's `remote.manifest.json` question from that checklist apply — see `003-dashboard-remote`'s T063 note that this checklist item is stale relative to the actual registry-contract.md design) before opening the PR
+- [X] T068 [P] `apps/admin/README.md` — what the admin remote does, how to run it standalone, and a pointer to [contracts/registry-entry.md](contracts/registry-entry.md)
+- [X] T069 [P] `packages/event-bus/README.md` — one paragraph on what it solves, noting the `BroadcastChannel` relay and why (research D2)
+- [X] T070 Update `docs/packages.md` — move `@enterprise-mfe/event-bus` from "planned" to its real entry
+- [X] T071 Update `docs/architecture.md`'s "Remotes" section — `apps/admin` joins `apps/dashboard`; document the cross-remote live-update mechanism as a pattern, not just this sprint's specific feature
+- [X] T072 Run every step of [quickstart.md](quickstart.md) §1–§7 end to end on a clean checkout
+- [X] T073 Write the pull request description — **zero new dependencies** is itself worth stating explicitly (Principle IX: the justification for not adding one), plus the two real corrections found during research (`BroadcastChannel` needed for the spec's own cross-tab scenario; the stale "sprint 6" comment)
+- [X] T074 Review the diff against `.claude/agents/pr-reviewer.md`'s checks (exposed/internal boundary, singleton versions, no cross-app relative imports, and this time also: does the new remote's `remote.manifest.json` question from that checklist apply — see `003-dashboard-remote`'s T063 note that this checklist item is stale relative to the actual registry-contract.md design) before opening the PR
 
 ---
 
