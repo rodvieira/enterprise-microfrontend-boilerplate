@@ -25,4 +25,22 @@ test.describe('dashboard composition', () => {
     await expect(page.getByRole('navigation')).toBeVisible();
     await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
   });
+
+  test("the dashboard's own data-fetch failure is contained to its region (FR-018, US2 scenario 4)", async ({
+    page,
+  }) => {
+    await page.goto('/dashboard?forceOverviewFailure=1');
+
+    // Contained: the KPI cards show their own error state...
+    await expect(page.getByRole('alert').first()).toBeVisible();
+    await expect(page.getByText('Unavailable').first()).toBeVisible();
+
+    // ...but the shell's chrome and navigation are unaffected, and the rest
+    // of the application keeps working — the same guarantee sprint 3 proved
+    // against simulated remotes (002-shell-host US3), now exercised against
+    // a real one for the first time.
+    await expect(page.getByRole('navigation')).toBeVisible();
+    await page.getByRole('link', { name: 'Home' }).click();
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
+  });
 });

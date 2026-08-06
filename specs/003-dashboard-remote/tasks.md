@@ -104,16 +104,16 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ### Tests for User Story 2
 
-- [ ] T030 [P] [US2] `apps/dashboard/tests/kpi-cards.test.tsx` — before the fetch resolves, each card shows a distinct loading state, not a blank or zeroed value (`FR-008`)
-- [ ] T031 [P] [US2] `apps/dashboard/tests/kpi-cards.test.tsx` — once the fetch resolves, the `active-users` and `usage-trend` cards display their values and the loading state is gone (`FR-006`, `FR-007`)
-- [ ] T032 [P] [US2] `apps/dashboard/tests/kpi-cards.test.tsx` — when the fetch is forced to fail, each card shows a distinct error state rather than a stale or blank value (`FR-008`)
-- [ ] T033 [US2] `apps/shell/e2e/dashboard-composition.spec.ts` — the dashboard's own data-fetch failure is contained to its region; the rest of the shell keeps working (`FR-018`, exercised against a real remote instead of a simulated one for the first time)
+- [X] T030 [P] [US2] `apps/dashboard/tests/kpi-cards.test.tsx` — before the fetch resolves, each card shows a distinct loading state, not a blank or zeroed value (`FR-008`)
+- [X] T031 [P] [US2] `apps/dashboard/tests/kpi-cards.test.tsx` — once the fetch resolves, the `active-users` and `usage-trend` cards display their values and the loading state is gone (`FR-006`, `FR-007`)
+- [X] T032 [P] [US2] `apps/dashboard/tests/kpi-cards.test.tsx` — when the fetch is forced to fail, each card shows a distinct error state rather than a stale or blank value (`FR-008`)
+- [X] T033 [US2] `apps/shell/e2e/dashboard-composition.spec.ts` — the dashboard's own data-fetch failure is contained to its region; the rest of the shell keeps working (`FR-018`, exercised against a real remote instead of a simulated one for the first time)
 
 ### Implementation for User Story 2
 
-- [ ] T034 [US2] Create `apps/dashboard/src/internal/kpi/kpi-card.tsx` — one card built on `packages/ui`'s `Card`, rendering a `KpiMetric`'s label/value/trend plus its own loading and error visual states
-- [ ] T035 [US2] Create `apps/dashboard/src/internal/kpi/kpi-cards.tsx` — renders both `KpiMetric` cards, driven by `useDashboardOverview`'s `FetchState`
-- [ ] T036 [US2] Wire `kpi-cards.tsx` into `exposed/App.tsx`, replacing the T017 smoke `Card`
+- [X] T034 [US2] Create `apps/dashboard/src/internal/kpi/kpi-card.tsx` — one card built on `packages/ui`'s `Card`, rendering a `KpiMetric`'s label/value/trend plus its own loading and error visual states
+- [X] T035 [US2] Create `apps/dashboard/src/internal/kpi/kpi-cards.tsx` — renders both `KpiMetric` cards, driven by `useDashboardOverview`'s `FetchState`
+- [X] T036 [US2] Wire `kpi-cards.tsx` into `exposed/App.tsx`, replacing the T017 smoke `Card`
 
 ---
 

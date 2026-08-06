@@ -1,5 +1,8 @@
 import { useAuth } from '@enterprise-mfe/auth';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
+import { shouldForceOverviewFailure } from '../internal/data/force-failure';
+import { useDashboardOverview } from '../internal/data/use-dashboard-overview';
+import { KpiCards } from '../internal/kpi/kpi-cards';
 
 /**
  * What the shell mounts at `/dashboard` (via RemoteRegion, "dashboard/App").
@@ -13,6 +16,9 @@ import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
  */
 export function App({ basePath }: RemoteAppProps) {
   const { user, isAuthenticated } = useAuth();
+  // One fetch, shared by every domain surface (data-model.md) — not three
+  // independent ones.
+  const overview = useDashboardOverview({ forceFailure: shouldForceOverviewFailure() });
 
   return (
     <div className="flex flex-col gap-6 p-6" data-base-path={basePath}>
@@ -22,6 +28,7 @@ export function App({ basePath }: RemoteAppProps) {
           {isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}
         </p>
       </header>
+      <KpiCards state={overview} />
     </div>
   );
 }
