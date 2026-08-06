@@ -3,6 +3,7 @@ import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
 import { ActivityChart } from '../internal/chart/activity-chart';
 import { shouldForceOverviewFailure } from '../internal/data/force-failure';
 import { useDashboardOverview } from '../internal/data/use-dashboard-overview';
+import { RecentActivity } from '../internal/feed/recent-activity';
 import { KpiCards } from '../internal/kpi/kpi-cards';
 import '../internal/styles.css';
 
@@ -41,6 +42,7 @@ export function App({ basePath }: RemoteAppProps) {
       </header>
       <KpiCards state={overview} />
       <ActivityChart state={overview} />
+      <RecentActivity state={overview} />
     </div>
   );
 }

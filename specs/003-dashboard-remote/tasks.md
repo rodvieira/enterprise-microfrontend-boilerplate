@@ -146,13 +146,13 @@ same shape 002's US5 (P3, boundary gate) took.
 
 ### Tests for User Story 4
 
-- [ ] T044 [P] [US4] `apps/dashboard/tests/recent-activity.test.tsx` — items render in reverse-chronological order (`FR-012`)
-- [ ] T045 [P] [US4] `apps/dashboard/tests/recent-activity.test.tsx` — an empty `feed` array renders `Table`'s `emptyState`, not a blank region (`FR-013`)
+- [X] T044 [P] [US4] `apps/dashboard/tests/recent-activity.test.tsx` — items render in reverse-chronological order (`FR-012`)
+- [X] T045 [P] [US4] `apps/dashboard/tests/recent-activity.test.tsx` — an empty `feed` array renders `Table`'s `emptyState`, not a blank region (`FR-013`)
 
 ### Implementation for User Story 4
 
-- [ ] T046 [US4] Create `apps/dashboard/src/internal/feed/recent-activity.tsx` using `@enterprise-mfe/ui`'s `Table` with an `emptyState`, rendering `ActivityFeedItem` rows
-- [ ] T047 [US4] Wire `recent-activity.tsx` into `exposed/App.tsx`, driven by `useDashboardOverview`'s `FetchState`
+- [X] T046 [US4] Create `apps/dashboard/src/internal/feed/recent-activity.tsx` using `@enterprise-mfe/ui`'s `Table` with an `emptyState`, rendering `ActivityFeedItem` rows
+- [X] T047 [US4] Wire `recent-activity.tsx` into `exposed/App.tsx`, driven by `useDashboardOverview`'s `FetchState`
 
 ---
 
