@@ -1,6 +1,6 @@
 import { AuthProvider } from '@enterprise-mfe/auth';
 import { useEffect, useState } from 'react';
-import type { PatchRoutesOnNavigationFunctionArgs, RouteObject } from 'react-router';
+import type { RouteObject } from 'react-router';
 import { RouterProvider, createBrowserRouter } from 'react-router';
 import { ShellLayout } from '../internal/chrome/layout';
 import { fetchRegistry } from '../internal/federation/manifest';
@@ -62,9 +62,10 @@ function createAppRouter() {
       },
     ],
     {
-      async patchRoutesOnNavigation({ patch }: PatchRoutesOnNavigationFunctionArgs) {
-        const routes = await discoverRemoteRoutes();
-        patch(null, routes);
+      async patchRoutesOnNavigation() {
+        // DELIBERATELY BROKEN — scratch branch proving CI catches an e2e
+        // failure (005-guard-rails T010). Never merged.
+        await discoverRemoteRoutes();
       },
     },
   );
