@@ -1,0 +1,30 @@
+{
+  "name": "@enterprise-mfe/event-bus",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Typed publish/subscribe for cross-remote communication without direct coupling, relayed across same-origin browser tabs via BroadcastChannel.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "dependencies": {
+    "@enterprise-mfe/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@enterprise-mfe/config-typescript": "workspace:*",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "vitest": "^4.1.10"
+  }
+}

@@ -8,8 +8,6 @@ export default defineConfig({
   mode: isDev ? 'development' : 'production',
   entry: { main: './src/index.tsx' },
   output: {
-    // Module Federation requires a fully-qualified public path so the shell
-    // resolves this remote's exposed modules and shared chunks correctly.
     publicPath: 'auto',
   },
   resolve: {
@@ -32,8 +30,6 @@ export default defineConfig({
         type: 'javascript/auto',
       },
       {
-        // Same pattern as apps/shell/rspack.config.ts (research D2 in
-        // 002-shell-host): https://tailwindcss.com/docs/installation/framework-guides/rspack/react
         test: /\.css$/,
         use: ['postcss-loader'],
         type: 'css',
@@ -43,7 +39,7 @@ export default defineConfig({
   plugins: [
     new rspack.HtmlRspackPlugin({ template: './index.html' }),
     new ModuleFederationPlugin({
-      name: 'dashboard',
+      name: 'admin',
       filename: 'remoteEntry.js',
       exposes: {
         './App': './src/exposed/App.tsx',
@@ -58,15 +54,12 @@ export default defineConfig({
     }),
   ],
   devServer: {
-    port: 3001,
+    port: 3002,
     open: false,
     hot: true,
     historyApiFallback: true,
-    // Module Federation loads this remote's manifest and remoteEntry.js
-    // cross-origin from the shell (port 3000). Without this, the browser's
-    // CORS policy blocks the fetch outright — found by actually running the
-    // composed shell + dashboard in a real browser (Playwright), not by
-    // inspecting the config.
+    // Same CORS requirement apps/dashboard's dev server has — the shell
+    // fetches this remote's manifest and remoteEntry.js cross-origin.
     headers: { 'Access-Control-Allow-Origin': '*' },
   },
 });
