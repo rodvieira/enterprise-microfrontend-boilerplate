@@ -65,13 +65,13 @@ ADR) depends on both being done, since it points at what they proved.
 
 ### Implementation for User Story 2
 
-- [ ] T007 [US2] Add an "Install Playwright browsers" step to `.github/workflows/ci.yml`, running `npx playwright install --with-deps chromium` (research D2 — Chromium only, matching the suite's current default project)
-- [ ] T008 [US2] Add an "End-to-end" step running `pnpm e2e`, positioned after "Shared deps drift check" and before "Security audit" in the existing `quality` job (research D3 — one job, not a second workflow)
+- [X] T007 [US2] Add an "Install Playwright browsers" step to `.github/workflows/ci.yml`, running `npx playwright install --with-deps chromium` (research D2 — Chromium only, matching the suite's current default project)
+- [X] T008 [US2] Add an "End-to-end" step running `pnpm e2e`, positioned after "Shared deps drift check" and before "Security audit" in the existing `quality` job (research D3 — one job, not a second workflow)
 
 ### Verification for User Story 2 (SC-003, SC-004)
 
-- [ ] T009 [US2] Push this branch and confirm the `quality` job's new steps both pass in a real CI run — not just locally
-- [ ] T010 [US2] **Prove CI actually catches a failure**: on a throwaway scratch branch (not `005-guard-rails`), comment out the `patchRoutesOnNavigation` call in `apps/shell/src/exposed/App.tsx`, push, confirm the `quality` job goes red specifically on the "End-to-end" step, then delete the scratch branch without merging it (`quickstart.md` §2)
+- [X] T009 [US2] Push this branch and confirm the `quality` job's new steps both pass in a real CI run — not just locally
+- [X] T010 [US2] **Prove CI actually catches a failure**: on a throwaway scratch branch (not `005-guard-rails`), comment out the `patchRoutesOnNavigation` call in `apps/shell/src/exposed/App.tsx`, push, confirm the `quality` job goes red specifically on the "End-to-end" step, then delete the scratch branch without merging it (`quickstart.md` §2)
 
 ---
 
