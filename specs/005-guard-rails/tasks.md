@@ -90,10 +90,10 @@ ADR) depends on both being done, since it points at what they proved.
 
 ## Phase 5: Polish, cross-cutting verification
 
-- [ ] T013 Run every step of [quickstart.md](quickstart.md) §1–§4 end to end on a clean checkout
-- [ ] T014 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm e2e`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence and confirm all seven exit `0` (`SC-004`)
-- [ ] T015 Write the pull request description — note explicitly that this sprint adds zero new dependencies and zero new application code beyond one e2e spec (Principle IX; plan.md Summary)
-- [ ] T016 Review the diff against `.claude/agents/pr-reviewer.md`'s checks before opening the PR — expect a short review, since neither `apps/*/src/internal/` nor any shared singleton package is touched
+- [X] T013 Run every step of [quickstart.md](quickstart.md) §1–§4 end to end on a clean checkout
+- [X] T014 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm e2e`, `pnpm check:boundaries`, `pnpm check:shared-deps` in sequence and confirm all seven exit `0` (`SC-004`)
+- [X] T015 Write the pull request description — note explicitly that this sprint adds zero new dependencies and zero new application code beyond one e2e spec (Principle IX; plan.md Summary)
+- [X] T016 Review the diff against `.claude/agents/pr-reviewer.md`'s checks before opening the PR — expect a short review, since neither `apps/*/src/internal/` nor any shared singleton package is touched
 
 ---
 
