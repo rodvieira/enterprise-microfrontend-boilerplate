@@ -218,12 +218,15 @@ standalone-repo parity is not this sprint's gap.
   `002-shell-host`). This sprint is verification and CI enforcement, not new
   mechanism — if a real failure exposes a bug the simulated tests missed,
   that bug fix is in scope, but building new containment machinery is not.
-- **"Genuinely unreachable" is achieved locally by stopping a dev server or
-  misconfiguring its port** — this project has no staging/production
-  deployment yet (that's sprint 9), so there is no real network partition to
-  test against; a local process that isn't listening is the closest
-  available proxy and is sufficient to exercise the same code path a real
-  network failure would.
+- **"Genuinely unreachable" is achieved via browser-level network
+  interception (Playwright's `page.route(...).abort()`), not by stopping a
+  dev server process** — corrected during planning (research.md D1): the
+  e2e suite runs `fullyParallel` against shared dev servers for the whole
+  run, so stopping a real process would break every other concurrently
+  running test. Aborting the specific request for the specific page under
+  test is still a real network-layer failure — the same `fetch()` rejection
+  a truly-down server produces — and it's the one that doesn't take other
+  tests down with it.
 - **CI's end-to-end step uses the same `apps/shell/playwright.config.ts`
   already committed** — no separate CI-specific Playwright configuration is
   introduced; the goal is CI running what already runs locally, not a
