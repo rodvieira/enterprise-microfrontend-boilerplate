@@ -83,8 +83,8 @@ ADR) depends on both being done, since it points at what they proved.
 
 ### Implementation for User Story 3
 
-- [ ] T011 [US3] Write `docs/decisions/0013-guard-rails-closed.md` (research D4): status Accepted; names all three constitution guard rails with a pointer to where/when each was built (`002-shell-host` for the error boundary's simulated-failure proof and `check:shared-deps`'s first real manifest, `003-dashboard-remote` for the boundary gate's first real second-app retest closing issue #6, `004-admin-remote` for the singleton check covering a second singleton package); records this sprint's addition (the real-failure e2e proof, CI enforcement); states explicitly that "boundary enforcement matches monorepo and standalone-repo behavior" depends on the sprint 7 generator's standalone-mode output per ADR-0007, not an oversight here (`FR-009`, `FR-010`)
-- [ ] T012 [US3] Cross-check the ADR's claims against this feature's own commits and the sprints it cites — every "built in sprint N" pointer must be verifiable by a real commit or file, not asserted from memory
+- [X] T011 [US3] Write `docs/decisions/0013-guard-rails-closed.md` (research D4): status Accepted; names all three constitution guard rails with a pointer to where/when each was built (`002-shell-host` for the error boundary's simulated-failure proof and `check:shared-deps`'s first real manifest, `003-dashboard-remote` for the boundary gate's first real second-app retest closing issue #6, `004-admin-remote` for the singleton check covering a second singleton package); records this sprint's addition (the real-failure e2e proof, CI enforcement); states explicitly that "boundary enforcement matches monorepo and standalone-repo behavior" depends on the sprint 7 generator's standalone-mode output per ADR-0007, not an oversight here (`FR-009`, `FR-010`)
+- [X] T012 [US3] Cross-check the ADR's claims against this feature's own commits and the sprints it cites — every "built in sprint N" pointer must be verifiable by a real commit or file, not asserted from memory
 
 ---
 
