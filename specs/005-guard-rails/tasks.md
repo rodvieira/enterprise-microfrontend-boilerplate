@@ -34,7 +34,7 @@ ADR) depends on both being done, since it points at what they proved.
 
 ## Phase 1: Setup
 
-- [ ] T001 Verify Playwright's Chromium browser is installed locally (`npx playwright install chromium`) — needed before T002 can run
+- [X] T001 Verify Playwright's Chromium browser is installed locally (`npx playwright install chromium`) — needed before T002 can run
 
 ---
 
@@ -46,14 +46,14 @@ ADR) depends on both being done, since it points at what they proved.
 
 ### Tests for User Story 1
 
-- [ ] T002 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — aborting the dashboard remote's `mf-manifest.json`/`remoteEntry.js` requests (`page.route(...).abort()`, research D1) shows a contained failure state for `/dashboard` only; the shell's navigation and the `/admin` route remain fully usable (`FR-001`–`FR-003`)
-- [ ] T003 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — clearing the aborted route and using the failed region's retry control recovers it without a full page reload (`FR-004`)
-- [ ] T004 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — a remote that loaded successfully, then has its requests aborted before a later revisit, shows the same contained failure state on that next load — not stale content (`FR-005`, spec Edge Cases)
-- [ ] T005 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — with *both* remotes' requests aborted simultaneously, the shell's own chrome, navigation, and session remain rendered (spec Edge Cases)
+- [X] T002 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — aborting the dashboard remote's `mf-manifest.json`/`remoteEntry.js` requests (`page.route(...).abort()`, research D1) shows a contained failure state for `/dashboard` only; the shell's navigation and the `/admin` route remain fully usable (`FR-001`–`FR-003`)
+- [X] T003 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — clearing the aborted route and using the failed region's retry control recovers it without a full page reload (`FR-004`)
+- [X] T004 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — a remote that loaded successfully, then has its requests aborted before a later revisit, shows the same contained failure state on that next load — not stale content (`FR-005`, spec Edge Cases)
+- [X] T005 [P] [US1] `apps/shell/e2e/remote-failure.spec.ts` — with *both* remotes' requests aborted simultaneously, the shell's own chrome, navigation, and session remain rendered (spec Edge Cases)
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Run `pnpm e2e` locally; confirm all four new scenarios pass alongside the existing 8 (`003-dashboard-remote`, `004-admin-remote`) with zero regressions. **No new application code is expected** (research.md, plan.md Summary) — if a scenario fails for a reason other than test-authoring error, that is a real bug in the existing containment logic; fix it here and record what was wrong in the task's own commit, not silently.
+- [X] T006 [US1] Run `pnpm e2e` locally; confirm all four new scenarios pass alongside the existing 8 (`003-dashboard-remote`, `004-admin-remote`) with zero regressions. **No new application code is expected** (research.md, plan.md Summary) — if a scenario fails for a reason other than test-authoring error, that is a real bug in the existing containment logic; fix it here and record what was wrong in the task's own commit, not silently.
 
 ---
 
