@@ -74,6 +74,19 @@ extracted to its own repository later (ADR-0007).
 ## No build step
 
 Packages ship TypeScript source: `exports` points at `src/index.ts` and the
-consuming application compiles it. There is no `dist/`. When standalone mode
-(ADR-0007) needs publishable artifacts, a build step is added then — to packages
-that already have real consumers proving the output shape.
+consuming application compiles it. There is no `dist/`.
+
+Standalone mode (ADR-0007, sprint 7 — `pnpm turbo gen remote`, ADR-0014)
+now exists, and `@enterprise-mfe/auth`, `@enterprise-mfe/event-bus`,
+`@enterprise-mfe/shared-types`, and `@enterprise-mfe/ui` are publish-ready:
+non-private, with `publishConfig` pointing at GitHub Packages, versioned and
+released through a real `.changeset/config.json` +
+`.github/workflows/publish-packages.yml`. **A build step producing `dist/`
+is still not part of that mechanism** — a standalone consumer's own bundler
+typically excludes `node_modules` from its loader rules by default (see
+`turbo/generators/remote/templates/common/rspack.config.ts.template`), so
+installing these packages from GitHub Packages today would resolve
+correctly but likely fail to build without one. This sprint's scope was the
+publish mechanism itself, confirmed with the user rather than assumed
+(ADR-0014) — adding a `dist/` build is real, separate follow-up work, not
+forgotten.

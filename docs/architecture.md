@@ -67,9 +67,16 @@ entry, exactly as the registry contract promises.
 composition mechanism end to end. `apps/admin` (sprint 5) is the second — and
 proved the mechanism actually generalizes: registering it required editing
 only the registry file, no further change to
-`apps/shell/src/exposed/App.tsx`'s route-patching. The scaffolding generator
-(ADR-0008) is extracted from what the two turn out to share, now that both
-exist.
+`apps/shell/src/exposed/App.tsx`'s route-patching. The scaffolding generator,
+`pnpm turbo gen remote` (sprint 7, ADR-0008, ADR-0014), is extracted from
+what the two turn out to share. It ships two output modes: monorepo mode
+writes `apps/<name>`, workspace-linked, and registers itself here and in
+`remotes.dev.json`; standalone mode writes an equivalent project outside
+this repository whose `package.json` depends on `@enterprise-mfe/*` as
+published GitHub Packages instead of `workspace:*` — the first real test of
+ADR-0007's "a remote can move to its own repository later" claim. Every
+remote generated after this sprint starts from the generator, in either
+mode; `apps/dashboard` and `apps/admin` remain the only two hand-built ones.
 
 **A remote's `src/exposed/` entry must import its own stylesheet directly —
 not only its standalone `bootstrap.tsx`.** When the shell loads a remote via
