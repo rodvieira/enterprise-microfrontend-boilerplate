@@ -1,10 +1,11 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
 // defineConfig lives in @rspack/cli, not @rspack/core — @rspack/core does not
 // export it, confirmed against the installed 2.1.7 by inspecting its exports.
 import { defineConfig } from '@rspack/cli';
 import { rspack } from '@rspack/core';
+import { buildScriptSrc } from './src/internal/federation/build-csp';
 import { resolveRegistrySourcePath } from './src/internal/federation/resolve-registry-source';
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -21,6 +22,17 @@ const isDev = process.env.NODE_ENV !== 'production';
 const registrySourcePath = resolveRegistrySourcePath(process.env.FEDERATION_ENV, (path) =>
   existsSync(resolve(import.meta.dirname, path)),
 );
+
+/**
+ * The CSP's script-src must come from the exact same allowedOrigins this
+ * build already selected above — never a second, independently-maintained
+ * value (specs/007-docs-security FR-004). Read straight from the resolved
+ * registry file, not re-derived some other way.
+ */
+const registry = JSON.parse(
+  readFileSync(resolve(import.meta.dirname, registrySourcePath), 'utf8'),
+) as { allowedOrigins: readonly string[] };
+const contentSecurityPolicy = buildScriptSrc(registry.allowedOrigins);
 
 export default defineConfig({
   mode: isDev ? 'development' : 'production',
@@ -59,7 +71,27 @@ export default defineConfig({
     ],
   },
   plugins: [
-    new rspack.HtmlRspackPlugin({ template: './index.html' }),
+    new rspack.HtmlRspackPlugin({
+      template: './index.html',
+      // index.html itself stays untouched — HtmlRspackPlugin's own `meta`
+      // option injects the tag (specs/007-docs-security research D1),
+      // rather than adding a second, template-placeholder-based mechanism
+      // alongside the CopyRspackPlugin one below.
+      //
+      // The built-in (native) HtmlRspackPlugin also emits a redundant
+      // name="Content-Security-Policy" attribute on this tag (confirmed by
+      // inspecting the built dist/index.html — neither 'http-equiv' nor
+      // 'httpEquiv' as the nested key avoids it). Harmless: the HTML
+      // pragma-processing algorithm applies http-equiv regardless of an
+      // unrelated name attribute on the same element, and nothing in this
+      // project reads `meta[name="Content-Security-Policy"]`.
+      meta: {
+        'Content-Security-Policy': {
+          'http-equiv': 'Content-Security-Policy',
+          content: contentSecurityPolicy,
+        },
+      },
+    }),
     new rspack.CopyRspackPlugin({
       patterns: [{ from: registrySourcePath, to: 'remotes.json' }],
     }),
