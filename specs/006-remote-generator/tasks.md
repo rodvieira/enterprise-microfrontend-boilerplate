@@ -33,8 +33,8 @@ line and the console summary.
 
 ## Phase 1: Setup
 
-- [ ] T001 Add `@turbo/gen`, `@changesets/cli`, and `@changesets/changelog-github` to root `package.json` `devDependencies` (research D2, D5); draft the one-line justification for each, verbatim, for the PR description (Constitution Principle IX)
-- [ ] T002 [P] Create `turbo/generators/config.ts` registering an empty `remote` generator stub, so `pnpm turbo gen remote` resolves to something before any prompt logic exists (research D2)
+- [X] T001 Add `@turbo/gen`, `@changesets/cli`, and `@changesets/changelog-github` to root `package.json` `devDependencies` (research D2, D5); draft the one-line justification for each, verbatim, for the PR description (Constitution Principle IX)
+- [X] T002 [P] Create `turbo/generators/config.ts` registering an empty `remote` generator stub, so `pnpm turbo gen remote` resolves to something before any prompt logic exists (research D2)
 
 ---
 
@@ -42,15 +42,15 @@ line and the console summary.
 
 **⚠️ CRITICAL**: No user story below can be demonstrated until this phase is complete — every story's independent test runs the generator end to end.
 
-- [ ] T003 [P] `turbo/generators/remote/validate.ts` — name legality, reserved-name (`shell`) and existing-`apps/*`-directory collision checks, route-path collision against `HOST_OWNED_ROUTE_PATHS` and existing `remotes.dev.json` entries (FR-004, FR-012, FR-013; reuses the collision semantics already in `apps/shell/src/internal/federation/manifest.ts`)
-- [ ] T004 [P] `turbo/generators/remote/validate.test.ts` — unit tests for every rule in T003, including the edge cases (invalid name shapes, `admin`/`shell` collisions, `/admin` route collision)
-- [ ] T005 [P] `turbo/generators/remote/shared-versions.ts` — reads `react`, `react-dom`, `react-router`, `@enterprise-mfe/auth`, `@enterprise-mfe/event-bus` version ranges live from `apps/dashboard/package.json` at generation time (research D3) — no version literal lives in any template
-- [ ] T006 [P] `turbo/generators/remote/shared-versions.test.ts` — confirms the read values match `apps/dashboard/package.json` exactly, and fails loudly if a singleton listed in `scripts/check-shared-deps.ts`'s `SINGLETONS` is missing from the source manifest
-- [ ] T007 `turbo/generators/remote/prompts.ts` — collects `mode`, `name`, `routePath`, `label` (and `outputPath` when `mode === 'standalone'`), running every check from T003 before any file write (FR-002, FR-014)
-- [ ] T008 [P] `turbo/generators/remote/templates/common/` — extract the files research D1 found identical between `apps/dashboard` and `apps/admin` (`src/exposed/App.tsx`, `src/internal/`, `src/index.tsx`, `src/bootstrap.tsx`, `index.html`, `tsconfig.json`, `postcss.config.mjs`), parameterized only by name/title
-- [ ] T009 `turbo/generators/remote/templates/monorepo/package.json` — `@enterprise-mfe/auth` and `@enterprise-mfe/event-bus` at `workspace:*`; `react`/`react-dom`/`react-router` substituted from T005's live read (FR-006)
-- [ ] T010 `turbo/generators/remote/actions/write-app.ts` — renders `templates/common/` + `templates/monorepo/` into `apps/<name>` (FR-003)
-- [ ] T011 `turbo/generators/remote/actions/register-dev-remote.ts` — appends a `remotes.dev.json` entry (`name`, `entry`, `routePath`, `label`) and, if needed, an `allowedOrigins` addition; assigns the next free dev port after existing entries (research D6, FR-009, `data-model.md`'s `DevRegistryEntry`)
+- [X] T003 [P] `turbo/generators/remote/validate.ts` — name legality, reserved-name (`shell`) and existing-`apps/*`-directory collision checks, route-path collision against `HOST_OWNED_ROUTE_PATHS` and existing `remotes.dev.json` entries (FR-004, FR-012, FR-013; reuses the collision semantics already in `apps/shell/src/internal/federation/manifest.ts`)
+- [X] T004 [P] `turbo/generators/remote/validate.test.ts` — unit tests for every rule in T003, including the edge cases (invalid name shapes, `admin`/`shell` collisions, `/admin` route collision)
+- [X] T005 [P] `turbo/generators/remote/shared-versions.ts` — reads `react`, `react-dom`, `react-router`, `@enterprise-mfe/auth`, `@enterprise-mfe/event-bus` version ranges live from `apps/dashboard/package.json` at generation time (research D3) — no version literal lives in any template
+- [X] T006 [P] `turbo/generators/remote/shared-versions.test.ts` — confirms the read values match `apps/dashboard/package.json` exactly, and fails loudly if a singleton listed in `scripts/check-shared-deps.ts`'s `SINGLETONS` is missing from the source manifest
+- [X] T007 `turbo/generators/remote/prompts.ts` — collects `mode`, `name`, `routePath`, `label` (and `outputPath` when `mode === 'standalone'`), running every check from T003 before any file write (FR-002, FR-014)
+- [X] T008 [P] `turbo/generators/remote/templates/common/` — extract the files research D1 found identical between `apps/dashboard` and `apps/admin` (`src/exposed/App.tsx`, `src/internal/`, `src/index.tsx`, `src/bootstrap.tsx`, `index.html`, `tsconfig.json`, `postcss.config.mjs`), parameterized only by name/title
+- [X] T009 `turbo/generators/remote/templates/monorepo/package.json` — `@enterprise-mfe/auth` and `@enterprise-mfe/event-bus` at `workspace:*`; `react`/`react-dom`/`react-router` substituted from T005's live read (FR-006)
+- [X] T010 `turbo/generators/remote/actions/write-app.ts` — renders `templates/common/` + `templates/monorepo/` into `apps/<name>` (FR-003)
+- [X] T011 `turbo/generators/remote/actions/register-dev-remote.ts` — appends a `remotes.dev.json` entry (`name`, `entry`, `routePath`, `label`) and, if needed, an `allowedOrigins` addition; assigns the next free dev port after existing entries (research D6, FR-009, `data-model.md`'s `DevRegistryEntry`)
 
 **Checkpoint**: A monorepo-mode remote can now be generated and composed by the shell. User story work below builds on this.
 
@@ -64,10 +64,10 @@ line and the console summary.
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Wire `turbo/generators/config.ts`'s `remote` generator: monorepo path = T007 prompts → T003 validation → T010 write-app → T011 register-dev-remote (`contracts/generator-contract.md` monorepo postconditions)
-- [ ] T013 [US1] `quickstart.md` §1: generate `apps/scratch-remote`; run `pnpm install`, `pnpm build`, `pnpm test`, `pnpm lint`, `pnpm typecheck` — confirm all five pass with zero manual edits (FR-008)
-- [ ] T014 [US1] `quickstart.md` §1: `pnpm dev`, visit `/scratch-remote`, confirm the placeholder renders composed inside the shell (contract acceptance scenario 3); clean up the scratch remote and its registry entry afterward
-- [ ] T015 [US1] `quickstart.md` §3: confirm a name collision (`admin`), a reserved name (`shell`), and a route collision (`/admin`) each refuse before any file write and leave the workspace unchanged (edge cases)
+- [X] T012 [US1] Wire `turbo/generators/config.ts`'s `remote` generator: monorepo path = T007 prompts → T003 validation → T010 write-app → T011 register-dev-remote (`contracts/generator-contract.md` monorepo postconditions)
+- [X] T013 [US1] `quickstart.md` §1: generate `apps/scratch-remote`; run `pnpm install`, `pnpm build`, `pnpm test`, `pnpm lint`, `pnpm typecheck` — confirm all five pass with zero manual edits (FR-008)
+- [X] T014 [US1] `quickstart.md` §1: `pnpm dev`, visit `/scratch-remote`, confirm the placeholder renders composed inside the shell (contract acceptance scenario 3); clean up the scratch remote and its registry entry afterward
+- [X] T015 [US1] `quickstart.md` §3: confirm a name collision (`admin`), a reserved name (`shell`), and a route collision (`/admin`) each refuse before any file write and leave the workspace unchanged (edge cases)
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 
@@ -81,10 +81,10 @@ line and the console summary.
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] `turbo/generators/remote/templates/common/rspack.config.ts` — `ModuleFederationPlugin` exposes exactly `{ './App': './src/exposed/App.tsx' }` and declares the identical `shared` singleton block `apps/dashboard`/`apps/admin` already use (FR-005)
-- [ ] T017 [US2] Re-run `pnpm check:boundaries` against a freshly generated scratch remote (reuse T013's output or regenerate) — confirm pass with zero edits (FR-007)
-- [ ] T018 [US2] Re-run `pnpm check:shared-deps` against the same scratch remote — confirm pass with zero edits (FR-006)
-- [ ] T019 [US2] Spot-check every import inside the generated `src/exposed/` and `src/internal/` is declared in the generated `package.json` (`.dependency-cruiser.js`'s `no-undeclared-dependencies` rule, ADR-0011)
+- [X] T016 [US2] `turbo/generators/remote/templates/common/rspack.config.ts` — `ModuleFederationPlugin` exposes exactly `{ './App': './src/exposed/App.tsx' }` and declares the identical `shared` singleton block `apps/dashboard`/`apps/admin` already use (FR-005)
+- [X] T017 [US2] Re-run `pnpm check:boundaries` against a freshly generated scratch remote (reuse T013's output or regenerate) — confirm pass with zero edits (FR-007)
+- [X] T018 [US2] Re-run `pnpm check:shared-deps` against the same scratch remote — confirm pass with zero edits (FR-006)
+- [X] T019 [US2] Spot-check every import inside the generated `src/exposed/` and `src/internal/` is declared in the generated `package.json` (`.dependency-cruiser.js`'s `no-undeclared-dependencies` rule, ADR-0011)
 
 **Checkpoint**: User Stories 1 and 2 together deliver ADR-0008's core rationale — a correct-by-construction monorepo remote.
 
@@ -98,15 +98,15 @@ line and the console summary.
 
 ### Implementation for User Story 3
 
-- [ ] T020 [US3] `.changeset/config.json` — designates `packages/*` as the linked/publishable set (never `apps/*`), targets GitHub Packages under the `@enterprise-mfe` scope (research D5)
-- [ ] T021 [P] [US3] Add `publishConfig` (`registry`, `access: "restricted"`) to `packages/auth/package.json`, `packages/event-bus/package.json`, `packages/shared-types/package.json`, and `packages/ui/package.json` (`contracts/package-publish-contract.md`) — no behavior change until a publish actually runs
-- [ ] T022 [US3] `.github/workflows/publish-packages.yml` — `changeset version` / `changeset publish`, triggered only by `workflow_dispatch` or a release tag, never on the existing `push`/`pull_request` triggers the `quality` job uses (FR-018, FR-019)
-- [ ] T023 [US3] Extend `turbo/generators/remote/prompts.ts` and `validate.ts` (T003, T007) with the `outputPath` prompt: required when `mode === 'standalone'`, refused if it resolves inside the monorepo root or into a non-empty directory (research D4, FR-016)
-- [ ] T024 [US3] `turbo/generators/remote/templates/standalone/package.json` and `.npmrc` — `@enterprise-mfe/*` at published semver ranges (never `workspace:*`), registry config pointing at GitHub Packages (FR-017)
-- [ ] T025 [US3] `turbo/generators/remote/templates/standalone/README.md` — states plainly that install requires `packages/*` to have been published at least once, and that failure is expected before that first publish (FR-020)
-- [ ] T026 [US3] `turbo/generators/remote/actions/write-app.ts` — standalone branch: render `templates/common/` + `templates/standalone/` to `outputPath`; confirm no monorepo-only action (T011, and Phase 6's docs action) ever runs for this mode (FR-016)
-- [ ] T027 [US3] `quickstart.md` §2: generate `../scratch-standalone`; confirm its `package.json` has no `workspace:*`, `.npmrc` is present and correct, `README.md` states the prerequisite, and `git status` in this repo shows nothing changed; clean up afterward
-- [ ] T028 [US3] `quickstart.md` §4: dry-run the publish workflow (`pnpm exec changeset status` or equivalent) to confirm `.changeset/config.json` and `publishConfig` are wired correctly — **without invoking a real `changeset publish` against GitHub Packages** (FR-019, SC-006)
+- [X] T020 [US3] `.changeset/config.json` — designates `packages/*` as the linked/publishable set (never `apps/*`), targets GitHub Packages under the `@enterprise-mfe` scope (research D5)
+- [X] T021 [P] [US3] Add `publishConfig` (`registry`, `access: "restricted"`) to `packages/auth/package.json`, `packages/event-bus/package.json`, `packages/shared-types/package.json`, and `packages/ui/package.json` (`contracts/package-publish-contract.md`) — no behavior change until a publish actually runs
+- [X] T022 [US3] `.github/workflows/publish-packages.yml` — `changeset version` / `changeset publish`, triggered only by `workflow_dispatch` or a release tag, never on the existing `push`/`pull_request` triggers the `quality` job uses (FR-018, FR-019)
+- [X] T023 [US3] Extend `turbo/generators/remote/prompts.ts` and `validate.ts` (T003, T007) with the `outputPath` prompt: required when `mode === 'standalone'`, refused if it resolves inside the monorepo root or into a non-empty directory (research D4, FR-016)
+- [X] T024 [US3] `turbo/generators/remote/templates/standalone/package.json` and `.npmrc` — `@enterprise-mfe/*` at published semver ranges (never `workspace:*`), registry config pointing at GitHub Packages (FR-017)
+- [X] T025 [US3] `turbo/generators/remote/templates/standalone/README.md` — states plainly that install requires `packages/*` to have been published at least once, and that failure is expected before that first publish (FR-020)
+- [X] T026 [US3] `turbo/generators/remote/actions/write-app.ts` — standalone branch: render `templates/common/` + `templates/standalone/` to `outputPath`; confirm no monorepo-only action (T011, and Phase 6's docs action) ever runs for this mode (FR-016)
+- [X] T027 [US3] `quickstart.md` §2: generate `../scratch-standalone`; confirm its `package.json` has no `workspace:*`, `.npmrc` is present and correct, `README.md` states the prerequisite, and `git status` in this repo shows nothing changed; clean up afterward
+- [X] T028 [US3] `quickstart.md` §4: dry-run the publish workflow (`pnpm exec changeset status` or equivalent) to confirm `.changeset/config.json` and `publishConfig` are wired correctly — **without invoking a real `changeset publish` against GitHub Packages** (FR-019, SC-006)
 
 **Checkpoint**: Both output modes work. `docs/blueprint.html`'s "Generator produces both monorepo-mode and standalone-mode output" DoD line is now true, without a live publish having occurred.
 
@@ -120,10 +120,10 @@ line and the console summary.
 
 ### Implementation for User Story 4
 
-- [ ] T029 [US4] `turbo/generators/remote/actions/update-architecture-docs.ts` — appends one line naming the new app to `docs/architecture.md`'s "## Remotes" section, matching its existing prose style (FR-011)
-- [ ] T030 [US4] Wire T029 into `config.ts`'s monorepo path only (after T011, alongside T012's wiring); confirm standalone mode never touches `apps/shell/`, `docs/`, or `remotes.dev.json` (acceptance scenario 4)
-- [ ] T031 [US4] Generator console summary (FR-015): files created, the registry entry added (or, for standalone, that no registry was touched), the docs line added, and an explicit statement that staging/production registration and any real package publish are **not** included
-- [ ] T032 [US4] `quickstart.md` §1 re-run: confirm `docs/architecture.md` gains the new remote's line automatically, with no separate manual step
+- [X] T029 [US4] `turbo/generators/remote/actions/update-architecture-docs.ts` — appends one line naming the new app to `docs/architecture.md`'s "## Remotes" section, matching its existing prose style (FR-011)
+- [X] T030 [US4] Wire T029 into `config.ts`'s monorepo path only (after T011, alongside T012's wiring); confirm standalone mode never touches `apps/shell/`, `docs/`, or `remotes.dev.json` (acceptance scenario 4)
+- [X] T031 [US4] Generator console summary (FR-015): files created, the registry entry added (or, for standalone, that no registry was touched), the docs line added, and an explicit statement that staging/production registration and any real package publish are **not** included
+- [X] T032 [US4] `quickstart.md` §1 re-run: confirm `docs/architecture.md` gains the new remote's line automatically, with no separate manual step
 
 **Checkpoint**: All four user stories are independently functional. The generator's output is discoverable, not just present on disk.
 
@@ -131,11 +131,11 @@ line and the console summary.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T033 Write `docs/decisions/0014-generator-dual-mode.md` — records the tool choices (`@turbo/gen`, Changesets; research D2, D5), the `remote.manifest.json`/`federation.config.ts` rejection (research D1), the GitHub Packages scope handling, and the no-live-publish boundary (FR-019), per Constitution Principle VII
-- [ ] T034 Run `quickstart.md` §1–§4 end to end on a clean checkout
-- [ ] T035 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm check:boundaries`, `pnpm check:shared-deps`, `pnpm e2e` in sequence — confirm all seven exit `0` with the three new devDependencies in place
-- [ ] T036 Write the pull request description, including T001's dependency justifications verbatim (Principle IX)
-- [ ] T037 Review the diff against `.claude/agents/pr-reviewer.md`'s checks before opening the PR
+- [X] T033 Write `docs/decisions/0014-generator-dual-mode.md` — records the tool choices (`@turbo/gen`, Changesets; research D2, D5), the `remote.manifest.json`/`federation.config.ts` rejection (research D1), the GitHub Packages scope handling, and the no-live-publish boundary (FR-019), per Constitution Principle VII
+- [X] T034 Run `quickstart.md` §1–§4 end to end on a clean checkout
+- [X] T035 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm check:boundaries`, `pnpm check:shared-deps`, `pnpm e2e` in sequence — confirm all seven exit `0` with the three new devDependencies in place
+- [X] T036 Write the pull request description, including T001's dependency justifications verbatim (Principle IX)
+- [X] T037 Review the diff against `.claude/agents/pr-reviewer.md`'s checks before opening the PR
 
 ---
 
