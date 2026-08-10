@@ -49,10 +49,10 @@ value and a comment stating why.
 
 ### Implementation for User Story 1
 
-- [ ] T001 [P] [US1] `.github/dependabot.yml` — `npm` (root `/`, pnpm-lockfile-aware) and `github-actions` ecosystem entries (FR-001, research D2)
-- [ ] T002 [US1] `.github/workflows/ci.yml` — add an `osv-scan` job calling OSV-Scanner's reusable workflow (`google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.0`), `fail-on-vuln: false` with a comment stating why (mirrors `pnpm audit`'s own stated reasoning, arrived at independently) (FR-002, FR-003, research D3)
-- [ ] T003 [US1] `.github/workflows/ci.yml` — add a `socket-security` job (Socket's CLI-based integration), `continue-on-error: true`, with a comment stating it requires a `SOCKET_SECURITY_API_KEY` secret this repo doesn't have yet — real mechanism, external credential deliberately left to a maintainer (research D3, same pattern as 006's GitHub Packages publish) (FR-002, FR-003)
-- [ ] T004 [US1] `quickstart.md` §1–2: confirm `dependabot.yml`'s structure and both new CI steps' triggers/failure policy — real check, not inspection-only
+- [X] T001 [P] [US1] `.github/dependabot.yml` — `npm` (root `/`, pnpm-lockfile-aware) and `github-actions` ecosystem entries (FR-001, research D2)
+- [X] T002 [US1] `.github/workflows/ci.yml` — add an `osv-scan` job calling OSV-Scanner's reusable workflow (`google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.0`), `fail-on-vuln: false` with a comment stating why (mirrors `pnpm audit`'s own stated reasoning, arrived at independently) (FR-002, FR-003, research D3)
+- [X] T003 [US1] `.github/workflows/ci.yml` — add a `socket-security` job (Socket's CLI-based integration), `continue-on-error: true`, with a comment stating it requires a `SOCKET_SECURITY_API_KEY` secret this repo doesn't have yet — real mechanism, external credential deliberately left to a maintainer (research D3, same pattern as 006's GitHub Packages publish) (FR-002, FR-003)
+- [X] T004 [US1] `quickstart.md` §1–2: confirm `dependabot.yml`'s structure and both new CI steps' triggers/failure policy — real check, not inspection-only
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 
@@ -71,10 +71,10 @@ environment's own `remotes.<env>.json` `allowedOrigins` exactly.
 
 ### Implementation for User Story 2
 
-- [ ] T005 [P] [US2] `apps/shell/src/internal/federation/build-csp.ts` — pure function: `allowedOrigins: readonly string[] -> script-src string` (`'self'` plus each origin) (FR-004, research D1)
-- [ ] T006 [P] [US2] `apps/shell/tests/build-csp.test.ts` — unit tests: empty list, one origin, multiple origins, no duplicate/malformed output
-- [ ] T007 [US2] `apps/shell/rspack.config.ts` — read the resolved registry file's `allowedOrigins` (same file `CopyRspackPlugin` already copies) and pass `build-csp.ts`'s output into `HtmlRspackPlugin`'s `meta` option as `{ 'Content-Security-Policy': { 'http-equiv': 'Content-Security-Policy', content: ... } }` — `index.html` itself stays untouched (FR-004, FR-005, research D1)
-- [ ] T008 [US2] `quickstart.md` §3: build the shell for `dev`/`staging`/`production`, confirm each emitted `index.html`'s CSP matches that environment's `allowedOrigins`, and confirm `pnpm dev` still composes dashboard/admin locally under the CSP (FR-005, FR-006)
+- [X] T005 [P] [US2] `apps/shell/src/internal/federation/build-csp.ts` — pure function: `allowedOrigins: readonly string[] -> script-src string` (`'self'` plus each origin) (FR-004, research D1)
+- [X] T006 [P] [US2] `apps/shell/tests/build-csp.test.ts` — unit tests: empty list, one origin, multiple origins, no duplicate/malformed output
+- [X] T007 [US2] `apps/shell/rspack.config.ts` — read the resolved registry file's `allowedOrigins` (same file `CopyRspackPlugin` already copies) and pass `build-csp.ts`'s output into `HtmlRspackPlugin`'s `meta` option as `{ 'Content-Security-Policy': { 'http-equiv': 'Content-Security-Policy', content: ... } }` — `index.html` itself stays untouched (FR-004, FR-005, research D1)
+- [X] T008 [US2] `quickstart.md` §3: build the shell for `dev`/`staging`/`production`, confirm each emitted `index.html`'s CSP matches that environment's `allowedOrigins`, and confirm `pnpm dev` still composes dashboard/admin locally under the CSP (FR-005, FR-006)
 
 **Checkpoint**: User Story 2 is independently functional and testable.
 
@@ -92,10 +92,10 @@ substantive, not a stub.
 
 ### Implementation for User Story 3
 
-- [ ] T009 [P] [US3] `docs/how-to-connect-sso.md` — how to replace `packages/auth`'s stub with a real identity provider; what the `useAuth()`/`<ProtectedRoute>`/`<AuthProvider>` contract requires of a real implementation; links to ADR-0009 (FR-007)
-- [ ] T010 [P] [US3] `docs/auth-strategy.md` — the auth contract's strategy, at the level `CLAUDE.md`'s existing reference implies (FR-008)
-- [ ] T011 [P] [US3] `docs/how-to-add-a-remote.md` — documents `pnpm turbo gen remote` (006) as the default path, and the manual convention (`apps/dashboard`/`apps/admin`'s own structure) a hand-built remote must still match (FR-009)
-- [ ] T012 [US3] `quickstart.md` §4: confirm all three files answer their implied question, not just that they exist
+- [X] T009 [P] [US3] `docs/how-to-connect-sso.md` — how to replace `packages/auth`'s stub with a real identity provider; what the `useAuth()`/`<ProtectedRoute>`/`<AuthProvider>` contract requires of a real implementation; links to ADR-0009 (FR-007)
+- [X] T010 [P] [US3] `docs/auth-strategy.md` — the auth contract's strategy, at the level `CLAUDE.md`'s existing reference implies (FR-008)
+- [X] T011 [P] [US3] `docs/how-to-add-a-remote.md` — documents `pnpm turbo gen remote` (006) as the default path, and the manual convention (`apps/dashboard`/`apps/admin`'s own structure) a hand-built remote must still match (FR-009)
+- [X] T012 [US3] `quickstart.md` §4: confirm all three files answer their implied question, not just that they exist
 
 **Checkpoint**: User Story 3 is independently functional and testable.
 
@@ -112,11 +112,11 @@ confirm zero gaps remain.
 
 ### Implementation for User Story 4
 
-- [ ] T013 [P] [US4] `docs/decisions/0004-react-typescript-tailwind.md` — records blueprint §2 item 04 (React 19 + TypeScript strict + Tailwind CSS), backfilled into its reserved number (research D4)
-- [ ] T014 [P] [US4] `docs/decisions/0005-pnpm-turborepo.md` — records blueprint §2 item 05 (pnpm workspaces + Turborepo, Plop-based generators over Nx), backfilled into its reserved number (research D4)
-- [ ] T015 [US4] `docs/decisions/0015-docs-security-closed.md` — records this sprint's own decisions (D1 CSP mechanism, D2 Dependabot, D3 OSV-Scanner + Socket) and the §2 coverage audit result (research D1–D4, FR-010)
-- [ ] T016 [US4] Confirm `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` satisfy the DoD's Portfolio checklist line; edit either only if a real gap is found, not by default (FR-011)
-- [ ] T017 [US4] `quickstart.md` §5: re-run the §2-vs-`docs/decisions/` comparison and confirm a 1:1 match
+- [X] T013 [P] [US4] `docs/decisions/0004-react-typescript-tailwind.md` — records blueprint §2 item 04 (React 19 + TypeScript strict + Tailwind CSS), backfilled into its reserved number (research D4)
+- [X] T014 [P] [US4] `docs/decisions/0005-pnpm-turborepo.md` — records blueprint §2 item 05 (pnpm workspaces + Turborepo, Plop-based generators over Nx), backfilled into its reserved number (research D4)
+- [X] T015 [US4] `docs/decisions/0015-docs-security-closed.md` — records this sprint's own decisions (D1 CSP mechanism, D2 Dependabot, D3 OSV-Scanner + Socket) and the §2 coverage audit result (research D1–D4, FR-010)
+- [X] T016 [US4] Confirm `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` satisfy the DoD's Portfolio checklist line; edit either only if a real gap is found, not by default (FR-011)
+- [X] T017 [US4] `quickstart.md` §5: re-run the §2-vs-`docs/decisions/` comparison and confirm a 1:1 match
 
 **Checkpoint**: All four user stories are independently functional. Every
 DoD line this sprint targets is closed.
@@ -125,11 +125,11 @@ DoD line this sprint targets is closed.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T018 [P] `docs/architecture.md` — one short mention of the CSP mechanism (where it's generated, what it's derived from), matching the existing "Remote loading"/"Boundary enforcement" section style
-- [ ] T019 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm check:boundaries`, `pnpm check:shared-deps`, `pnpm e2e` in sequence — confirm all seven exit `0`
-- [ ] T020 Push the branch and confirm the two new CI steps (T002, T003) actually run and report in a real GitHub Actions run — not just locally
-- [ ] T021 Write the pull request description
-- [ ] T022 Review the diff against `.claude/agents/pr-reviewer.md`'s checks before opening the PR
+- [X] T018 [P] `docs/architecture.md` — one short mention of the CSP mechanism (where it's generated, what it's derived from), matching the existing "Remote loading"/"Boundary enforcement" section style
+- [X] T019 Run `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `pnpm check:boundaries`, `pnpm check:shared-deps`, `pnpm e2e` in sequence — confirm all seven exit `0`
+- [X] T020 Push the branch and confirm the two new CI steps (T002, T003) actually run and report in a real GitHub Actions run — not just locally
+- [X] T021 Write the pull request description
+- [X] T022 Review the diff against `.claude/agents/pr-reviewer.md`'s checks before opening the PR
 
 ---
 
