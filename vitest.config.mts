@@ -39,6 +39,15 @@ export default defineConfig({
           include: ['tests/**/*.test.ts'],
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'turbo-generators',
+          root: './turbo/generators/remote',
+          environment: 'node',
+          include: ['*.test.ts'],
+        },
+      },
       browserProject('@enterprise-mfe/ui', './packages/ui'),
       browserProject('@enterprise-mfe/auth', './packages/auth'),
       browserProject('@enterprise-mfe/federation-utils', './packages/federation-utils'),

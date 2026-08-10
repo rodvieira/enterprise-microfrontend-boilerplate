@@ -1,10 +1,13 @@
 {
   "name": "@enterprise-mfe/auth",
   "version": "0.0.0",
-  "private": true,
   "description": "The shared session contract, backed by an in-memory stub. Not real authentication.",
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
   "exports": {
     ".": "./src/index.ts"
   },
