@@ -24,7 +24,7 @@
   "devDependencies": {
     "@enterprise-mfe/config-typescript": "workspace:*",
     "@playwright/test": "^1.62.1",
-    "@rspack/cli": "^2.1.7",
+    "@rspack/cli": "^2.1.8",
     "@rspack/core": "^2.1.7",
     "@rspack/dev-server": "^2.2.0",
     "@tailwindcss/postcss": "^4.3.3",
