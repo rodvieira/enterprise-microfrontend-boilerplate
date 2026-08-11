@@ -1,6 +1,6 @@
 # 0015 — Sprint 8 (docs + security) closed: CSP mechanism, dependency scanning, and the ADR-coverage audit
 
-**Status:** Accepted
+**Status:** Accepted (Dependabot decision partially superseded by [ADR-0016](0016-dependabot-disabled.md) — OSV-Scanner, Socket, and the CSP mechanism below remain in effect)
 
 ## Context
 
