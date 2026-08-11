@@ -24,7 +24,7 @@
   "devDependencies": {
     "@enterprise-mfe/config-typescript": "workspace:*",
     "@rspack/cli": "^2.1.7",
-    "@rspack/core": "^2.1.7",
+    "@rspack/core": "^2.1.8",
     "@rspack/dev-server": "^2.2.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.0",
