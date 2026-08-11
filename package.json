@@ -22,7 +22,7 @@
     "@biomejs/biome": "^1.9.4",
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.1",
-    "@commitlint/cli": "^19.6.0",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@enterprise-mfe/config-biome": "workspace:*",
     "@testing-library/jest-dom": "^7.0.0",
