@@ -89,10 +89,6 @@ other tab, live.
 - **[docs/decisions/](docs/decisions/)** — every architectural decision
   this project has made, as an ADR, with the reasoning and evidence behind
   each one — never edited after the fact, only superseded.
-- **[docs/posts/exposed-internal-boundary.md](docs/posts/exposed-internal-boundary.md)**
-  — a longer technical account of this project's central architectural
-  convention: why `exposed/`/`internal/` exists, how it's enforced, and
-  what broke before it was right.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — the rules that matter most,
   before opening a PR.
 
