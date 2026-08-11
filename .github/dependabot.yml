@@ -14,6 +14,17 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    ignore:
+      # @types/node's major must track engines.node's major (currently
+      # Node 22, "node": ">=22.22.2") — Dependabot has no way to know that
+      # relationship on its own and will otherwise propose whatever the
+      # latest major is, type-checking this codebase against Node APIs
+      # the declared engine doesn't actually have (found for real: PR #28
+      # proposed 22.10.2 -> 26.2.0). Bump this ignore rule deliberately,
+      # together with `engines.node`, when the project's target Node
+      # version actually changes — never independently.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   # Keeps pinned Action versions (actions/checkout@v4, etc.) current too —
   # the same automated-update guarantee, applied to .github/workflows/.
