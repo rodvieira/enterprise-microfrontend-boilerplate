@@ -33,7 +33,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^6.0.5",
-    "dependency-cruiser": "^16.4.2",
+    "dependency-cruiser": "^18.1.1",
     "jsdom": "^30.0.1",
     "lefthook": "^1.8.2",
     "react": "^19.2.8",
