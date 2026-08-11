@@ -71,40 +71,7 @@ jobs:
       # independently for the same reason, not copied unexamined.
       fail-on-vuln: false
 
-  # Supply-chain risk distinct from CVE/advisory scanning: install-time
-  # script behavior, typosquatting, risk in newly-added dependencies —
-  # neither pnpm audit nor OSV-Scanner's advisory-database matching catches
-  # this. Requires a SOCKET_SECURITY_API_KEY repository secret this project
-  # does not have yet — real mechanism, external Socket.dev account setup
-  # deliberately left to a maintainer (same pattern as 006's GitHub
-  # Packages publish credentials). continue-on-error keeps a missing/empty
-  # key from blocking every PR until that secret is added.
-  socket-security:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    permissions:
-      issues: write
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Socket CLI
-        run: pip install socketsecurity --upgrade
-
-      - name: Run Socket security scan
-        env:
-          SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_SECURITY_API_KEY }}
-          GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=0
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            PR_NUMBER=${{ github.event.pull_request.number }}
-          fi
-          socketcli --target-path "$GITHUB_WORKSPACE" --scm github --pr-number "$PR_NUMBER"
+  # Socket's supply-chain scan job was removed (ADR-0017) — it requires a
+  # SOCKET_SECURITY_API_KEY repository secret nobody configured, and ran on
+  # every push/PR failing for that reason alone. OSV-Scanner above still
+  # covers CVE/advisory scanning.
