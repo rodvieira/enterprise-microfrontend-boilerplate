@@ -40,6 +40,15 @@ local development, is refused — refusal is contained exactly like a load
 failure, so one bad entry never takes the rest of the application down with
 it.
 
+A browser-level `Content-Security-Policy` (sprint 8, ADR-0015) backs this
+same guarantee up: `apps/shell/src/internal/federation/build-csp.ts`
+derives `script-src` from the exact same `allowedOrigins` list this section
+describes, read from the same resolved `remotes.<env>.json` the build
+already selects — never a second, hand-maintained value. Emitted as a
+`<meta http-equiv="Content-Security-Policy">` tag via `HtmlRspackPlugin`'s
+own `meta` option, since this project's build output is static assets with
+no server of its own to set an HTTP header from.
+
 ## Remote loading
 
 `packages/federation-utils` provides `useRemote()` and `RemoteBoundary`: a

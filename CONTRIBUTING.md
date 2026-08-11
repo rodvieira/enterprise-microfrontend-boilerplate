@@ -29,9 +29,8 @@ pnpm dev
 
 ## Adding a new remote
 
-Once the generator exists (see `docs/decisions/0008-generator-after-two-remotes.md`
-for why it doesn't exist from day one), use `pnpm turbo gen remote`. Before that
-point, copy the structure of the closer of `apps/dashboard` or `apps/admin`.
+Use `pnpm turbo gen remote` — see `docs/how-to-add-a-remote.md` for both
+output modes and the hand-built convention it's extracted from.
 
 ## Adding a shared package
 
@@ -43,8 +42,7 @@ through this.
 ## Reporting a security issue
 
 Please don't open a public issue for a security vulnerability. See
-`SECURITY.md` (or, until that file exists, open a private security advisory via
-GitHub's "Report a vulnerability" button on this repo).
+`SECURITY.md`.
 
 ## Pull request checklist
 

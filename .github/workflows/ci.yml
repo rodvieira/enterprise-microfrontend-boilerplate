@@ -51,3 +51,60 @@ jobs:
       - name: Security audit
         run: pnpm audit --audit-level=high
         continue-on-error: true # a new upstream advisory must not block an unrelated PR; reviewed rather than enforced
+
+  # CVE/dependency scanning, distinct from pnpm audit above (specs/007-docs-security
+  # research D3). No step-level Action exists for OSV-Scanner — only this
+  # reusable-workflow form (confirmed against google.github.io/osv-scanner/github-action/).
+  osv-scan:
+    permissions:
+      actions: read
+      security-events: write
+      contents: read
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.0"
+    with:
+      scan-args: |-
+        --recursive
+        ./
+      # Report-only, the tool's own native switch — not a bolted-on
+      # continue-on-error. Same posture as pnpm audit above ("a new
+      # upstream advisory must not block an unrelated PR"), arrived at
+      # independently for the same reason, not copied unexamined.
+      fail-on-vuln: false
+
+  # Supply-chain risk distinct from CVE/advisory scanning: install-time
+  # script behavior, typosquatting, risk in newly-added dependencies —
+  # neither pnpm audit nor OSV-Scanner's advisory-database matching catches
+  # this. Requires a SOCKET_SECURITY_API_KEY repository secret this project
+  # does not have yet — real mechanism, external Socket.dev account setup
+  # deliberately left to a maintainer (same pattern as 006's GitHub
+  # Packages publish credentials). continue-on-error keeps a missing/empty
+  # key from blocking every PR until that secret is added.
+  socket-security:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      issues: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Socket CLI
+        run: pip install socketsecurity --upgrade
+
+      - name: Run Socket security scan
+        env:
+          SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_SECURITY_API_KEY }}
+          GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=0
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
+          fi
+          socketcli --target-path "$GITHUB_WORKSPACE" --scm github --pr-number "$PR_NUMBER"

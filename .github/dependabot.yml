@@ -1,0 +1,23 @@
+# Real, automated dependency-update scanning (blueprint DoD "Dependabot/
+# Renovate ... wired into CI", specs/007-docs-security research D2).
+#
+# Dependabot over Renovate: zero additional infrastructure — native to
+# GitHub (this project's host), activates from this file alone, with no
+# separate account/app-install step outside version control to trust was
+# actually done.
+version: 2
+updates:
+  # Dependabot's npm ecosystem understands pnpm-lock.yaml directly (GA
+  # support) — no separate "pnpm" ecosystem exists or is needed.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  # Keeps pinned Action versions (actions/checkout@v4, etc.) current too —
+  # the same automated-update guarantee, applied to .github/workflows/.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
