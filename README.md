@@ -58,13 +58,15 @@ instead of a login flow, deliberately (see
 
 ## Demo & live URLs
 
+Live: <https://rodvieira.github.io/enterprise-microfrontend-boilerplate/>
+— the shell composing the real `apps/dashboard` and `apps/admin` remotes,
+deployed to GitHub Pages (see
+[ADR-0018](docs/decisions/0018-github-pages-reference-deploy.md)).
+
 _Pending: a recorded demo GIF of the cross-remote KPI update (`apps/admin`
-→ `packages/event-bus` → `apps/dashboard`, live, no reload) and links to a
-real deployed instance go here once available. See
+→ `packages/event-bus` → `apps/dashboard`, live, no reload). See
 [docs/how-to-deploy.md](docs/how-to-deploy.md) for how to deploy dashboard,
-admin, and the shell to your own static host — `remotes.staging.json`/
-`remotes.production.json` currently ship with empty `remotes` arrays, a
-maintainer's own action away from pointing at something real._
+admin, and the shell to your own static host._
 
 ## Quick start
 

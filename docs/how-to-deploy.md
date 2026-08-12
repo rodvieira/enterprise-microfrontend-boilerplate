@@ -76,12 +76,17 @@ see `docs/architecture.md`'s "Remote loading" section). Then rebuild the
 shell with `FEDERATION_ENV=production` so the new registry entry is
 picked up.
 
-**This repository's own `remotes.staging.json` and
-`remotes.production.json` currently ship with empty `remotes` arrays.**
-Building the shell for either environment today produces a working host
-that composes nothing — correct, not broken, since neither environment
-has a real deployed remote to point at yet. That's a maintainer's own,
-separate action: deploy a remote for real, then add its entry here.
+**This repository's own `remotes.staging.json` still ships with an empty
+`remotes` array** — `staging` remains an unexercised placeholder, a
+maintainer's own separate action away from pointing at something real.
+`remotes.production.json` no longer does: this repository's own shell,
+dashboard, and admin are deployed for real to GitHub Pages (see
+[ADR-0018](decisions/0018-github-pages-reference-deploy.md) and
+`.github/workflows/deploy.yml`) at
+<https://rodvieira.github.io/enterprise-microfrontend-boilerplate/>. A
+GitHub Pages project page serves from `/<repo>/`, not `/`, which is why
+`remotes.<env>.json` also carries an optional `basePath` field — see
+ADR-0018 for what that changes in the shell.
 
 ## What this guide is not
 
