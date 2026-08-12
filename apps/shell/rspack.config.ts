@@ -31,8 +31,18 @@ const registrySourcePath = resolveRegistrySourcePath(process.env.FEDERATION_ENV,
  */
 const registry = JSON.parse(
   readFileSync(resolve(import.meta.dirname, registrySourcePath), 'utf8'),
-) as { allowedOrigins: readonly string[] };
+) as { allowedOrigins: readonly string[]; basePath?: string };
 const contentSecurityPolicy = buildScriptSrc(registry.allowedOrigins);
+
+/**
+ * Same "read straight from the resolved registry file" discipline as the
+ * CSP above: an environment deployed under a subpath (e.g. a GitHub Pages
+ * project page) declares that subpath once, in its own remotes.<env>.json,
+ * rather than a second, independently-maintained build flag. Injected as
+ * <base href> below, which both the HTML's own asset URLs and the app's
+ * runtime registry fetch (manifest.ts) resolve against.
+ */
+const basePath = registry.basePath ?? '/';
 
 export default defineConfig({
   mode: isDev ? 'development' : 'production',
@@ -73,6 +83,7 @@ export default defineConfig({
   plugins: [
     new rspack.HtmlRspackPlugin({
       template: './index.html',
+      base: { href: basePath },
       // index.html itself stays untouched — HtmlRspackPlugin's own `meta`
       // option injects the tag (specs/007-docs-security research D1),
       // rather than adding a second, template-placeholder-based mechanism

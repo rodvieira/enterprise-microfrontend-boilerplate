@@ -1,7 +1,12 @@
 import type { RemoteRegistration, RemoteRegistry } from './types';
 import { isEnvironment } from './types';
 
-const REGISTRY_URL = '/remotes.json';
+// Relative, not root-absolute: resolves against the document's <base href>
+// (set at build time from the registry's own basePath — rspack.config.ts),
+// not against whatever path the browser happens to be on. A root-absolute
+// '/remotes.json' would 404 once the shell is deployed under a subpath
+// (e.g. a GitHub Pages project page).
+const REGISTRY_URL = 'remotes.json';
 
 /**
  * A registry that failed validation. Always names REGISTRY_URL, and includes
