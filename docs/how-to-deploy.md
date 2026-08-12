@@ -81,19 +81,37 @@ picked up.
 maintainer's own separate action away from pointing at something real.
 `remotes.production.json` no longer does: this repository's own shell,
 dashboard, and admin are deployed for real to GitHub Pages (see
-[ADR-0018](decisions/0018-github-pages-reference-deploy.md) and
+[ADR-0018](decisions/0018-github-pages-reference-deploy.md),
+[ADR-0019](decisions/0019-remote-asset-path-vs-shell-route-path.md), and
 `.github/workflows/deploy.yml`) at
 <https://rodvieira.github.io/enterprise-microfrontend-boilerplate/>. A
 GitHub Pages project page serves from `/<repo>/`, not `/`, which is why
 `remotes.<env>.json` also carries an optional `basePath` field — see
 ADR-0018 for what that changes in the shell.
 
+## Two path namespaces that must never collide
+
+A remote's `routePath` (the URL the shell's own router owns, e.g.
+`/dashboard`) and the URL its static build is actually hosted at are two
+different things, even though it's tempting to make them the same
+string. Hosting a remote's own standalone build (its own `index.html`,
+per ADR-0007) at the exact path the shell's router owns means a hard
+navigation to that path — typing the URL, refreshing, a bookmark — gets
+served the remote's standalone `index.html` directly by the static host,
+never reaching the shell at all. ADR-0019 has the full story; this
+repository's own deploy hosts remotes under `/remotes/<name>/` for
+exactly this reason. A static host with no server-side rewrite rule (GitHub
+Pages, a plain nginx without a SPA fallback, S3 without a redirect rule)
+also needs a `404.html` that's a copy of the shell's own `index.html`, so
+a hard navigation to any shell-owned route the host has no file for still
+boots the shell instead of the host's generic 404.
+
 ## What this guide is not
 
 Not a specific host's dashboard walkthrough — Vercel, Netlify, GitHub
 Pages, S3+CloudFront, and plain nginx are all equally valid choices for
 static assets with no server-side requirement, and none of them changes
-anything described above. Not an automated CI/CD deploy pipeline — this
-repository has none yet, and adding one is a decision for whoever actually
-runs a specific host, not a default this boilerplate should assume for
-every adopter.
+anything described above. `.github/workflows/deploy.yml` is this
+repository's own choice (GitHub Pages) exercising the mechanism for
+real — adopting a different host means writing an equivalent pipeline for
+it, not a default this boilerplate assumes for every adopter.

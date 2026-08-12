@@ -39,15 +39,31 @@ jobs:
         run: FEDERATION_ENV=production pnpm --filter @enterprise-mfe/shell run build
 
       # One GitHub Pages site composing all three independent static
-      # builds: the shell at the site root, each remote under its own
-      # subpath — matching the URLs already committed in
-      # apps/shell/src/internal/federation/remotes.production.json.
+      # builds: the shell at the site root, its client-side routes
+      # (/dashboard, /admin — owned by apps/shell's own router). Remote
+      # assets go under a separate /remotes/<name>/ namespace, not
+      # /dashboard or /admin themselves — those paths already belong to
+      # the shell's router. Deploying a remote's own standalone
+      # index.html at the exact path the shell's router owns meant a
+      # hard navigation (page load, not a client-side link) to
+      # "/dashboard/" was served by GitHub Pages' static file server as
+      # the standalone dashboard app, never reaching the shell at all.
+      # See ADR-0019.
       - name: Assemble Pages site
         run: |
-          mkdir -p _site/dashboard _site/admin
+          mkdir -p _site/remotes/dashboard _site/remotes/admin
           cp -r apps/shell/dist/. _site/
-          cp -r apps/dashboard/dist/. _site/dashboard/
-          cp -r apps/admin/dist/. _site/admin/
+          cp -r apps/dashboard/dist/. _site/remotes/dashboard/
+          cp -r apps/admin/dist/. _site/remotes/admin/
+          # GitHub Pages serves static files with no server-side rewrite:
+          # a hard navigation to a shell client-side route (e.g.
+          # "/dashboard", which has no matching file) gets GitHub's own
+          # 404 page, never the shell's JS. Pages serves 404.html for any
+          # unmatched path (still with an HTTP 404 status, browsers still
+          # run its scripts) — an exact copy of the shell's own
+          # index.html, safe because <base href> is an absolute path, not
+          # relative to whatever URL 404.html happened to be served from.
+          cp apps/shell/dist/index.html _site/404.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
