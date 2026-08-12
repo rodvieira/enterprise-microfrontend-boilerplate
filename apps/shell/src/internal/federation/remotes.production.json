@@ -1,5 +1,19 @@
 {
   "environment": "production",
-  "allowedOrigins": [],
-  "remotes": []
+  "basePath": "/enterprise-microfrontend-boilerplate/",
+  "allowedOrigins": ["https://rodvieira.github.io"],
+  "remotes": [
+    {
+      "name": "dashboard",
+      "entry": "https://rodvieira.github.io/enterprise-microfrontend-boilerplate/dashboard/mf-manifest.json",
+      "routePath": "/dashboard",
+      "label": "Dashboard"
+    },
+    {
+      "name": "admin",
+      "entry": "https://rodvieira.github.io/enterprise-microfrontend-boilerplate/admin/mf-manifest.json",
+      "routePath": "/admin",
+      "label": "Admin"
+    }
+  ]
 }

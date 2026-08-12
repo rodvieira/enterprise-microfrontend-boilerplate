@@ -62,6 +62,12 @@ function createAppRouter() {
       },
     ],
     {
+      // Read from <base href> (set at build time from the registry's own
+      // basePath — rspack.config.ts), not hardcoded '/': the same value
+      // manifest.ts's relative REGISTRY_URL resolves against, so the router
+      // and the registry fetch never disagree about where the app is
+      // mounted.
+      basename: new URL(document.baseURI).pathname,
       async patchRoutesOnNavigation({ patch }: PatchRoutesOnNavigationFunctionArgs) {
         const routes = await discoverRemoteRoutes();
         patch(null, routes);
