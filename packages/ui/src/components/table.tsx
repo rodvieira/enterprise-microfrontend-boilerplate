@@ -33,7 +33,11 @@ export function Table<Row>({
         className,
       )}
     >
-      {caption ? <caption className="p-3 text-(--color-text-muted)">{caption}</caption> : null}
+      {caption ? (
+        // <caption> is center-aligned by the browser's own default
+        // stylesheet — every consumer needs the override, not just this one.
+        <caption className="p-3 text-left font-medium text-(--color-text)">{caption}</caption>
+      ) : null}
       <thead className="bg-(--color-surface-muted)">
         <tr>
           {columns.map((column) => (

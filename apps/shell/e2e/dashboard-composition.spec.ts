@@ -46,17 +46,26 @@ test.describe('dashboard composition', () => {
 
   test("the activity chart doesn't affect the shell's chrome (SC-003)", async ({ page }) => {
     await page.goto('/');
-    const navBefore = await page.getByRole('navigation').evaluate((el) => el.outerHTML);
+    // The banner (title + session control) never depends on the route, so it
+    // must stay byte-identical. The nav's active link legitimately does
+    // depend on the route — asserted separately below, by link text and
+    // aria-current, rather than folded into this same byte-for-byte check.
     const bannerBefore = await page.getByRole('banner').evaluate((el) => el.outerHTML);
+    const navLinksBefore = await page.getByRole('navigation').getByRole('link').allTextContents();
+    await expect(page.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page');
 
     await page.goto('/dashboard');
     // Wait for the real chart (not the loading placeholder) to mount.
     await expect(page.locator('.recharts-wrapper')).toBeVisible();
 
-    const navAfter = await page.getByRole('navigation').evaluate((el) => el.outerHTML);
     const bannerAfter = await page.getByRole('banner').evaluate((el) => el.outerHTML);
-    expect(navAfter).toBe(navBefore);
+    const navLinksAfter = await page.getByRole('navigation').getByRole('link').allTextContents();
     expect(bannerAfter).toBe(bannerBefore);
+    expect(navLinksAfter).toEqual(navLinksBefore);
+    await expect(page.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
 
     // Navigate away and back: no leaked chart resources from the previous mount (FR-011).
     await page.getByRole('link', { name: 'Home' }).click();

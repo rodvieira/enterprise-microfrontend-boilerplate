@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react';
 import type { PatchRoutesOnNavigationFunctionArgs, RouteObject } from 'react-router';
 import { RouterProvider, createBrowserRouter } from 'react-router';
 import { ShellLayout } from '../internal/chrome/layout';
+import { RegisteredRemotesProvider } from '../internal/chrome/registered-remotes-context';
 import { fetchRegistry } from '../internal/federation/manifest';
 import { registerAllowedRemotes } from '../internal/federation/register';
+import type { RemoteRegistration } from '../internal/federation/types';
 import { HomeRoute } from '../internal/routes/home';
 import { RemoteRegion } from '../internal/routes/remote-region';
 import { HOST_OWNED_ROUTE_PATHS } from '../internal/routes/remote-routes';
@@ -33,12 +35,18 @@ function createAppRouter() {
     return registryPromise;
   }
 
-  let remoteRoutesPromise: Promise<RouteObject[]> | null = null;
-  function discoverRemoteRoutes(): Promise<RouteObject[]> {
+  interface DiscoveredRoutes {
+    routes: RouteObject[];
+    registered: readonly RemoteRegistration[];
+  }
+
+  let remoteRoutesPromise: Promise<DiscoveredRoutes> | null = null;
+  function discoverRemoteRoutes(): Promise<DiscoveredRoutes> {
     remoteRoutesPromise ??= getRegistry()
       .then((registry) => registerAllowedRemotes(registry))
-      .then(({ registered }) =>
-        registered.map((registration) => ({
+      .then(({ registered }) => ({
+        registered,
+        routes: registered.map((registration) => ({
           path: registration.routePath,
           element: (
             <ShellLayout>
@@ -46,7 +54,7 @@ function createAppRouter() {
             </ShellLayout>
           ),
         })),
-      );
+      }));
     return remoteRoutesPromise;
   }
 
@@ -69,7 +77,7 @@ function createAppRouter() {
       // mounted.
       basename: new URL(document.baseURI).pathname,
       async patchRoutesOnNavigation({ patch }: PatchRoutesOnNavigationFunctionArgs) {
-        const routes = await discoverRemoteRoutes();
+        const { routes } = await discoverRemoteRoutes();
         patch(null, routes);
       },
     },
@@ -85,6 +93,7 @@ function createAppRouter() {
  */
 export function App() {
   const [{ router, discoverRemoteRoutes }] = useState(createAppRouter);
+  const [registeredRemotes, setRegisteredRemotes] = useState<readonly RemoteRegistration[]>([]);
 
   useEffect(() => {
     // Fire-and-forget: the frame renders immediately and never waits on this
@@ -94,15 +103,21 @@ export function App() {
     // must be decided and logged immediately, not deferred until someone
     // happens to visit that path. `discoverRemoteRoutes` is memoized per
     // router instance, so `patchRoutesOnNavigation` reuses this same result
-    // instead of registering twice.
-    discoverRemoteRoutes().catch((error: unknown) => {
-      console.error(error);
-    });
+    // instead of registering twice. The nav (ShellLayout) reads the same
+    // `registered` list through context, so it only ever links to a remote
+    // that actually passed origin-guard.
+    discoverRemoteRoutes()
+      .then(({ registered }) => setRegisteredRemotes(registered))
+      .catch((error: unknown) => {
+        console.error(error);
+      });
   }, [discoverRemoteRoutes]);
 
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <RegisteredRemotesProvider value={registeredRemotes}>
+        <RouterProvider router={router} />
+      </RegisteredRemotesProvider>
     </AuthProvider>
   );
 }

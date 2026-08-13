@@ -1,8 +1,17 @@
 import { Layout, Nav } from '@enterprise-mfe/ui';
+import type { NavItem } from '@enterprise-mfe/ui';
 import type { ReactNode } from 'react';
+import { useLocation } from 'react-router';
+import { useRegisteredRemotes } from './registered-remotes-context';
 import { SessionIndicator } from './session-indicator';
 
-const NAV_ITEMS = [{ href: '/', label: 'Home' }];
+const HOME_ITEM: NavItem = { href: '/', label: 'Home' };
+
+/** Exact match for '/', a path-segment-aware prefix match for everything else. */
+function isActiveHref(href: string, pathname: string): boolean {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export interface ShellLayoutProps {
   children: ReactNode;
@@ -13,8 +22,22 @@ export interface ShellLayoutProps {
  * @enterprise-mfe/ui — never from shell-defined chrome (FR-002). This is what
  * proves the design system compiled by a real bundler, not just exercised in
  * a test environment.
+ *
+ * Nav links for remotes are read from RegisteredRemotesContext, not
+ * hardcoded — the same `registered` list origin-guard already vetted
+ * (App.tsx), so the nav can never link to a remote that was refused.
  */
 export function ShellLayout({ children }: ShellLayoutProps) {
+  const location = useLocation();
+  const registeredRemotes = useRegisteredRemotes();
+
+  const navItems: NavItem[] = [
+    HOME_ITEM,
+    ...registeredRemotes.map((remote) => ({ href: remote.routePath, label: remote.label })),
+  ];
+  const activeHref =
+    navItems.find((item) => isActiveHref(item.href, location.pathname))?.href ?? '/';
+
   return (
     <Layout
       header={
@@ -30,7 +53,7 @@ export function ShellLayout({ children }: ShellLayoutProps) {
           <SessionIndicator />
         </div>
       }
-      sidebar={<Nav items={NAV_ITEMS} activeHref="/" />}
+      sidebar={<Nav items={navItems} activeHref={activeHref} />}
     >
       {children}
     </Layout>
