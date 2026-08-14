@@ -8,17 +8,17 @@ export class UnknownEnvironmentError extends Error {}
  * Resolves which registry source file the build should copy to
  * `remotes.json` for the given `FEDERATION_ENV` value.
  *
- * A pure function of (env, fileExists) so the "unknown environment" and
- * "environment names a file that doesn't exist" failures — spec edge case,
- * `FR-005`/`FR-009` — are unit-testable without touching the real filesystem
- * or the real rspack build. `rspack.config.ts` calls this with `existsSync`;
+ * A pure function of (env, fileExists), so the two failures worth getting
+ * right — an unknown environment, and an environment naming a file that
+ * doesn't exist — are unit-testable without touching the real filesystem or
+ * the real rspack build. `rspack.config.ts` calls this with `existsSync`;
  * tests call it with a fake.
  */
 export function resolveRegistrySourcePath(
   federationEnv: string | undefined,
   fileExists: (path: string) => boolean,
 ): string {
-  // FR-005: no configuration required to start.
+  // No configuration required to start: dev is the default.
   const env = federationEnv ?? 'dev';
 
   if (!isEnvironment(env)) {

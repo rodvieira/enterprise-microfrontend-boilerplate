@@ -15,7 +15,7 @@ function sortIndicator(active: boolean, direction: SortDirection): string {
   return direction === 'asc' ? ' ▲' : ' ▼';
 }
 
-/** Wraps the shared design system's Table (FR-002) — no bespoke table markup. */
+/** Wraps the shared design system's Table — no bespoke table markup. */
 export function UserTable({ users, sortColumn, sortDirection, onSort }: UserTableProps) {
   function header(label: string, column: SortColumn) {
     const active = sortColumn === column;

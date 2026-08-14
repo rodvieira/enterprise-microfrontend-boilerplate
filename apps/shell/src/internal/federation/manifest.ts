@@ -11,7 +11,7 @@ const REGISTRY_URL = 'remotes.json';
 /**
  * A registry that failed validation. Always names REGISTRY_URL, and includes
  * the environment field when the document was parseable enough to have one —
- * satisfying FR-009's requirement to name the file and the environment.
+ * so a failure always names both the file and the environment.
  */
 export class RegistryError extends Error {}
 
@@ -115,7 +115,7 @@ function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): Re
 /**
  * Fetches and validates the registry the running host was deployed with.
  * Never re-fetched after startup — a registry change is a deployment, not a
- * runtime event (research D3).
+ * runtime event.
  */
 export async function fetchRegistry(
   hostOwnedRoutePaths: readonly string[] = [],

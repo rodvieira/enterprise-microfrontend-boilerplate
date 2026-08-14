@@ -2,7 +2,7 @@ import type { DashboardOverview, FetchState, KpiMetric } from '../data/types';
 import { KpiCard } from './kpi-card';
 
 /**
- * FR-006's two KPIs, known by id even before the fetch resolves, so a
+ * Both KPIs, known by id even before the fetch resolves, so a
  * loading card can still show its real label instead of a placeholder.
  */
 const KPI_ORDER: readonly { id: string; label: string }[] = [

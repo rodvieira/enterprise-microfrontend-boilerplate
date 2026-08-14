@@ -24,7 +24,7 @@ import '../internal/styles.css';
  *
  * Deliberately no <AuthProvider> here: when composed inside the shell, this
  * component renders inside the shell's own <AuthProvider> (React context is
- * shared because @enterprise-mfe/auth is an MF singleton — FR-005). Only the
+ * shared because @enterprise-mfe/auth is an MF singleton). Only the
  * standalone dev entry (bootstrap.tsx) needs its own provider, since it has
  * no shell ancestor to supply one.
  */
@@ -36,7 +36,7 @@ export function App({ basePath }: RemoteAppProps) {
 
   // 004-admin-remote's headline proof: a role change in admin bumps this
   // count live, with no reload and no direct coupling — the update travels
-  // only through packages/event-bus (research D3: a simple increment
+  // only through packages/event-bus (a simple increment
   // against whatever the last fetch resolved, not a recomputation from
   // admin's user list, which this remote has no reason to know about).
   const [roleChangeBumps, setRoleChangeBumps] = useState(0);

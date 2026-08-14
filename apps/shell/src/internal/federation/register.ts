@@ -26,7 +26,7 @@ export function describeRemote(registration: RemoteRegistration): string {
  * Runs every registration through origin-guard.ts before calling the
  * Module Federation runtime's registerRemotes(). A refused remote is dropped
  * here — it never reaches registerRemotes, so it never becomes a fetch
- * attempt, let alone a RemoteLoadState (FR-016–FR-018).
+ * attempt, let alone a RemoteLoadState.
  */
 export async function registerAllowedRemotes(registry: RemoteRegistry): Promise<RegisterOutcome> {
   const registered: RemoteRegistration[] = [];

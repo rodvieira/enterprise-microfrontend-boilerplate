@@ -32,7 +32,7 @@ const ROLE_CYCLE: readonly Role[] = ['admin', 'editor', 'viewer'];
 /**
  * 27 seeded users — enough to force pagination at any reasonable page size
  * (data-model.md). This project has no backend; this is the entire "data
- * source" (003-dashboard-remote research D5's same pattern).
+ * source" — the same pattern apps/dashboard uses.
  */
 export function createUserFixtures(): User[] {
   const users: User[] = [];

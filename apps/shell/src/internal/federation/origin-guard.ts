@@ -20,7 +20,7 @@ function decide(
  * 2. its origin must be on the allow-list.
  * 3. the transport must be secure, unless the host is loopback.
  *
- * This is the security boundary of the whole composition (FR-016–FR-018) — it
+ * This is the security boundary of the whole composition — it
  * runs before any remote code is fetched, so a refusal never becomes a load
  * attempt. See register.ts for where that ordering is enforced.
  */

@@ -16,7 +16,7 @@ type Mode = 'invite' | 'edit';
 const ROLES: readonly Role[] = ['admin', 'editor', 'viewer'];
 
 /**
- * One modal for both invite and role-change (FR-008-FR-011), gated by
+ * One modal for both invite and role-change, gated by
  * useCanWriteUsers — not offered at all without users:write.
  */
 export function UserFormModal({ users, onInvite, onChangeRole }: UserFormModalProps) {

@@ -18,7 +18,7 @@ import '../internal/styles.css';
  *
  * Deliberately no <AuthProvider> here: when composed inside the shell, this
  * component renders inside the shell's own <AuthProvider> (React context is
- * shared because @enterprise-mfe/auth is an MF singleton — FR-005). Only the
+ * shared because @enterprise-mfe/auth is an MF singleton). Only the
  * standalone dev entry (bootstrap.tsx) needs its own provider.
  */
 export function App({ basePath }: RemoteAppProps) {

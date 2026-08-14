@@ -26,9 +26,8 @@ function ChartFrame({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Renders to inline SVG (research D3) — no global stylesheet, no canvas
- * registry, nothing to leak into the shell's chrome or any other region
- * (FR-010, FR-011).
+ * Renders to inline SVG — no global stylesheet, no canvas registry, nothing
+ * to leak into the shell's chrome or any other region.
  */
 export function ActivityChart({ state }: ActivityChartProps) {
   if (state.status === 'idle' || state.status === 'loading') {

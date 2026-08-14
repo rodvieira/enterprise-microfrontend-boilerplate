@@ -7,7 +7,7 @@ export interface PaginationControlsProps {
   onPrevious: () => void;
 }
 
-/** Button-based prev/next, admin-local — research D6. */
+/** Button-based prev/next. Admin-local: no other app needs this control. */
 export function PaginationControls({
   page,
   pageCount,

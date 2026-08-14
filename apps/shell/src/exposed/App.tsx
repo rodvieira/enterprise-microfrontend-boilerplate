@@ -97,7 +97,7 @@ function createAppRouter() {
 
 /**
  * What bootstrap.tsx mounts. This is the shell's public entry, the same
- * exposed/ vs internal/ split every remote uses (constitution Principle I) —
+ * exposed/ vs internal/ split every remote uses (ADR-0006) —
  * even though the shell exposes nothing over federation today.
  */
 export function App() {
@@ -105,9 +105,9 @@ export function App() {
   const [registeredRemotes, setRegisteredRemotes] = useState<readonly RemoteRegistration[]>([]);
 
   useEffect(() => {
-    // Fire-and-forget: the frame renders immediately and never waits on this
-    // (FR-001, research D3 consequences). Runs origin control and registers
-    // every allowed remote with the MF runtime at startup (FR-016–FR-018),
+    // Fire-and-forget: the frame renders immediately and never waits on
+    // this. Runs origin control and registers every allowed remote with the
+    // MF runtime at startup,
     // even if the person never navigates to a remote's route — a refusal
     // must be decided and logged immediately, not deferred until someone
     // happens to visit that path. `discoverRemoteRoutes` is memoized per
