@@ -54,7 +54,10 @@ push back and point to this rule.
 - `pnpm e2e` → Playwright, shell composing both remotes
 - `pnpm check:boundaries` → dependency-cruiser, fails on cross-app relative imports
 - `pnpm check:shared-deps` → singleton drift check
+- `pnpm check:package-exports` → packs each publishable package and verifies its
+  `publishConfig.exports` resolve inside the tarball (run after `pnpm build`)
 - `pnpm audit --audit-level=high` → CVE baseline
+- `pnpm eject` → one-time: rename the scope, swap the example remotes for your own
 
 ## Auth (see ADR-0009, docs/auth-strategy.md)
 

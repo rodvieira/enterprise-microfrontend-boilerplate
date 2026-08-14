@@ -6,12 +6,20 @@
   "type": "module",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "restricted",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
   },
   "exports": {
     ".": "./src/index.ts"
   },
+  "files": ["dist"],
   "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {

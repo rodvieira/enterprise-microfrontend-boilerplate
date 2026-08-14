@@ -40,6 +40,11 @@ jobs:
       - name: Shared deps drift check
         run: pnpm check:shared-deps
 
+      # Runs after Build: it packs what packages/*/dist actually contains, so
+      # an unbuilt tree would report a false failure.
+      - name: Publishable package shape
+        run: pnpm check:package-exports
+
       # Chromium only, matching playwright.config.ts's default project — no
       # cross-browser projects are defined yet (005-guard-rails research D2).
       - name: Install Playwright browsers
