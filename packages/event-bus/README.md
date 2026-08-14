@@ -61,3 +61,20 @@ A topic not listed here fails to type-check at both `publish()` and
 `subscribe()` call sites — the same discipline `Permission` and `Role`
 already use in `@enterprise-mfe/shared-types`. Adding a second event later is
 a type addition here, not an API change.
+
+## Cross-tab validation
+
+Same-tab delivery is guaranteed by the compiler: publisher and subscriber
+are one build. Cross-tab delivery is not — two tabs can be running two
+independently-deployed builds of the same remote, so an older tab can post
+the payload shape *its* `EventMap` described.
+
+So payloads arriving over `BroadcastChannel` are checked against a
+type-guard per topic before delivery. Anything that fails — an unknown
+topic, a mismatched payload, a message that is not a bus message — is
+dropped with a `console.warn`, never thrown: a newer tab publishing a
+topic this build has not heard of is expected during a rollout.
+
+Adding a topic to `EventMap` requires adding its validator; `EventValidators`
+is a mapped type over `EventMap`, so omitting one is a type error. See
+[ADR-0025](../../docs/decisions/0025-cross-tab-payload-validation.md).
