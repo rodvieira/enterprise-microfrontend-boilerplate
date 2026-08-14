@@ -6,13 +6,22 @@
   "type": "module",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "restricted",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./styles.css": "./dist/tokens.css"
+    }
   },
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/tokens.css"
   },
+  "files": ["dist"],
   "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --publicDir src/styles",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
