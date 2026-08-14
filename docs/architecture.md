@@ -117,6 +117,30 @@ The event set is a closed, typed union
 type-check at both `publish()` and `subscribe()`, the same discipline
 `Role` and `Permission` already use in `packages/shared-types`.
 
+## Styling across remotes
+
+Every app imports Tailwind and the design system's tokens itself:
+
+```css
+@import "tailwindcss";
+@import "@enterprise-mfe/ui/styles.css";
+```
+
+That means a composed page carries one Tailwind preflight per app — about
+24 KB of CSS each, three times over on this repository's own deployment.
+That duplication is deliberate rather than unnoticed: a remote with no
+preflight of its own renders correctly only inside this shell, which
+would break the standalone-parity guarantee that lets any remote move to
+its own repository.
+
+The hazard worth guarding is not the duplication but **divergence**. Two
+remotes on different Tailwind majors ship different resets, whichever
+loads last wins, and base elements across the whole page quietly
+restyle — with nothing failing and nothing to grep for. So `tailwindcss`
+and `@tailwindcss/postcss` are covered by `pnpm check:shared-deps`
+alongside the runtime singletons: upgrading Tailwind is a coordinated
+change across every app, enforced in CI. See ADR-0024.
+
 ## Boundary enforcement
 
 `dependency-cruiser` (`pnpm check:boundaries`) enforces two structural rules
