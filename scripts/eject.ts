@@ -19,6 +19,7 @@ import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'no
 import { join, relative } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
+import { formatPaths } from '../turbo/generators/remote/actions/format-output';
 import {
   nextDevPort,
   registerDevRemote,
@@ -395,23 +396,14 @@ and commit the result, CI's \`pnpm install --frozen-lockfile\` will fail.
  * Hands the result to Biome rather than trying to emit
  * already-formatted output.
  *
- * Two things here are formatted by construction and not by this script: the
- * registry JSON that registerDevRemote writes with a plain
- * `JSON.stringify(…, null, 2)`, and the generated placeholder component,
- * whose prose re-wraps depending on how long the label is. Both predate the
- * eject — `pnpm turbo gen remote` alone leaves the same two files needing a
- * format pass — so the fix belongs here, once, rather than as a second
- * formatter implementation inside the generator.
+ * The whole repository, not just the generated app: the eject rewrites
+ * imports, package names, and prose across almost every file, and a scope of
+ * a different length re-flows lines the formatter cares about.
  */
 function formatWrittenFiles(): void {
-  try {
-    execFileSync('node_modules/.bin/biome', ['check', '--write', '.'], {
-      cwd: REPO_ROOT,
-      stdio: 'ignore',
-    });
-  } catch {
+  if (!formatPaths(REPO_ROOT, ['.'])) {
     console.warn(
-      'eject: could not run Biome automatically — run `pnpm lint:fix` to format the generated files.',
+      'eject: could not run Biome automatically — run `pnpm lint:fix` to format the result.',
     );
   }
 }
