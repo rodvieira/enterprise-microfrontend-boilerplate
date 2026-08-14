@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import type { PlopTypes } from '@turbo/gen';
+import { formatPaths } from './remote/actions/format-output';
 import { nextDevPort, registerDevRemote } from './remote/actions/register-dev-remote';
 import { updateArchitectureDocs } from './remote/actions/update-architecture-docs';
 import { writeApp } from './remote/actions/write-app';
@@ -57,6 +58,18 @@ function generateRemote(repoRoot: string, answers: RemoteAnswers): string {
     summary.push(
       'NOT done: staging/production registry registration — a deployment decision (ADR-0012, FR-010), not a scaffolding one.',
     );
+
+    // Monorepo mode only: every path here is inside this repository, so this
+    // repository's formatter is the right one to apply. A standalone project
+    // owns its own tooling and is deliberately left alone.
+    const formatted = formatPaths(repoRoot, [
+      relative(repoRoot, targetDir),
+      'apps/shell/src/internal/federation/remotes.dev.json',
+      'docs/architecture.md',
+    ]);
+    if (!formatted) {
+      summary.push('Could not run Biome — run `pnpm lint:fix` to format the generated files.');
+    }
   } else {
     summary.push('No registry touched — standalone mode owns no registry to write to (FR-016).');
     summary.push(
