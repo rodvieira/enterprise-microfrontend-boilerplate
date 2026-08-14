@@ -92,6 +92,12 @@ describe('cross-tab payload validation', () => {
   const unsubscribers: Array<() => void> = [];
   let otherTab: BroadcastChannel;
 
+  /**
+   * A payload the validator accepts, used only to mark a point in the
+   * channel's queue. Never asserted on.
+   */
+  const SENTINEL = { userId: 'sentinel', newRole: 'viewer' } as const;
+
   beforeEach(() => {
     otherTab = new BroadcastChannel('@enterprise-mfe/event-bus');
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -103,17 +109,50 @@ describe('cross-tab payload validation', () => {
     vi.restoreAllMocks();
   });
 
-  /** Lets the channel's async delivery run before asserting. */
-  const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+  /**
+   * Waits until everything already posted has been processed.
+   *
+   * Not a timeout: BroadcastChannel delivery is asynchronous and, under CI
+   * load, arbitrarily slow — a `setTimeout(0)` here let one test's message
+   * arrive during the next one, which is exactly how this suite first went
+   * flaky. Delivery preserves order, so posting a sentinel *after* the
+   * message under test and waiting for the sentinel proves the message
+   * under test has already been handled, whether it was delivered or
+   * dropped.
+   */
+  function flush(): Promise<void> {
+    return new Promise((resolve) => {
+      const stop = subscribe(TOPIC, (payload) => {
+        if (payload.userId === SENTINEL.userId) {
+          stop();
+          resolve();
+        }
+      });
+      otherTab.postMessage({ topic: TOPIC, payload: SENTINEL });
+    });
+  }
+
+  /** Everything the subscriber saw, minus the sentinels used to synchronise. */
+  function recorder(): { received: unknown[]; handler: (payload: unknown) => void } {
+    const received: unknown[] = [];
+    return {
+      received,
+      handler: (payload) => {
+        if ((payload as { userId?: string })?.userId !== SENTINEL.userId) {
+          received.push(payload);
+        }
+      },
+    };
+  }
 
   it("delivers a payload that matches this build's contract", async () => {
-    const handler = vi.fn();
+    const { received, handler } = recorder();
     unsubscribers.push(subscribe(TOPIC, handler));
 
     otherTab.postMessage({ topic: TOPIC, payload: PAYLOAD });
-    await settle();
+    await flush();
 
-    expect(handler).toHaveBeenCalledWith(PAYLOAD);
+    expect(received).toEqual([PAYLOAD]);
   });
 
   it.each([
@@ -123,35 +162,35 @@ describe('cross-tab payload validation', () => {
     ['a non-object payload', 'user-1 is now an editor'],
     ['null', null],
   ])('drops %s instead of delivering it as typed', async (_label, payload) => {
-    const handler = vi.fn();
+    const { received, handler } = recorder();
     unsubscribers.push(subscribe(TOPIC, handler));
 
     otherTab.postMessage({ topic: TOPIC, payload });
-    await settle();
+    await flush();
 
-    expect(handler).not.toHaveBeenCalled();
+    expect(received).toEqual([]);
     expect(console.warn).toHaveBeenCalled();
   });
 
   it('ignores a topic this build has never heard of, which a rollout produces', async () => {
-    const handler = vi.fn();
+    const { received, handler } = recorder();
     unsubscribers.push(subscribe(TOPIC, handler));
 
     otherTab.postMessage({ topic: 'user:promoted-to-wizard', payload: { userId: 'user-1' } });
-    await settle();
+    await flush();
 
-    expect(handler).not.toHaveBeenCalled();
+    expect(received).toEqual([]);
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('does not know it'));
   });
 
   it('ignores a message that is not a bus message at all', async () => {
-    const handler = vi.fn();
+    const { received, handler } = recorder();
     unsubscribers.push(subscribe(TOPIC, handler));
 
     otherTab.postMessage('hello from an unrelated library on this origin');
-    await settle();
+    await flush();
 
-    expect(handler).not.toHaveBeenCalled();
+    expect(received).toEqual([]);
     expect(console.warn).toHaveBeenCalled();
   });
 });
