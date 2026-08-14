@@ -1,5 +1,10 @@
 # enterprise-microfrontend-boilerplate
 
+[![CI](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://rodvieira.github.io/enterprise-microfrontend-boilerplate/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![pnpm](https://img.shields.io/badge/pnpm-workspace-f69220)](https://pnpm.io/)
+
 A production-grade starting point for large, scalable React applications
 built on micro-frontend architecture — [Module Federation
 2.0](https://module-federation.io/), via [Rspack](https://rspack.rs/).
@@ -58,15 +63,19 @@ instead of a login flow, deliberately (see
 
 ## Demo & live URLs
 
+![Changing a user's role in the admin remote, in one tab, moving the dashboard remote's active-users KPI in another](docs/assets/cross-remote-kpi.gif)
+
+Two browser tabs. Changing a role in **admin** moves **dashboard**'s
+"active users" KPI — across a tab boundary, with no reload, no shared
+global, and no import between the two remotes. The update travels only
+through the typed event bus.
+
 Live: <https://rodvieira.github.io/enterprise-microfrontend-boilerplate/>
 — the shell composing the real `apps/dashboard` and `apps/admin` remotes,
 deployed to GitHub Pages (see
 [ADR-0018](docs/decisions/0018-github-pages-reference-deploy.md)).
-
-_Pending: a recorded demo GIF of the cross-remote KPI update (`apps/admin`
-→ `packages/event-bus` → `apps/dashboard`, live, no reload). See
-[docs/how-to-deploy.md](docs/how-to-deploy.md) for how to deploy dashboard,
-admin, and the shell to your own static host._
+[docs/how-to-deploy.md](docs/how-to-deploy.md) covers deploying to your
+own static host.
 
 ## Quick start
 
@@ -99,6 +108,28 @@ example remotes.
 
 Run it on a clean working tree: `git reset --hard` is the undo, and the
 command refuses to start without one.
+
+## Stack, and why
+
+Every choice below is recorded as an ADR, including the ones that were
+decided *against* doing something.
+
+| Layer | Choice | Decision |
+|---|---|---|
+| Bundler | Rspack | [ADR-0002](docs/decisions/0002-rspack-over-vite.md) |
+| Federation | Module Federation 2.0 | [ADR-0003](docs/decisions/0003-module-federation-2.md) |
+| UI | React + TypeScript + Tailwind | [ADR-0004](docs/decisions/0004-react-typescript-tailwind.md) |
+| Monorepo | pnpm + Turborepo | [ADR-0005](docs/decisions/0005-pnpm-turborepo.md) |
+| Module boundary | `exposed/` vs `internal/` | [ADR-0006](docs/decisions/0006-exposed-internal-boundary.md) |
+| Remote portability | Monorepo *and* standalone parity | [ADR-0007](docs/decisions/0007-monorepo-and-standalone-parity.md) |
+| Auth | A contract, not a login flow | [ADR-0009](docs/decisions/0009-auth-contract-not-implementation.md) |
+| Remote discovery | Registry fetched at runtime | [ADR-0012](docs/decisions/0012-runtime-registry-fetch.md) |
+| Packaging | `publishConfig.exports` → `dist/` | [ADR-0020](docs/decisions/0020-packages-build-for-publishing.md) |
+| Adoption | `pnpm eject` | [ADR-0021](docs/decisions/0021-eject-adoption-path.md) |
+| Rollback | Optional `version` per remote | [ADR-0022](docs/decisions/0022-registry-version-and-rollback.md) |
+| Observability | A contract, not a vendor | [ADR-0023](docs/decisions/0023-telemetry-contract.md) |
+| CSS | Per-app Tailwind, version guarded | [ADR-0024](docs/decisions/0024-css-isolation.md) |
+| Cross-tab events | Validated at the receiving edge | [ADR-0025](docs/decisions/0025-cross-tab-payload-validation.md) |
 
 ## Learn more
 
