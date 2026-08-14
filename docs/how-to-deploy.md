@@ -89,6 +89,46 @@ GitHub Pages project page serves from `/<repo>/`, not `/`, which is why
 `remotes.<env>.json` also carries an optional `basePath` field — see
 ADR-0018 for what that changes in the shell.
 
+## Immutable versions, and rolling one back
+
+The mechanism above already makes rollback cheap, but only if remotes are
+published to **immutable, versioned paths** rather than overwritten in
+place:
+
+```text
+https://cdn.example/dashboard/1.4.0/mf-manifest.json
+https://cdn.example/dashboard/1.4.1/mf-manifest.json
+https://cdn.example/dashboard/1.4.2/mf-manifest.json   ← current
+```
+
+A registry entry then names one of them, and states which one it is:
+
+```jsonc
+{
+  "name": "dashboard",
+  "entry": "https://cdn.example/dashboard/1.4.2/mf-manifest.json",
+  "version": "1.4.2",
+  "routePath": "/dashboard",
+  "label": "Dashboard"
+}
+```
+
+**Rolling back is editing that string and redeploying the shell's
+`remotes.<env>.json`.** No remote is rebuilt; no remote is redeployed;
+1.4.1 was never deleted, so it is still there to point at. The same
+mechanism gives you canary and blue/green — two environments' registries
+pointing at different versions of the same remote.
+
+`version` is optional and the host never resolves or compares it: `entry`
+alone decides what loads. It exists so that "which build was in
+production when this broke?" is answered by the same file that decided
+what to load. The shell includes it in every federation diagnostic
+(`dashboard@1.4.2` rather than `dashboard`). A remote served from a
+mutable path — dev, or any host that overwrites in place — should simply
+omit the field rather than state a version it cannot guarantee; a
+present-but-empty or non-string `version` is rejected at startup, because
+that is a deploy pipeline substituting a value it failed to compute.
+
 ## Two path namespaces that must never collide
 
 A remote's `routePath` (the URL the shell's own router owns, e.g.

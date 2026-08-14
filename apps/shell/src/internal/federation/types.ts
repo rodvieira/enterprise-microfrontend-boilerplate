@@ -15,6 +15,17 @@ export interface RemoteRegistration {
   routePath: string;
   /** What navigation shows a person. */
   label: string;
+  /**
+   * Which build of the remote this entry points at. Optional: a remote
+   * served from a mutable path (dev, or a host that overwrites in place)
+   * genuinely has no version to state, and claiming one would be a lie.
+   *
+   * The host never resolves or compares it — `entry` alone decides what
+   * loads. It exists so the answer to "which version was in production when
+   * this broke?" is in the same file that decided what to load, rather than
+   * inferred from a URL by whoever is reading a stack trace at the time.
+   */
+  version?: string;
 }
 
 export interface RemoteRegistry {

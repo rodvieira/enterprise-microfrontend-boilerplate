@@ -95,6 +95,85 @@ describe('fetchRegistry', () => {
     await expect(fetchRegistry(['/settings'])).rejects.toThrow(/the shell itself/);
   });
 
+  it('carries an optional version through untouched', async () => {
+    const dashboard = {
+      name: 'dashboard',
+      entry: 'https://cdn.example/dashboard/1.4.2/mf-manifest.json',
+      routePath: '/dashboard',
+      label: 'Dashboard',
+      version: '1.4.2',
+    };
+    mockFetch(() =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            environment: 'production',
+            allowedOrigins: ['https://cdn.example'],
+            remotes: [dashboard],
+          }),
+      }),
+    );
+
+    const registry = await fetchRegistry();
+    expect(registry.remotes[0]?.version).toBe('1.4.2');
+  });
+
+  it('accepts a remote that states no version — a mutable entry has none to state', async () => {
+    mockFetch(() =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            environment: 'dev',
+            allowedOrigins: ['http://localhost:3001'],
+            remotes: [
+              {
+                name: 'dashboard',
+                entry: 'http://localhost:3001/mf-manifest.json',
+                routePath: '/dashboard',
+                label: 'Dashboard',
+              },
+            ],
+          }),
+      }),
+    );
+
+    const registry = await fetchRegistry();
+    expect(registry.remotes[0]?.version).toBeUndefined();
+  });
+
+  it.each([null, 42, ''])('rejects a present-but-unusable version (%j)', async (version) => {
+    // A pipeline that substituted a value it failed to compute. Dropping it
+    // silently would lose the one fact worth having during an incident.
+    mockFetch(() =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            environment: 'production',
+            allowedOrigins: [],
+            remotes: [
+              {
+                name: 'dashboard',
+                entry: 'https://cdn.example/d/mf-manifest.json',
+                routePath: '/dashboard',
+                label: 'Dashboard',
+                version,
+              },
+            ],
+          }),
+      }),
+    );
+
+    await expect(fetchRegistry()).rejects.toThrow(RegistryError);
+    await expect(fetchRegistry()).rejects.toThrow(/"dashboard"/);
+    await expect(fetchRegistry()).rejects.toThrow(/version/);
+  });
+
   it('accepts an empty registry — zero remotes is a valid state', async () => {
     mockFetch(() =>
       Promise.resolve({

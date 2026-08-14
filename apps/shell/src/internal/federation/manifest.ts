@@ -57,6 +57,26 @@ function assertNoDuplicateNames(environment: string, remotes: readonly RemoteReg
   }
 }
 
+/**
+ * `version` is optional, but a present-and-malformed one is rejected rather
+ * than ignored. A registry that says `"version": null` is a deploy pipeline
+ * substituting a value it failed to compute — silently dropping it would
+ * lose exactly the fact worth having during an incident.
+ */
+function assertVersionsAreUsable(
+  environment: string,
+  remotes: readonly RemoteRegistration[],
+): void {
+  for (const remote of remotes) {
+    if (!('version' in remote) || remote.version === undefined) continue;
+    if (typeof remote.version !== 'string' || remote.version.trim().length === 0) {
+      fail(
+        `[environment: ${environment}] remote "${remote.name}" has a "version" of ${JSON.stringify(remote.version)}. Omit the field entirely if this remote has no version to state.`,
+      );
+    }
+  }
+}
+
 function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): RemoteRegistry {
   if (typeof document !== 'object' || document === null) {
     fail('expected a JSON object at the top level.');
@@ -87,6 +107,7 @@ function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): Re
 
   assertNoDuplicateNames(registry.environment, registry.remotes);
   assertNoRoutePathCollisions(registry.environment, registry.remotes, hostOwnedRoutePaths);
+  assertVersionsAreUsable(registry.environment, registry.remotes);
 
   return registry;
 }
