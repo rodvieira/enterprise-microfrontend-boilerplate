@@ -5,6 +5,7 @@ import { nextDevPort, registerDevRemote } from './remote/actions/register-dev-re
 import { updateArchitectureDocs } from './remote/actions/update-architecture-docs';
 import { writeApp } from './remote/actions/write-app';
 import { createRemotePrompts } from './remote/prompts';
+import { resolveSourceManifest } from './remote/shared-versions';
 import type { RemoteAnswers } from './remote/types';
 import { validateOutputDirAvailable } from './remote/validate';
 
@@ -78,16 +79,22 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   // `pnpm turbo gen remote`, not by inspecting the bundler config.
   const repoRoot = dirname(dirname(plop.getPlopfilePath()));
 
-  // Precondition 1 (generator-contract.md): apps/dashboard and apps/admin
-  // both existing is what proves this is a real, uncorrupted checkout of
-  // this monorepo — the two real remotes the templates were extracted from.
-  const requiredApps = ['apps/dashboard', 'apps/admin'];
-  const missing = requiredApps.filter((path) => !existsSync(join(repoRoot, path)));
-  if (missing.length > 0) {
+  // Precondition 1 (generator-contract.md): the generator needs the shell to
+  // register a remote into, and at least one existing remote to read shared
+  // versions from (shared-versions.ts).
+  //
+  // This used to require apps/dashboard AND apps/admin by name. That made a
+  // correct, fully-working checkout fail the moment the example remotes were
+  // swapped for a company's own — which is exactly what `pnpm eject` does.
+  // What actually has to hold is structural, so that is what gets checked:
+  // resolveSourceManifest throws with its own, more specific message when no
+  // remote qualifies.
+  if (!existsSync(join(repoRoot, 'apps/shell'))) {
     throw new Error(
-      `pnpm turbo gen remote: expected ${missing.join(' and ')} to exist — run this from a complete checkout of the monorepo root, not a partial one.`,
+      'pnpm turbo gen remote: expected apps/shell to exist — run this from the monorepo root, not a partial checkout.',
     );
   }
+  resolveSourceManifest(repoRoot);
 
   plop.setActionType('generate-remote', (answers) =>
     generateRemote(repoRoot, answers as RemoteAnswers),

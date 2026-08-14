@@ -1,13 +1,22 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
- * The source of truth this feature reads live at generation time (research
- * D3) — apps/dashboard was picked because it already declares every
- * singleton scripts/check-shared-deps.ts checks. Never a template literal:
- * see turbo/generators/remote/templates/monorepo/package.json.template.
+ * The generator reads every version live at generation time (research D3)
+ * from a real remote's manifest — never a template literal, see
+ * turbo/generators/remote/templates/monorepo/package.json.template.
+ *
+ * *Which* remote is discovered rather than hardcoded. It used to be
+ * literally `apps/dashboard/package.json`, which made the generator break
+ * outright the moment the example remotes were removed — exactly what
+ * `pnpm eject` does for a company adopting this boilerplate. Any remote
+ * declaring the full singleton set is an equally valid source, so the
+ * generator asks for one instead of naming one.
  */
-const SOURCE_MANIFEST = 'apps/dashboard/package.json';
+const APPS_DIR = 'apps';
+
+/** The host is not a remote: it does not declare the full singleton set. */
+const NOT_A_REMOTE: readonly string[] = ['shell'];
 
 /**
  * Mirrors scripts/check-shared-deps.ts's SINGLETONS exactly. Kept as a
@@ -54,47 +63,95 @@ interface PackageManifest {
   devDependencies?: Record<string, string>;
 }
 
+function candidateAppDirs(repoRoot: string): string[] {
+  let entries: string[];
+  try {
+    entries = readdirSync(join(repoRoot, APPS_DIR), { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name);
+  } catch {
+    return [];
+  }
+  // Sorted so the same checkout always resolves the same manifest — an
+  // arbitrary readdir order would make a generated app's versions depend on
+  // filesystem iteration order.
+  return entries.filter((name) => !NOT_A_REMOTE.includes(name)).sort();
+}
+
 /**
- * Reads react/react-dom/react-router/@enterprise-mfe/auth/@enterprise-mfe/event-bus
- * version ranges directly from apps/dashboard/package.json. Throws loudly if
- * any of them is missing there, rather than generating a package.json that
- * would silently fail check:shared-deps (research D3).
+ * The first remote under apps/ that declares every REQUIRED_SINGLETONS
+ * entry, as a repo-relative manifest path.
+ *
+ * Throws naming each candidate and exactly what it is missing, rather than
+ * a bare "no source found" — when this fails, the useful question is always
+ * "which singleton did that remote forget to declare?".
  */
-export function readSharedVersions(repoRoot: string): SharedVersions {
-  const manifestPath = join(repoRoot, SOURCE_MANIFEST);
-  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as PackageManifest;
-  const deps = manifest.dependencies ?? {};
+export function resolveSourceManifest(repoRoot: string): string {
+  const candidates = candidateAppDirs(repoRoot);
+  const rejected: string[] = [];
 
-  const missing: string[] = [];
-  const versions = {} as Record<string, string>;
-
-  for (const name of REQUIRED_SINGLETONS) {
-    const range = deps[name];
-    if (!range) {
-      missing.push(name);
+  for (const name of candidates) {
+    const manifestPath = join(APPS_DIR, name, 'package.json');
+    let manifest: PackageManifest;
+    try {
+      manifest = JSON.parse(readFileSync(join(repoRoot, manifestPath), 'utf8')) as PackageManifest;
+    } catch {
+      rejected.push(`${manifestPath} (no readable package.json)`);
       continue;
     }
-    versions[name] = range;
+    const deps = manifest.dependencies ?? {};
+    const missing = REQUIRED_SINGLETONS.filter((singleton) => !deps[singleton]);
+    if (missing.length === 0) {
+      return manifestPath;
+    }
+    rejected.push(`${manifestPath} (missing: ${missing.join(', ')})`);
   }
 
-  if (missing.length > 0) {
-    throw new Error(
-      `shared-versions: ${SOURCE_MANIFEST} is missing required singleton(s): ${missing.join(', ')}. scripts/check-shared-deps.ts's SINGLETONS expects these to be declared there.`,
-    );
+  const detail =
+    rejected.length > 0
+      ? `Checked:\n  - ${rejected.join('\n  - ')}`
+      : `No app other than ${NOT_A_REMOTE.join('/')} exists under ${APPS_DIR}/.`;
+
+  throw new Error(
+    `shared-versions: no remote under ${APPS_DIR}/ declares every required singleton ` +
+      `(${REQUIRED_SINGLETONS.join(', ')}), so there is nothing to read generated versions from.\n${detail}`,
+  );
+}
+
+/**
+ * Reads every REQUIRED_SINGLETONS range from the discovered source manifest
+ * (resolveSourceManifest). Throws loudly when no remote declares them all,
+ * rather than generating a package.json that would silently fail
+ * check:shared-deps (research D3).
+ */
+export function readSharedVersions(repoRoot: string): SharedVersions {
+  const sourceManifest = resolveSourceManifest(repoRoot);
+  const manifest = JSON.parse(
+    readFileSync(join(repoRoot, sourceManifest), 'utf8'),
+  ) as PackageManifest;
+  const deps = manifest.dependencies ?? {};
+
+  const versions = {} as Record<string, string>;
+  // resolveSourceManifest only returns a manifest that declares all of
+  // them, so there is no missing-singleton case left to handle here.
+  for (const name of REQUIRED_SINGLETONS) {
+    versions[name] = deps[name] as string;
   }
 
   return versions as SharedVersions;
 }
 
 /**
- * Reads REQUIRED_TOOL_VERSIONS directly from apps/dashboard/package.json's
+ * Reads REQUIRED_TOOL_VERSIONS from the same discovered source manifest's
  * dependencies and devDependencies (merged — @module-federation/enhanced is
  * a runtime dependency there, the rest are dev tooling). Same live-read
  * discipline as readSharedVersions, for the same reason.
  */
 export function readToolVersions(repoRoot: string): ToolVersions {
-  const manifestPath = join(repoRoot, SOURCE_MANIFEST);
-  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as PackageManifest;
+  const sourceManifest = resolveSourceManifest(repoRoot);
+  const manifest = JSON.parse(
+    readFileSync(join(repoRoot, sourceManifest), 'utf8'),
+  ) as PackageManifest;
   const merged = { ...manifest.dependencies, ...manifest.devDependencies };
 
   const missing: string[] = [];
@@ -111,7 +168,7 @@ export function readToolVersions(repoRoot: string): ToolVersions {
 
   if (missing.length > 0) {
     throw new Error(
-      `shared-versions: ${SOURCE_MANIFEST} is missing expected tool version(s): ${missing.join(', ')}.`,
+      `shared-versions: ${sourceManifest} is missing expected tool version(s): ${missing.join(', ')}.`,
     );
   }
 

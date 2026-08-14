@@ -80,6 +80,26 @@ automatically. `/dashboard` and `/admin` are both live; switch users'
 roles in admin and watch dashboard's "active users" KPI update in the
 other tab, live.
 
+## Adopting this for your own company
+
+`dashboard` and `admin` exist to prove the conventions generalize — they
+are examples, not something you ship. When you are ready to make this
+repository yours:
+
+```bash
+pnpm eject --scope @acme --first-remote payments
+```
+
+That renames the `@enterprise-mfe` scope to yours, scaffolds your first
+real remote in place of the two examples, and removes the artifacts of
+*this* project's build process (its specs, ADRs, and blueprint). It runs
+once, then deletes itself, and writes `EJECT-TODO.md` listing what a
+script should not decide for you — mostly prose that still describes the
+example remotes.
+
+Run it on a clean working tree: `git reset --hard` is the undo, and the
+command refuses to start without one.
+
 ## Learn more
 
 - **[docs/blueprint.html](docs/blueprint.html)** — the complete technical

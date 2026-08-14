@@ -48,6 +48,15 @@ export default defineConfig({
           include: ['*.test.ts'],
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'eject',
+          root: './scripts/eject',
+          environment: 'node',
+          include: ['*.test.ts'],
+        },
+      },
       browserProject('@enterprise-mfe/ui', './packages/ui'),
       browserProject('@enterprise-mfe/auth', './packages/auth'),
       browserProject('@enterprise-mfe/federation-utils', './packages/federation-utils'),
