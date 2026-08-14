@@ -13,7 +13,7 @@ later sprints.
 | [`@enterprise-mfe/config-biome`](../packages/config-biome) | Shared lint and format rules. | No |
 | [`@enterprise-mfe/federation-utils`](../packages/federation-utils) | `useRemote()` + `RemoteBoundary` — remote loading and error containment, so no app hand-rolls federation loading mechanics. Bundler- and MF-agnostic by design (a loader function, not `React.lazy`/Suspense) — see research D5. | No |
 | [`@enterprise-mfe/event-bus`](../packages/event-bus) | Typed pub/sub for cross-remote communication without direct coupling — the mechanism behind the admin → dashboard live role-change/KPI-update demo. Same-tab delivery plus a same-origin `BroadcastChannel` relay for cross-tab delivery — see `004-admin-remote` research D2. | **Yes** |
-| `@enterprise-mfe/telemetry` | *Planned (sprint 8)* — thin observability wrapper. | No |
+| [`@enterprise-mfe/telemetry`](../packages/telemetry) | Remote-observability contract: `<TelemetryProvider>`, `useTelemetry()`, and four events separating a load failure from a render crash. Console-backed by default, no vendor — see ADR-0023 and `docs/how-to-connect-telemetry.md`. | **Yes** |
 | `@enterprise-mfe/testing-utils` | *Planned (sprint 6)* — mocks and helpers for testing federation-consuming components. | No |
 
 ## Dependency direction

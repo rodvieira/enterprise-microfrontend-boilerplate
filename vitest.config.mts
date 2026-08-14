@@ -61,6 +61,7 @@ export default defineConfig({
       browserProject('@enterprise-mfe/auth', './packages/auth'),
       browserProject('@enterprise-mfe/federation-utils', './packages/federation-utils'),
       browserProject('@enterprise-mfe/event-bus', './packages/event-bus'),
+      browserProject('@enterprise-mfe/telemetry', './packages/telemetry'),
       browserProject('shell', './apps/shell'),
       browserProject('dashboard', './apps/dashboard'),
       browserProject('admin', './apps/admin'),

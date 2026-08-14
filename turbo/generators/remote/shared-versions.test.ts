@@ -89,7 +89,7 @@ describe('readSharedVersions', () => {
     }
   });
 
-  it("stays in sync with scripts/check-shared-deps.ts's SINGLETONS list", () => {
+  it('never hands out a version scripts/check-shared-deps.ts does not guard', () => {
     const source = readFileSync(join(REPO_ROOT, 'scripts/check-shared-deps.ts'), 'utf8');
     const match = source.match(/const SINGLETONS = \[([\s\S]*?)\] as const;/);
     expect(match).not.toBeNull();
@@ -102,7 +102,19 @@ describe('readSharedVersions', () => {
       .filter((entryMatch): entryMatch is RegExpMatchArray => entryMatch !== null)
       .map((entryMatch) => entryMatch[1]);
 
-    expect(new Set(listedNames)).toEqual(new Set(REQUIRED_SINGLETONS));
+    // A subset, not an exact match. The two lists answer different
+    // questions: check-shared-deps.ts guards *anything* that must agree
+    // wherever it is declared, while REQUIRED_SINGLETONS is what a
+    // generated remote is given a version of. A singleton no remote needs
+    // by default — @enterprise-mfe/telemetry, which the host installs and a
+    // remote only opts into — belongs in the first list and not the second.
+    //
+    // The dangerous direction is the one asserted here: a version the
+    // generator hands out that nothing checks for drift would reintroduce
+    // exactly the silent runtime failure both lists exist to prevent.
+    const guarded = new Set(listedNames);
+    const unguarded = REQUIRED_SINGLETONS.filter((name) => !guarded.has(name));
+    expect(unguarded).toEqual([]);
   });
 });
 

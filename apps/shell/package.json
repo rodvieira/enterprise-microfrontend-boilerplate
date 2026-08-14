@@ -15,6 +15,7 @@
     "@enterprise-mfe/auth": "workspace:*",
     "@enterprise-mfe/federation-utils": "workspace:*",
     "@enterprise-mfe/shared-types": "workspace:*",
+    "@enterprise-mfe/telemetry": "workspace:*",
     "@enterprise-mfe/ui": "workspace:*",
     "@module-federation/enhanced": "^2.8.1",
     "react": "^19.2.8",
