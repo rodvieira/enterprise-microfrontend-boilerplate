@@ -44,6 +44,14 @@ const SINGLETONS = [
   // everything is being sent to its real vendor — a monitoring gap that
   // looks exactly like healthy silence (ADR-0023).
   '@enterprise-mfe/telemetry',
+  // Build-time, unlike everything above it, and here for the same reason
+  // they are: every app ships its own compiled Tailwind, so a composed page
+  // carries one preflight per app. Identical versions make those duplicates
+  // harmless. Different majors make them a silent visual bug — whichever
+  // remote's reset loads last quietly restyles the others' base elements,
+  // with nothing failing and nothing to grep for (ADR-0024).
+  'tailwindcss',
+  '@tailwindcss/postcss',
 ] as const;
 
 const MANIFEST_DIRS = ['apps', 'packages'];
