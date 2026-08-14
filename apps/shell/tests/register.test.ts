@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describeRemote } from '../src/internal/federation/register';
 import type { RemoteRegistry } from '../src/internal/federation/types';
 
 const { registerRemotesMock } = vi.hoisted(() => ({ registerRemotesMock: vi.fn() }));
@@ -72,5 +73,30 @@ describe('registerAllowedRemotes', () => {
     expect(outcome.registered).toHaveLength(0);
     expect(outcome.refused).toHaveLength(1);
     expect(registerRemotesMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('describeRemote', () => {
+  it('names the version when the registry states one', () => {
+    expect(
+      describeRemote({
+        name: 'dashboard',
+        entry: 'https://cdn.example/d/mf-manifest.json',
+        routePath: '/dashboard',
+        label: 'Dashboard',
+        version: '1.4.2',
+      }),
+    ).toBe('dashboard@1.4.2');
+  });
+
+  it('falls back to the bare name rather than inventing a version', () => {
+    expect(
+      describeRemote({
+        name: 'dashboard',
+        entry: 'http://localhost:3001/mf-manifest.json',
+        routePath: '/dashboard',
+        label: 'Dashboard',
+      }),
+    ).toBe('dashboard');
   });
 });
