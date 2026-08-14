@@ -1,4 +1,5 @@
 import { AuthProvider } from '@enterprise-mfe/auth';
+import { TelemetryProvider } from '@enterprise-mfe/telemetry';
 import { useEffect, useState } from 'react';
 import type { PatchRoutesOnNavigationFunctionArgs, RouteObject } from 'react-router';
 import { RouterProvider, createBrowserRouter } from 'react-router';
@@ -50,7 +51,15 @@ function createAppRouter() {
           path: registration.routePath,
           element: (
             <ShellLayout>
-              <RemoteRegion remoteName={registration.name} basePath={registration.routePath} />
+              {/* Spread, not `version={registration.version}`: under
+                  exactOptionalPropertyTypes an absent version and one
+                  explicitly set to undefined are different things, and the
+                  registry omitting the field is the former. */}
+              <RemoteRegion
+                remoteName={registration.name}
+                basePath={registration.routePath}
+                {...(registration.version ? { version: registration.version } : {})}
+              />
             </ShellLayout>
           ),
         })),
@@ -114,10 +123,12 @@ export function App() {
   }, [discoverRemoteRoutes]);
 
   return (
-    <AuthProvider>
-      <RegisteredRemotesProvider value={registeredRemotes}>
-        <RouterProvider router={router} />
-      </RegisteredRemotesProvider>
-    </AuthProvider>
+    <TelemetryProvider>
+      <AuthProvider>
+        <RegisteredRemotesProvider value={registeredRemotes}>
+          <RouterProvider router={router} />
+        </RegisteredRemotesProvider>
+      </AuthProvider>
+    </TelemetryProvider>
   );
 }

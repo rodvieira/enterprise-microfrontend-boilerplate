@@ -39,6 +39,11 @@ const SINGLETONS = [
   // dashboard's subscriber at all. Added in sprint 5 alongside apps/admin
   // (004-admin-remote research D2, constitution Principle III).
   '@enterprise-mfe/event-bus',
+  // The telemetry sink the host installs. Two copies would mean a remote
+  // reporting into its own console-backed default while the host believes
+  // everything is being sent to its real vendor — a monitoring gap that
+  // looks exactly like healthy silence (ADR-0023).
+  '@enterprise-mfe/telemetry',
 ] as const;
 
 const MANIFEST_DIRS = ['apps', 'packages'];
