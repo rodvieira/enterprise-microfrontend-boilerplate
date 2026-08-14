@@ -12,7 +12,7 @@ interface RemoteBoundaryState {
 }
 
 /**
- * Contains a failure to the region it wraps (FR-012). A remote that throws
+ * Contains a failure to the region it wraps. A remote that throws
  * during render — not only during load — must not propagate past this
  * boundary.
  *

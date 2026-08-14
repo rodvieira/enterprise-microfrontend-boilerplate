@@ -3,8 +3,8 @@ import { Button } from '@enterprise-mfe/ui';
 
 /**
  * Shows the signed-in person's name, or a control to sign in — the frame's
- * one visible sign that the session contract from sprint 2 works when
- * compiled and run for real (FR-003).
+ * one visible sign that @enterprise-mfe/auth's session contract works when
+ * compiled and run for real.
  */
 export function SessionIndicator() {
   const { status, user, login, logout } = useAuth();

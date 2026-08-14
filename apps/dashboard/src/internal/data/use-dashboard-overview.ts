@@ -10,7 +10,7 @@ function toError(reason: unknown): Error {
 /**
  * Thin hook wrapping fetch-overview.ts in a FetchState
  * (idle → loading → loaded | failed, data-model.md), reused by all three
- * domain surfaces so they move through loading/error together (FR-008).
+ * domain surfaces so they move through loading/error together.
  */
 export function useDashboardOverview(
   options?: FetchOverviewOptions,

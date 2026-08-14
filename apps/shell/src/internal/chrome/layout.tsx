@@ -19,7 +19,7 @@ export interface ShellLayoutProps {
 
 /**
  * The frame: navigation, layout, and a session indicator, all composed from
- * @enterprise-mfe/ui — never from shell-defined chrome (FR-002). This is what
+ * @enterprise-mfe/ui — never from shell-defined chrome. This is what
  * proves the design system compiled by a real bundler, not just exercised in
  * a test environment.
  *

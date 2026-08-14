@@ -1,7 +1,7 @@
 /**
- * The shell's only configuration input. Shapes match data-model.md exactly —
- * see specs/002-shell-host/data-model.md for the full rationale behind each
- * field and rule.
+ * The shell's only configuration input. See docs/architecture.md's "The
+ * remote registry" section for what each field is for, and ADR-0012 for why
+ * this is a file fetched at runtime rather than compiled in.
  */
 
 export type Environment = 'dev' | 'staging' | 'production';
@@ -32,7 +32,7 @@ export interface RemoteRegistry {
   environment: Environment;
   /** Origins the host may execute code from. May be empty. */
   allowedOrigins: readonly string[];
-  /** May be empty — an empty registry is a valid state (US1 scenario 2). */
+  /** May be empty — an empty registry is a valid state. */
   remotes: readonly RemoteRegistration[];
 }
 

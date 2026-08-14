@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 /**
  * The same shape React.lazy accepts, so a caller can pass a dynamic import
- * directly. Deliberately bundler-agnostic (research D5): this package knows
+ * directly. Deliberately bundler-agnostic: this package knows
  * nothing about Module Federation, so every failure mode below is testable
  * with a plain rejecting/hanging promise, before any real remote exists.
  */

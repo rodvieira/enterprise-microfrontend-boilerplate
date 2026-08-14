@@ -4,7 +4,7 @@ import type { EventMap } from './event-map';
 /**
  * Typed publish/subscribe (contracts/event-bus-contract.md). Same-tab
  * delivery is a plain Map<topic, Set<handler>>; cross-tab delivery is a
- * same-origin BroadcastChannel relay (research D2) — a separate channel
+ * same-origin BroadcastChannel relay — a separate channel
  * instance with the same name never receives its own postMessage, so this
  * module's own channel is never delivered to twice.
  */

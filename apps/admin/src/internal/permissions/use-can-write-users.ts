@@ -1,8 +1,9 @@
 import { useAuth } from '@enterprise-mfe/auth';
 
 /**
- * Local permission check (research D4) — not a packages/auth contract
- * change. Reads the existing User.permissions shape from sprint 2.
+ * Local permission check — not a packages/auth contract
+ * change. Reads the User.permissions shape @enterprise-mfe/shared-types
+ * already defines.
  */
 export function useCanWriteUsers(): boolean {
   const { user } = useAuth();

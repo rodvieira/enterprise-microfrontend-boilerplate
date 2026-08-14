@@ -12,7 +12,7 @@ if (!container) {
  * Standalone dev entry has no shell to supply a basePath or an ancestor
  * <AuthProvider> — same pattern as apps/dashboard/src/bootstrap.tsx. When
  * composed inside the shell, App.tsx relies on the shell's own provider
- * instead (FR-005).
+ * instead.
  */
 createRoot(container).render(
   <AuthProvider>

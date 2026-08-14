@@ -72,6 +72,13 @@ identity provider).
 ## Rules
 
 - Conventional Commits, English only — code, comments, commits, docs, PR text.
+- **Comments in shipped code explain the *why*, in self-contained prose.** A
+  comment is read by someone who has this file open and nothing else, so
+  traceability markers (`FR-012`, `research D3`, `US2 scenario 1`, sprint
+  numbers) do not belong there — they resolve to `specs/`, which an adopter
+  who ran `pnpm eject` no longer has. Link an ADR when the reasoning is
+  genuinely elsewhere; otherwise state the reason inline. Tests may still
+  cite whatever helps.
 - No dependency added without a one-line justification in the PR description.
 - Every new package or app needs an entry in the relevant `docs/` file, not just code.
 - If a decision changes something already logged in `docs/decisions/`, add a new

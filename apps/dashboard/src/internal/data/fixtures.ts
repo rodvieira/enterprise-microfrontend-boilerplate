@@ -1,6 +1,6 @@
 import type { ActivityDataPoint, ActivityFeedItem, KpiMetric } from './types';
 
-/** In-module fixture data (research D5) — this project has no backend. */
+/** In-module fixture data — this project has no backend. */
 
 export const KPI_FIXTURES: readonly KpiMetric[] = [
   { id: 'active-users', label: 'Active users', value: 1204, trend: 'up' },
@@ -31,7 +31,7 @@ const FEED_DESCRIPTIONS: readonly string[] = [
   'Radia Perlman signed in',
 ];
 
-/** Reverse-chronological (newest first) and bounded at 12 items (FR-013, contracts/dashboard-data-contract.md). */
+/** Reverse-chronological (newest first) and bounded at 12 items. */
 export const FEED_FIXTURES: readonly ActivityFeedItem[] = FEED_DESCRIPTIONS.map(
   (description, index) => ({
     id: `activity-${index}`,

@@ -6,7 +6,7 @@ import { permissionsForRole } from '@enterprise-mfe/shared-types';
  *
  * This file is the entire fake. Everything else in this package is the contract
  * that a real identity provider would satisfy, so swapping this out is a
- * one-file change and no consumer notices (constitution Principle VI, ADR-0009).
+ * one-file change and no consumer notices (ADR-0009).
  *
  * It contacts nothing: no network, no storage, no environment variable. That is
  * asserted in `tests/stub-isolation.test.ts`.

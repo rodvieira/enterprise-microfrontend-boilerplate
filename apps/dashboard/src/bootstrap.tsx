@@ -13,7 +13,7 @@ if (!container) {
  * <AuthProvider> — the dashboard must still render fully with no shell
  * present (spec edge case), so this is the one place `apps/dashboard`
  * establishes its own session. When composed inside the shell, App.tsx
- * relies on the shell's own <AuthProvider> instead (FR-005) — see
+ * relies on the shell's own <AuthProvider> instead — see
  * exposed/App.tsx's comment.
  */
 createRoot(container).render(

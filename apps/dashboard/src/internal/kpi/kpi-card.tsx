@@ -11,8 +11,8 @@ export interface KpiCardProps {
 }
 
 /**
- * One KPI card, built on the shared design system's Card (FR-002). Carries
- * its own loading and error visual states (FR-008) — driven entirely by
+ * One KPI card, built on the shared design system's Card. Carries
+ * its own loading and error visual states — driven entirely by
  * `status`, so `kpi-cards.tsx` never has to decide how a card *looks*, only
  * what state it's in.
  */

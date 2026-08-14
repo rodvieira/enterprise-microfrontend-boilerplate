@@ -21,7 +21,7 @@ const COLUMNS: readonly TableColumn<ActivityFeedItem>[] = [
 ];
 
 /**
- * Renders exactly what it's given, newest first (FR-012) — bounding to at
+ * Renders exactly what it's given, newest first — bounding to at
  * most 12 items is fetch-overview.ts's responsibility
  * (contracts/dashboard-data-contract.md), not this component's.
  */

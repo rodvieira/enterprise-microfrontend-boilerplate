@@ -24,8 +24,8 @@ function sortUsers(users: readonly User[], column: SortColumn, direction: SortDi
 
 /**
  * Owns the mutable in-memory fixture (data-model.md), pagination, and sort
- * state — all admin-local (research D6). Publishes 'user:role-changed'
- * only after a role-change mutation actually succeeds (FR-013).
+ * state — all admin-local. Publishes 'user:role-changed'
+ * only after a role-change mutation actually succeeds.
  */
 export function useUserList() {
   const [allUsers, setAllUsers] = useState<User[]>(() => createUserFixtures());
