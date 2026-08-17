@@ -80,14 +80,14 @@ picked up.
 `remotes` array** — `staging` remains an unexercised placeholder, a
 maintainer's own separate action away from pointing at something real.
 `remotes.production.json` no longer does: this repository's own shell,
-dashboard, and admin are deployed for real to GitHub Pages (see
-[ADR-0018](decisions/0018-github-pages-reference-deploy.md),
-[ADR-0019](decisions/0019-remote-asset-path-vs-shell-route-path.md), and
-`.github/workflows/deploy.yml`) at
-<https://rodvieira.github.io/enterprise-microfrontend-boilerplate/>. A
-GitHub Pages project page serves from `/<repo>/`, not `/`, which is why
-`remotes.<env>.json` also carries an optional `basePath` field — see
-ADR-0018 for what that changes in the shell.
+dashboard, and admin are deployed for real to Vercel (see
+[ADR-0026](decisions/0026-vercel-over-github-pages.md),
+[ADR-0019](decisions/0019-remote-asset-path-vs-shell-route-path.md),
+`vercel.json`, and `scripts/build-site.ts`) at
+<https://enterprise-microfrontend-boilerplate.vercel.app/>. A host that
+serves the shell from a subpath rather than a domain root sets the
+optional `basePath` field in `remotes.<env>.json`; the Vercel deployment
+serves from the root, so it does not.
 
 ## Immutable versions, and rolling one back
 
@@ -144,14 +144,19 @@ exactly this reason. A static host with no server-side rewrite rule (GitHub
 Pages, a plain nginx without a SPA fallback, S3 without a redirect rule)
 also needs a `404.html` that's a copy of the shell's own `index.html`, so
 a hard navigation to any shell-owned route the host has no file for still
-boots the shell instead of the host's generic 404.
+boots the shell — at the cost of that route answering with an HTTP 404
+while rendering correctly, which crawlers and uptime monitors read as a
+broken page. `scripts/build-site.ts` still emits that `404.html` so the
+output stays droppable on such a host; the Vercel deployment answers 200
+instead, because a rewrite is a capability GitHub Pages does not have
+(ADR-0026).
 
 ## What this guide is not
 
 Not a specific host's dashboard walkthrough — Vercel, Netlify, GitHub
 Pages, S3+CloudFront, and plain nginx are all equally valid choices for
 static assets with no server-side requirement, and none of them changes
-anything described above. `.github/workflows/deploy.yml` is this
-repository's own choice (GitHub Pages) exercising the mechanism for
-real — adopting a different host means writing an equivalent pipeline for
-it, not a default this boilerplate assumes for every adopter.
+anything described above. `vercel.json` plus `scripts/build-site.ts` are
+this repository's own choice exercising the mechanism for real — adopting a
+different host means pointing that same assembled `_site/` at it, not a
+default this boilerplate assumes for every adopter.

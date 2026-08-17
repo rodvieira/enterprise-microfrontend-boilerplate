@@ -9,3 +9,4 @@ test-results/
 .env.local
 *.log
 .DS_Store
+_site/

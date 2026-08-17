@@ -1,7 +1,7 @@
 # enterprise-microfrontend-boilerplate
 
 [![CI](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://rodvieira.github.io/enterprise-microfrontend-boilerplate/)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://enterprise-microfrontend-boilerplate.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![pnpm](https://img.shields.io/badge/pnpm-workspace-f69220)](https://pnpm.io/)
 
@@ -70,10 +70,10 @@ Two browser tabs. Changing a role in **admin** moves **dashboard**'s
 global, and no import between the two remotes. The update travels only
 through the typed event bus.
 
-Live: <https://rodvieira.github.io/enterprise-microfrontend-boilerplate/>
+Live: <https://enterprise-microfrontend-boilerplate.vercel.app/>
 — the shell composing the real `apps/dashboard` and `apps/admin` remotes,
-deployed to GitHub Pages (see
-[ADR-0018](docs/decisions/0018-github-pages-reference-deploy.md)).
+deployed to Vercel (see
+[ADR-0026](docs/decisions/0026-vercel-over-github-pages.md)).
 [docs/how-to-deploy.md](docs/how-to-deploy.md) covers deploying to your
 own static host.
 
@@ -130,6 +130,7 @@ decided *against* doing something.
 | Observability | A contract, not a vendor | [ADR-0023](docs/decisions/0023-telemetry-contract.md) |
 | CSS | Per-app Tailwind, version guarded | [ADR-0024](docs/decisions/0024-css-isolation.md) |
 | Cross-tab events | Validated at the receiving edge | [ADR-0025](docs/decisions/0025-cross-tab-payload-validation.md) |
+| Deployment | One Vercel project, rewrites for SPA routes | [ADR-0026](docs/decisions/0026-vercel-over-github-pages.md) |
 
 ## Learn more
 

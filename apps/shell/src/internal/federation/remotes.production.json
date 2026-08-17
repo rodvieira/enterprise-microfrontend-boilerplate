@@ -1,17 +1,16 @@
 {
   "environment": "production",
-  "basePath": "/enterprise-microfrontend-boilerplate/",
-  "allowedOrigins": ["https://rodvieira.github.io"],
+  "allowedOrigins": ["https://enterprise-microfrontend-boilerplate.vercel.app"],
   "remotes": [
     {
       "name": "dashboard",
-      "entry": "https://rodvieira.github.io/enterprise-microfrontend-boilerplate/remotes/dashboard/mf-manifest.json",
+      "entry": "https://enterprise-microfrontend-boilerplate.vercel.app/remotes/dashboard/mf-manifest.json",
       "routePath": "/dashboard",
       "label": "Dashboard"
     },
     {
       "name": "admin",
-      "entry": "https://rodvieira.github.io/enterprise-microfrontend-boilerplate/remotes/admin/mf-manifest.json",
+      "entry": "https://enterprise-microfrontend-boilerplate.vercel.app/remotes/admin/mf-manifest.json",
       "routePath": "/admin",
       "label": "Admin"
     }

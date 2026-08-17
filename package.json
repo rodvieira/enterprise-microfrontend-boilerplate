@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
+    "build:site": "tsx scripts/build-site.ts",
     "test": "vitest run",
     "e2e": "turbo e2e",
     "lint": "biome check .",

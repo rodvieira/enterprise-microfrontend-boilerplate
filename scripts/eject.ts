@@ -39,8 +39,8 @@ import {
   flattenAdrReferences,
   formatJson,
   renameScope,
+  rewriteBuildSiteRemotes,
   rewriteCommitlintScopes,
-  rewriteDeployWorkflow,
   rewritePlaywrightWebServers,
   rewriteVitestProjects,
   validateScope,
@@ -64,6 +64,7 @@ const SKIP_DIRS = new Set([
   'node_modules',
   '.git',
   'dist',
+  '_site',
   '.turbo',
   'coverage',
   'playwright-report',
@@ -268,9 +269,7 @@ function rewriteConfigs(options: Options, port: number): void {
     }),
   );
   edit('commitlint.config.mjs', (c) => rewriteCommitlintScopes(c, REMOVED_APPS, options.name));
-  edit('.github/workflows/deploy.yml', (c) =>
-    rewriteDeployWorkflow(c, REMOVED_APPS, { scope: OLD_SCOPE, name: options.name }),
-  );
+  edit('scripts/build-site.ts', (c) => rewriteBuildSiteRemotes(c, options.name));
 
   // Staging and production point at URLs only the adopter knows.
   for (const environment of ['staging', 'production']) {
@@ -380,7 +379,7 @@ and commit the result, CI's \`pnpm install --frozen-lockfile\` will fail.
   publishing, or a standalone consumer's bundler will not compile them.
 - **Fill in \`remotes.staging.json\` / \`remotes.production.json\`** with your own
   URLs and \`allowedOrigins\`; the eject emptied them because only you know them.
-  If you serve the shell from a subpath (a GitHub Pages project page, say), add
+  If you serve the shell from a subpath rather than a domain root, add
   \`"basePath": "/your-repo/"\` back to that environment's registry — it was
   dropped precisely because its old value named this boilerplate's repository.
 - **Rewrite \`docs/architecture.md\`** to describe your platform. It still narrates
