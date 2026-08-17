@@ -14,7 +14,7 @@ function loaded(feed: readonly ActivityFeedItem[]) {
 }
 
 describe('RecentActivity', () => {
-  it('renders items in the order given (reverse-chronological, FR-012)', () => {
+  it('renders items in the order given (reverse-chronological)', () => {
     render(<RecentActivity state={loaded(FEED)} />);
     const rows = screen.getAllByRole('row').slice(1); // drop header row
     expect(rows[0]).toHaveTextContent('Newest event');
@@ -22,7 +22,7 @@ describe('RecentActivity', () => {
     expect(rows[2]).toHaveTextContent('Oldest event');
   });
 
-  it('shows a distinct empty state when there is no activity (FR-013)', () => {
+  it('shows a distinct empty state when there is no activity', () => {
     render(<RecentActivity state={loaded([])} />);
     expect(screen.getByText('No recent activity.')).toBeInTheDocument();
     expect(screen.queryByText('Newest event')).not.toBeInTheDocument();

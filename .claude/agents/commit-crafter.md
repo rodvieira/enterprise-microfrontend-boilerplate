@@ -20,7 +20,7 @@ Look at `git diff --staged` and produce one Conventional Commits message.
 ## Type rules
 
 Standard Conventional Commits types (`feat`, `fix`, `refactor`, `test`, `docs`,
-`chore`, `ci`). If the diff adds or changes an ADR in `docs/decisions/`, always use
+`chore`, `ci`). If the diff only touches `docs/`, always use
 `docs` even if the underlying code also changed in the same commit — split into
 two commits if that's not true.
 

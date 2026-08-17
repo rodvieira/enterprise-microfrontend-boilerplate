@@ -1,5 +1,5 @@
 import type { Role, User } from '@enterprise-mfe/shared-types';
-import { Button, Input, Modal } from '@enterprise-mfe/ui';
+import { Button, Input, Modal, Select } from '@enterprise-mfe/ui';
 import type { FormEvent } from 'react';
 import { useId, useState } from 'react';
 import { useCanWriteUsers } from '../permissions/use-can-write-users';
@@ -109,51 +109,42 @@ export function UserFormModal({ users, onInvite, onChangeRole }: UserFormModalPr
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              <label className="flex flex-col gap-1 text-sm font-medium text-(--color-text)">
-                Role
-                <select
-                  className="h-10 rounded-(--radius-control) border border-(--color-border) bg-(--color-surface) px-(--spacing-control-x)"
-                  value={inviteRole}
-                  onChange={(event) => setInviteRole(event.target.value as Role)}
-                >
-                  {ROLES.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <Select
+                label="Role"
+                value={inviteRole}
+                onChange={(event) => setInviteRole(event.target.value as Role)}
+              >
+                {ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </Select>
             </>
           ) : (
             <>
-              <label className="flex flex-col gap-1 text-sm font-medium text-(--color-text)">
-                User
-                <select
-                  className="h-10 rounded-(--radius-control) border border-(--color-border) bg-(--color-surface) px-(--spacing-control-x)"
-                  value={targetUserId}
-                  onChange={(event) => setTargetUserId(event.target.value)}
-                >
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1 text-sm font-medium text-(--color-text)">
-                New role
-                <select
-                  className="h-10 rounded-(--radius-control) border border-(--color-border) bg-(--color-surface) px-(--spacing-control-x)"
-                  value={editRole}
-                  onChange={(event) => setEditRole(event.target.value as Role)}
-                >
-                  {ROLES.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <Select
+                label="User"
+                value={targetUserId}
+                onChange={(event) => setTargetUserId(event.target.value)}
+              >
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="New role"
+                value={editRole}
+                onChange={(event) => setEditRole(event.target.value as Role)}
+              >
+                {ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </Select>
             </>
           )}
 

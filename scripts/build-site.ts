@@ -6,7 +6,7 @@
  * command, and duplicating the assemble logic into a `vercel.json` string
  * would put the same layout in two places that could drift.
  *
- * The layout is the one ADR-0019 settled on: the shell at the root, and
+ * The layout: the shell at the root, and
  * each remote's own static build under `/remotes/<name>/` — never at
  * `/dashboard` or `/admin`, which belong to the shell's own router. A
  * remote's standalone index.html sitting at the path the router owns means
@@ -43,7 +43,7 @@ function main(): void {
   }
 
   // The one build whose output depends on the environment: it copies the
-  // matching remotes.<env>.json to remotes.json (ADR-0012).
+  // matching remotes.<env>.json to remotes.json.
   run('pnpm', ['--filter', '@enterprise-mfe/shell', 'run', 'build'], {
     FEDERATION_ENV: 'production',
   });

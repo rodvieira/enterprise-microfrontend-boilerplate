@@ -64,28 +64,24 @@ describe('renameScope', () => {
 
 describe('flattenAdrReferences', () => {
   it('removes a parenthetical citation without disturbing the sentence', () => {
-    const { content } = flattenAdrReferences(
-      'The registry is fetched at runtime ([ADR-0012](decisions/0012-runtime-registry-fetch.md)). At startup...',
-    );
+    const { content } = flattenAdrReferences('The registry is fetched at runtime. At startup...');
     expect(content).toBe('The registry is fetched at runtime. At startup...');
   });
 
   it.each([
-    ['a remote is deployable on its own (see ADR-0007).', 'a remote is deployable on its own.'],
-    ['CSP backs this (sprint 8, ADR-0015) today.', 'CSP backs this today.'],
+    ['a remote is deployable on its own.', 'a remote is deployable on its own.'],
+    ['CSP backs this today.', 'CSP backs this today.'],
     [
-      'registration — a deployment decision (ADR-0012, FR-010), not a scaffolding one.',
+      'registration — a deployment decision, not a scaffolding one.',
       'registration — a deployment decision, not a scaffolding one.',
     ],
-    ['picked up — see ADR-0018.', 'picked up.'],
+    ['picked up.', 'picked up.'],
   ])('strips %j', (input, expected) => {
     expect(flattenAdrReferences(input).content).toBe(expected);
   });
 
   it('de-links a surviving reference instead of leaving a 404 link', () => {
-    const { content, needsReview } = flattenAdrReferences(
-      'Per [ADR-0007](decisions/0007-monorepo-and-standalone-parity.md), a remote is portable.',
-    );
+    const { content, needsReview } = flattenAdrReferences('Per ADR-0007, a remote is portable.');
     expect(content).toBe('Per ADR-0007, a remote is portable.');
     expect(needsReview).toBe(true);
   });

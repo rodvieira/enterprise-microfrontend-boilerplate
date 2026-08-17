@@ -58,7 +58,7 @@ function packagesToCheck(): Array<{ dir: string; manifest: Manifest }> {
           readFileSync(join(REPO_ROOT, PACKAGES_DIR, dir, 'package.json'), 'utf8'),
         ) as Manifest;
         // A private package is never published, so it has no published shape
-        // to verify — federation-utils is host-side only (ADR-0014).
+        // to verify — federation-utils is host-side only.
         if (manifest.private || !manifest.publishConfig?.exports) return [];
         return [{ dir, manifest }];
       } catch {

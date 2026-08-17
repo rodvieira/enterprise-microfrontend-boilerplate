@@ -1,7 +1,7 @@
 # @enterprise-mfe/event-bus
 
 Typed publish/subscribe for cross-remote communication without direct
-coupling. It's the mechanism behind `004-admin-remote`'s headline proof:
+coupling. It's the mechanism behind this project's headline proof:
 `apps/admin` publishes a role change, `apps/dashboard` subscribes to it and
 updates its "active users" KPI live — neither remote imports the other.
 
@@ -33,7 +33,7 @@ boundary at all — separate tabs share no JavaScript memory — which is a real
 gap between what the spec's own scenario describes and what such a design
 could ever demonstrate. `BroadcastChannel` closes it without a backend,
 same-origin, matching exactly how the shell composes every remote from one
-page. See [research.md D2](../../specs/004-admin-remote/research.md).
+page.
 
 ## No event history, no request/response, no cross-origin delivery
 
@@ -46,7 +46,6 @@ page. See [research.md D2](../../specs/004-admin-remote/research.md).
 - `BroadcastChannel` is same-origin by design. The shell composes every
   remote from one page, so this was never a limitation in practice.
 
-See [contracts/event-bus-contract.md](../../specs/004-admin-remote/contracts/event-bus-contract.md)
 for the full contract.
 
 ## The event set is a closed union
@@ -76,5 +75,4 @@ dropped with a `console.warn`, never thrown: a newer tab publishing a
 topic this build has not heard of is expected during a rollout.
 
 Adding a topic to `EventMap` requires adding its validator; `EventValidators`
-is a mapped type over `EventMap`, so omitting one is a type error. See
-[ADR-0025](../../docs/decisions/0025-cross-tab-payload-validation.md).
+is a mapped type over `EventMap`, so omitting one is a type error. 

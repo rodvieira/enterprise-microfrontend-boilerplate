@@ -75,14 +75,14 @@ export function renameScope(content: string, fromScope: string, toScope: string)
  * match before the barer ones.
  *
  * Everything NOT listed here — most importantly prose-integrated forms like
- * "Per [ADR-0007](decisions/…), a remote is deployable on its own" — is left
+ * "Per ADR-0007, a remote is deployable on its own" — is left
  * exactly as it is and reported for a human instead. Stripping those needs
  * the sentence rewritten, and a regex that tries produces silent nonsense.
  */
 const ADR_PARENTHETICALS: readonly RegExp[] = [
-  // " (see [ADR-0012](docs/decisions/0012-x.md), FR-010)" / " (ADR-0008, FR-010)"
+  // "" / ""
   /\s*\((?:see\s+)?(?:sprint\s+\d+,\s*)?(?:\[ADR-\d+\]\([^)]*\)|ADR-\d+)(?:\s*,\s*(?:\[ADR-\d+\]\([^)]*\)|ADR-\d+|FR-\d+|SC-\d+|research\s+D\d+))*\)/gi,
-  // " — see [ADR-0012](…)." / " - see ADR-0012."  (clause at end of sentence)
+  // "." / "."  (clause at end of sentence)
   /\s*[—-]\s*see\s+(?:\[ADR-\d+\]\([^)]*\)|ADR-\d+)(?=[.,;]|\s*$)/gi,
 ];
 

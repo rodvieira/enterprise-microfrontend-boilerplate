@@ -1,7 +1,9 @@
 /**
- * The shell's only configuration input. See docs/architecture.md's "The
- * remote registry" section for what each field is for, and ADR-0012 for why
- * this is a file fetched at runtime rather than compiled in.
+ * The shell's only configuration input.
+ *
+ * Fetched at runtime rather than compiled in, so switching environment is
+ * switching a file and never a rebuild. See docs/USAGE.md's "The remote
+ * registry" for what each field is for.
  */
 
 export type Environment = 'dev' | 'staging' | 'production';

@@ -1,20 +1,20 @@
 /**
  * The telemetry contract, not a telemetry implementation.
  *
- * Same shape of decision as @enterprise-mfe/auth (ADR-0009): enterprises
+ * Same shape of decision as @enterprise-mfe/auth: enterprises
  * bring their own vendor — Sentry, Datadog, OpenTelemetry, an internal
  * collector — and a boilerplate that picked one would be wrong for
  * everybody else and would drag that vendor's SDK across the federation
  * boundary into every remote.
  *
  * So this package ships the interface and a console-backed default, and
- * `docs/how-to-connect-telemetry.md` documents the swap.
+ * `docs/USAGE.md` documents the swap.
  */
 
 /**
  * Which remote an event is about.
  *
- * `version` comes from the registry when it states one (ADR-0022) — it is
+ * `version` comes from the registry when it states one — it is
  * the whole reason that field exists, because "which build broke?" is only
  * answerable if the answer travels with the failure.
  */

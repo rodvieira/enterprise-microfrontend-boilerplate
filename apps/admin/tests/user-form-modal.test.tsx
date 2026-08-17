@@ -28,13 +28,13 @@ function renderModal(overrides: RenderModalOverrides = {}) {
 }
 
 describe('UserFormModal', () => {
-  it('is not offered at all without users:write (FR-008, SC-004)', () => {
+  it('is not offered at all without users:write', () => {
     useAuthMock.mockReturnValue({ user: { permissions: ['users:read'] } });
     renderModal();
     expect(screen.queryByRole('button', { name: /invite or edit user/i })).not.toBeInTheDocument();
   });
 
-  it('lets a session with users:write submit a new user (FR-009)', async () => {
+  it('lets a session with users:write submit a new user', async () => {
     useAuthMock.mockReturnValue({ user: { permissions: ['users:write'] } });
     const { onInvite } = renderModal();
 
@@ -50,7 +50,7 @@ describe('UserFormModal', () => {
     });
   });
 
-  it('lets a session with users:write submit a role change (FR-010)', async () => {
+  it('lets a session with users:write submit a role change', async () => {
     useAuthMock.mockReturnValue({ user: { permissions: ['users:write'] } });
     const { onChangeRole } = renderModal();
 
@@ -62,7 +62,7 @@ describe('UserFormModal', () => {
     expect(onChangeRole).toHaveBeenCalledWith('user-1', 'editor');
   });
 
-  it('rejects an invalid submission with a visible reason and does not call onInvite (FR-011)', async () => {
+  it('rejects an invalid submission with a visible reason and does not call onInvite', async () => {
     useAuthMock.mockReturnValue({ user: { permissions: ['users:write'] } });
     renderModal({
       onInvite: () => ({ ok: false, error: 'Name and email are required.' }),

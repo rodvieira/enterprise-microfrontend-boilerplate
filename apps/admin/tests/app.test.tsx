@@ -25,7 +25,7 @@ describe('App', () => {
     await waitFor(() => expect(screen.getByText('Not signed in')).toBeInTheDocument());
   });
 
-  it('reads the current session via the shared auth contract (FR-005)', async () => {
+  it('reads the current session via the shared auth contract', async () => {
     render(
       <AuthProvider>
         <SignInButton />

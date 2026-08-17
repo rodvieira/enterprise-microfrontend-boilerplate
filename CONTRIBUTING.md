@@ -18,7 +18,7 @@ pnpm dev
    shared package. This is enforced in CI via `dependency-cruiser`
    (`pnpm check:boundaries`), and failing it blocks the PR.
 2. **Only `src/exposed/` is a valid import target from outside an app.**
-   `src/internal/` is private, always. See `docs/architecture.md`.
+   `src/internal/` is private, always. See `docs/USAGE.md`.
 3. **Shared singleton packages** (`packages/auth`, `packages/event-bus`, React
    itself) must stay on identical versions across every app. `pnpm check:shared-deps`
    verifies this — if you bump a version, bump it everywhere that package is used.
@@ -29,7 +29,7 @@ pnpm dev
 
 ## Adding a new remote
 
-Use `pnpm turbo gen remote` — see `docs/how-to-add-a-remote.md` for both
+Use `pnpm turbo gen remote` — see `docs/USAGE.md` for both
 output modes and the hand-built convention it's extracted from.
 
 ## Adding a shared package
@@ -50,5 +50,5 @@ Please don't open a public issue for a security vulnerability. See
 - [ ] `pnpm check:shared-deps` passes
 - [ ] `pnpm test` passes
 - [ ] New/changed behavior has a test
-- [ ] If this changes an architectural decision already in `docs/decisions/`, a
+- [ ] If this changes how the project is used, `docs/USAGE.md` is updated — a
       new ADR is added (never edit an old one to pretend it always said that)

@@ -3,6 +3,7 @@ import type { RemoteLoader } from '@enterprise-mfe/federation-utils';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
 import type { RemoteContext, Telemetry } from '@enterprise-mfe/telemetry';
 import { useTelemetry } from '@enterprise-mfe/telemetry';
+import { Button } from '@enterprise-mfe/ui';
 import { useCallback, useMemo } from 'react';
 import { createFederationLoader } from '../federation/loader';
 
@@ -11,7 +12,7 @@ export interface RemoteRegionProps {
   remoteName: string;
   /** Passed to the remote's exposed root component. */
   basePath: string;
-  /** From the registry, when it states one (ADR-0022). Reported with every event. */
+  /** From the registry, when it states one. Reported with every event. */
   version?: string;
 }
 
@@ -82,9 +83,9 @@ export function RemoteRegion({ remoteName, basePath, version }: RemoteRegionProp
     return (
       <p role="alert">
         Failed to load "{remoteName}": {error?.message}.{' '}
-        <button type="button" onClick={retry}>
+        <Button type="button" size="sm" variant="secondary" onClick={retry}>
           Retry
-        </button>
+        </Button>
       </p>
     );
   }
@@ -95,9 +96,9 @@ export function RemoteRegion({ remoteName, basePath, version }: RemoteRegionProp
       fallback={(renderError, renderRetry) => (
         <p role="alert">
           "{remoteName}" failed while rendering: {renderError.message}.{' '}
-          <button type="button" onClick={renderRetry}>
+          <Button type="button" size="sm" variant="secondary" onClick={renderRetry}>
             Retry
-          </button>
+          </Button>
         </p>
       )}
     >

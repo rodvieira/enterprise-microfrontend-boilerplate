@@ -35,8 +35,8 @@ function existingRoutePaths(repoRoot: string): string[] {
  * Every prompt's `validate` runs before plop's inquirer-backed prompt loop
  * advances to the next question — an invalid answer re-prompts the same
  * question rather than proceeding, so by the time all prompts resolve, the
- * full answer set has already passed every check in validate.ts (FR-002,
- * FR-014). No file is written until every prompt has resolved.
+ * full answer set has already passed every check in validate.ts. No file is
+ * written until every prompt has resolved.
  *
  * Takes repoRoot explicitly (computed once in config.ts via
  * plop.getPlopfilePath()) rather than deriving it here: @turbo/gen bundles

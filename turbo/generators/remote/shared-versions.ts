@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
- * The generator reads every version live at generation time (research D3)
+ * The generator reads every version live at generation time
  * from a real remote's manifest — never a template literal, see
  * turbo/generators/remote/templates/monorepo/package.json.template.
  *
@@ -36,9 +36,9 @@ export type SharedVersions = Record<(typeof REQUIRED_SINGLETONS)[number], string
 
 /**
  * Every other tool version the templates need that isn't a
- * check-shared-deps.ts singleton — read live for the same reason D3 covers
- * the singletons: a hardcoded literal here would silently drift the next
- * time apps/dashboard bumps one of these, with nothing to catch it until a
+ * check-shared-deps.ts singleton — read live for the same reason the
+ * singletons are: a hardcoded literal here would silently drift the next
+ * time the source remote bumps one of these, with nothing to catch it until a
  * generated app's build breaks on an unrelated, much later day.
  */
 export const REQUIRED_TOOL_VERSIONS = [
@@ -122,7 +122,7 @@ export function resolveSourceManifest(repoRoot: string): string {
  * Reads every REQUIRED_SINGLETONS range from the discovered source manifest
  * (resolveSourceManifest). Throws loudly when no remote declares them all,
  * rather than generating a package.json that would silently fail
- * check:shared-deps (research D3).
+ * check:shared-deps.
  */
 export function readSharedVersions(repoRoot: string): SharedVersions {
   const sourceManifest = resolveSourceManifest(repoRoot);

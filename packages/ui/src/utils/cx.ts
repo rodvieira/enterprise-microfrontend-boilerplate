@@ -1,7 +1,7 @@
 /**
  * Compose class names, dropping anything falsy.
  *
- * This is here instead of a `clsx` dependency on purpose: constitution
+ * This is here instead of a `clsx` dependency on purpose:
  * Principle IX — a boilerplate's dependency list is inherited wholesale by every
  * adopter, and this is the whole feature.
  */

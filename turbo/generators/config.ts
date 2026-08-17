@@ -3,7 +3,6 @@ import { dirname, join, relative, resolve } from 'node:path';
 import type { PlopTypes } from '@turbo/gen';
 import { formatPaths } from './remote/actions/format-output';
 import { nextDevPort, registerDevRemote } from './remote/actions/register-dev-remote';
-import { updateArchitectureDocs } from './remote/actions/update-architecture-docs';
 import { writeApp } from './remote/actions/write-app';
 import { createRemotePrompts } from './remote/prompts';
 import { resolveSourceManifest } from './remote/shared-versions';
@@ -22,7 +21,7 @@ function generateRemote(repoRoot: string, answers: RemoteAnswers): string {
       ? join(repoRoot, 'apps', answers.name)
       : resolve(repoRoot, answers.outputPath ?? '');
 
-  // Re-checked here (already checked once at prompt time, FR-014): the
+  // Re-checked here (already checked once at prompt time): the
   // filesystem can change between a prompt answer and action execution in
   // an interactive CLI. A second, identical refusal is cheap insurance
   // against writing over something that appeared in that window.
@@ -53,10 +52,8 @@ function generateRemote(repoRoot: string, answers: RemoteAnswers): string {
       port,
     });
     summary.push(`Registered in apps/shell/src/internal/federation/remotes.dev.json: ${entry}`);
-    updateArchitectureDocs({ repoRoot, name: answers.name, label: answers.label });
-    summary.push('Added one line to docs/architecture.md\'s "Remotes" section.');
     summary.push(
-      'NOT done: staging/production registry registration — a deployment decision (ADR-0012, FR-010), not a scaffolding one.',
+      'NOT done: staging/production registry registration — a deployment decision, not a scaffolding one.',
     );
 
     // Monorepo mode only: every path here is inside this repository, so this
@@ -65,16 +62,16 @@ function generateRemote(repoRoot: string, answers: RemoteAnswers): string {
     const formatted = formatPaths(repoRoot, [
       relative(repoRoot, targetDir),
       'apps/shell/src/internal/federation/remotes.dev.json',
-      'docs/architecture.md',
     ]);
     if (!formatted) {
       summary.push('Could not run Biome — run `pnpm lint:fix` to format the generated files.');
     }
   } else {
-    summary.push('No registry touched — standalone mode owns no registry to write to (FR-016).');
+    summary.push('No registry touched — standalone mode owns no registry to write to.');
     summary.push(
-      'NOT done: no live publish to GitHub Packages occurred (FR-019) — pnpm install in the generated ' +
-        'project will fail until packages/* are published at least once. See its README.md.',
+      'NOT done: nothing was published. This repository does not publish its packages, so ' +
+        '`pnpm install` in the generated project cannot resolve @enterprise-mfe/* until you ' +
+        'publish your own scope to your own registry. See its README.md and docs/USAGE.md.',
     );
   }
 
@@ -92,7 +89,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
   // `pnpm turbo gen remote`, not by inspecting the bundler config.
   const repoRoot = dirname(dirname(plop.getPlopfilePath()));
 
-  // Precondition 1 (generator-contract.md): the generator needs the shell to
+  // Precondition: the generator needs the shell to
   // register a remote into, and at least one existing remote to read shared
   // versions from (shared-versions.ts).
   //
@@ -115,7 +112,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
   plop.setGenerator('remote', {
     description:
-      'Scaffold a new micro-frontend remote (monorepo or standalone mode), extracted from apps/dashboard and apps/admin (ADR-0008).',
+      'Scaffold a new micro-frontend remote (monorepo or standalone mode), extracted from apps/dashboard and apps/admin.',
     prompts: createRemotePrompts(repoRoot),
     actions: [{ type: 'generate-remote' }],
   });

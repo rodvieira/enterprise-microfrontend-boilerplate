@@ -51,7 +51,7 @@ export function TelemetryProvider({ children, telemetry }: TelemetryProviderProp
  * Reads the active sink.
  *
  * Unlike useAuth, this does NOT throw outside a provider: a remote rendered
- * standalone (ADR-0007's parity guarantee) has no host to inherit a provider
+ * standalone — which every remote here must support — has no host to inherit a provider
  * from, and refusing to render it because nothing is watching would make
  * telemetry a hard dependency of running the app at all. Falling back to the
  * console keeps the standalone case working and still shows the events.

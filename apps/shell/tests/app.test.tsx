@@ -46,7 +46,7 @@ describe('App', () => {
     expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
   });
 
-  it('renders unaffected when the registry mixes a refused remote with an allowed one (FR-018)', async () => {
+  it('renders unaffected when the registry mixes a refused remote with an allowed one', async () => {
     mockRegistryResponse({
       environment: 'dev',
       allowedOrigins: ['http://localhost:3001'],
@@ -71,7 +71,7 @@ describe('App', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getByRole('main')).toBeInTheDocument();
 
-    // The refusal is decided and logged, not silently absent (FR-016/FR-018) —
+    // The refusal is decided and logged, not silently absent —
     // but it never crashes the frame, and only the allowed remote reaches the
     // MF runtime.
     await waitFor(() => expect(registerRemotesMock).toHaveBeenCalledTimes(1));

@@ -30,10 +30,9 @@ because the second one is what proves a convention actually generalizes
 rather than merely happening to work once. It is not a full framework (no
 proprietary vocabulary, no hosted cloud service), not locked to one
 monorepo tool (every remote is independently deployable — see
-[ADR-0007](docs/decisions/0007-monorepo-and-standalone-parity.md)), and it
+ADR-0007), and it
 does not implement real authentication — it ships a stable contract
-instead of a login flow, deliberately (see
-[ADR-0009](docs/decisions/0009-auth-contract-not-implementation.md)).
+instead of a login flow, deliberately.
 
 ## What's actually running
 
@@ -72,9 +71,8 @@ through the typed event bus.
 
 Live: <https://enterprise-microfrontend-boilerplate.vercel.app/>
 — the shell composing the real `apps/dashboard` and `apps/admin` remotes,
-deployed to Vercel (see
-[ADR-0026](docs/decisions/0026-vercel-over-github-pages.md)).
-[docs/how-to-deploy.md](docs/how-to-deploy.md) covers deploying to your
+deployed to Vercel.
+[docs/USAGE.md](docs/USAGE.md) covers deploying to your
 own static host.
 
 ## Quick start
@@ -101,7 +99,7 @@ pnpm eject --scope @acme --first-remote payments
 
 That renames the `@enterprise-mfe` scope to yours, scaffolds your first
 real remote in place of the two examples, and removes the artifacts of
-*this* project's build process (its specs, ADRs, and blueprint). It runs
+*this* project's own working notes. It runs
 once, then deletes itself, and writes `EJECT-TODO.md` listing what a
 script should not decide for you — mostly prose that still describes the
 example remotes.
@@ -109,42 +107,27 @@ example remotes.
 Run it on a clean working tree: `git reset --hard` is the undo, and the
 command refuses to start without one.
 
-## Stack, and why
+## Stack
 
-Every choice below is recorded as an ADR, including the ones that were
-decided *against* doing something.
+| Layer | Choice |
+|---|---|
+| Bundler | Rspack |
+| Federation | Module Federation 2.0 |
+| UI | React 19 + TypeScript + Tailwind 4 |
+| Monorepo | pnpm workspaces + Turborepo |
+| Routing | React Router |
+| Lint / format | Biome |
+| Tests | Vitest + Testing Library, Playwright for e2e |
 
-| Layer | Choice | Decision |
-|---|---|---|
-| Bundler | Rspack | [ADR-0002](docs/decisions/0002-rspack-over-vite.md) |
-| Federation | Module Federation 2.0 | [ADR-0003](docs/decisions/0003-module-federation-2.md) |
-| UI | React + TypeScript + Tailwind | [ADR-0004](docs/decisions/0004-react-typescript-tailwind.md) |
-| Monorepo | pnpm + Turborepo | [ADR-0005](docs/decisions/0005-pnpm-turborepo.md) |
-| Module boundary | `exposed/` vs `internal/` | [ADR-0006](docs/decisions/0006-exposed-internal-boundary.md) |
-| Remote portability | Monorepo *and* standalone parity | [ADR-0007](docs/decisions/0007-monorepo-and-standalone-parity.md) |
-| Auth | A contract, not a login flow | [ADR-0009](docs/decisions/0009-auth-contract-not-implementation.md) |
-| Remote discovery | Registry fetched at runtime | [ADR-0012](docs/decisions/0012-runtime-registry-fetch.md) |
-| Packaging | `publishConfig.exports` → `dist/` | [ADR-0020](docs/decisions/0020-packages-build-for-publishing.md) |
-| Adoption | `pnpm eject` | [ADR-0021](docs/decisions/0021-eject-adoption-path.md) |
-| Rollback | Optional `version` per remote | [ADR-0022](docs/decisions/0022-registry-version-and-rollback.md) |
-| Observability | A contract, not a vendor | [ADR-0023](docs/decisions/0023-telemetry-contract.md) |
-| CSS | Per-app Tailwind, version guarded | [ADR-0024](docs/decisions/0024-css-isolation.md) |
-| Cross-tab events | Validated at the receiving edge | [ADR-0025](docs/decisions/0025-cross-tab-payload-validation.md) |
-| Deployment | One Vercel project, rewrites for SPA routes | [ADR-0026](docs/decisions/0026-vercel-over-github-pages.md) |
+Why each of these, and what the alternatives cost, is covered where it
+matters in [docs/USAGE.md](docs/USAGE.md).
 
 ## Learn more
 
-- **[docs/blueprint.html](docs/blueprint.html)** — the complete technical
-  spec: product overview, every key decision and the evidence behind it,
-  competitive gap analysis, and the full sprint-by-sprint build order.
-- **[docs/architecture.md](docs/architecture.md)** — the contributor-facing
-  architecture reference: the remote registry, remote loading, cross-remote
-  communication, and boundary enforcement.
-- **[docs/decisions/](docs/decisions/)** — every architectural decision
-  this project has made, as an ADR, with the reasoning and evidence behind
-  each one — never edited after the fact, only superseded.
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** — the rules that matter most,
-  before opening a PR.
+- **[docs/USAGE.md](docs/USAGE.md)** — commands, a step-by-step from clone to
+  your own platform, the shared packages and their APIs, adding a remote,
+  deploying, and connecting real auth or telemetry.
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to propose a change.
 
 ## License
 

@@ -2,8 +2,8 @@
 @import "@enterprise-mfe/ui/styles.css";
 
 /*
- * Same gotcha every remote in this repository already paid for (research D2,
- * 002-shell-host): Tailwind's scanner respects .gitignore, which ignores
+ * Same gotcha every remote in this repository already paid for: Tailwind's
+ * scanner respects .gitignore, which ignores
  * node_modules/, so @source must use the workspace-relative path, not the
  * node_modules symlink.
  */

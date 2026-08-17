@@ -11,11 +11,11 @@ import { resolveRegistrySourcePath } from './src/internal/federation/resolve-reg
 const isDev = process.env.NODE_ENV !== 'production';
 
 /**
- * "Switching environment is switching a file" (research D3): the build copies
+ * "Switching environment is switching a file": the build copies
  * exactly one of the three registry files to remotes.json, and that copy —
  * not any compiled-in value — is what the running host fetches at startup.
  *
- * The unknown-environment / missing-file failure (spec edge case) lives in
+ * The unknown-environment / missing-file failure lives in
  * resolveRegistrySourcePath, a pure function, so it is unit-tested directly
  * rather than only provable by running a real rspack build.
  */
@@ -26,7 +26,7 @@ const registrySourcePath = resolveRegistrySourcePath(process.env.FEDERATION_ENV,
 /**
  * The CSP's script-src must come from the exact same allowedOrigins this
  * build already selected above — never a second, independently-maintained
- * value (specs/007-docs-security FR-004). Read straight from the resolved
+ * value. Read straight from the resolved
  * registry file, not re-derived some other way.
  */
 const registry = JSON.parse(
@@ -85,8 +85,8 @@ export default defineConfig({
       template: './index.html',
       base: { href: basePath },
       // index.html itself stays untouched — HtmlRspackPlugin's own `meta`
-      // option injects the tag (specs/007-docs-security research D1),
-      // rather than adding a second, template-placeholder-based mechanism
+      // option injects the tag, rather than adding a second,
+      // template-placeholder-based mechanism
       // alongside the CopyRspackPlugin one below.
       //
       // The built-in (native) HtmlRspackPlugin also emits a redundant
@@ -110,7 +110,7 @@ export default defineConfig({
       name: 'shell',
       // Deliberately no `exposes`: the shell is a host, not a remote. It
       // composes federated regions but exposes nothing of its own — see
-      // constitution Principle I and research D8.
+      // docs/USAGE.md's "How the pieces fit".
       remotes: {},
       shared: {
         react: { singleton: true, requiredVersion: '^19.2.8' },

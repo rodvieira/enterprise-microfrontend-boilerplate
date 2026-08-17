@@ -12,8 +12,8 @@ import '../internal/styles.css';
  *
  * The styles.css import and this file's default export both matter *here*,
  * not only in bootstrap.tsx/as an afterthought — see
- * apps/dashboard/src/exposed/App.tsx and docs/architecture.md's "Remotes"
- * section for why (003-dashboard-remote's CSS-federation and default-export
+ * apps/dashboard/src/exposed/App.tsx and docs/USAGE.md's "Remotes"
+ * section for why (the CSS-federation and default-export
  * findings, applied from day one in this app).
  *
  * Deliberately no <AuthProvider> here: when composed inside the shell, this

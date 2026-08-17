@@ -12,12 +12,12 @@ import '../internal/styles.css';
  * The styles.css import matters *here*, not only in bootstrap.tsx: when the
  * shell loads this module via federation, it fetches only the chunks in
  * `./App`'s own dependency graph — bootstrap.tsx's chunk is never
- * requested. See docs/architecture.md's "Remotes" section for the full
+ * requested. See docs/USAGE.md's "Remotes" section for the full
  * story (found the hard way while building apps/dashboard).
  *
  * Deliberately no <AuthProvider> here: when composed inside the shell, this
  * component renders inside the shell's own <AuthProvider> (React context is
- * shared because @enterprise-mfe/auth is an MF singleton — FR-005). Only
+ * shared because @enterprise-mfe/auth is an MF singleton). Only
  * the standalone dev entry (bootstrap.tsx) needs its own provider.
  */
 export function App({ basePath }: RemoteAppProps) {
