@@ -279,61 +279,22 @@ export function rewriteCommitlintScopes(
 }
 
 /**
- * Rewrites the Pages deploy so it builds and assembles the new remote
- * instead of the two examples.
+ * Points the deployable-site build at the new remote instead of the two
+ * examples.
+ *
+ * One `REMOTES` array drives the whole assemble (scripts/build-site.ts), so
+ * this is a single rewrite rather than one per build step — the deploy used
+ * to be a CI workflow with a step per app, and moving it into a script is
+ * what made that possible.
  */
-export function rewriteDeployWorkflow(
-  content: string,
-  removedApps: readonly string[],
-  options: { scope: string; name: string },
-): string {
-  let next = content;
-  let removedSteps = 0;
-
-  for (const app of removedApps) {
-    const step = new RegExp(
-      `\\n\\s*- name: Build ${escapeRegExp(app)} remote\\n\\s*run: [^\\n]*\\n`,
-      'i',
+export function rewriteBuildSiteRemotes(content: string, newRemote: string): string {
+  const remotes = /const REMOTES = \[[^\]]*\] as const;/;
+  if (!remotes.test(content)) {
+    throw new EjectTransformError(
+      'rewriteBuildSiteRemotes: could not find the REMOTES array in the site build.',
     );
-    const before = next;
-    next = next.replace(step, '\n');
-    if (next !== before) removedSteps += 1;
   }
-  required(
-    removedSteps === removedApps.length,
-    `rewriteDeployWorkflow: expected to remove ${removedApps.length} build step(s), removed ${removedSteps}.`,
-  );
-
-  // One build step for the new remote, placed before the shell's.
-  const shellStep = /(\n(\s*)- name: Build shell \(production\)\n)/;
-  required(shellStep.test(next), "rewriteDeployWorkflow: could not find the shell's build step.");
-  next = next.replace(
-    shellStep,
-    (_full, whole: string, indent: string) =>
-      `\n${indent}- name: Build ${options.name} remote\n${indent}  run: pnpm --filter ${options.scope}/${options.name} run build\n${whole.replace(/^\n/, '')}`,
-  );
-
-  // Assemble block: one mkdir/cp pair per remote.
-  const mkdir = /^(\s*)mkdir -p .*$/m;
-  required(mkdir.test(next), 'rewriteDeployWorkflow: could not find the mkdir line.');
-  next = next.replace(
-    mkdir,
-    (_full, indent: string) => `${indent}mkdir -p _site/remotes/${options.name}`,
-  );
-
-  for (const app of removedApps) {
-    const copy = new RegExp(`^\\s*cp -r apps/${escapeRegExp(app)}/dist/\\..*$\\n`, 'm');
-    next = next.replace(copy, '');
-  }
-  const shellCopy = /^(\s*)(cp -r apps\/shell\/dist\/\. _site\/)$/m;
-  required(shellCopy.test(next), 'rewriteDeployWorkflow: could not find the shell copy line.');
-  next = next.replace(
-    shellCopy,
-    (_full, indent: string, line: string) =>
-      `${indent}${line}\n${indent}cp -r apps/${options.name}/dist/. _site/remotes/${options.name}/`,
-  );
-
-  return next;
+  return content.replace(remotes, `const REMOTES = ['${newRemote}'] as const;`);
 }
 
 // ---------------------------------------------------------------------------

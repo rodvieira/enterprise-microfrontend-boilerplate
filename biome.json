@@ -17,6 +17,7 @@
     "ignore": [
       "**/node_modules/**",
       "**/dist/**",
+      "**/_site/**",
       "**/build/**",
       "**/.turbo/**",
       "**/coverage/**",

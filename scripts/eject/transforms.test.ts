@@ -8,8 +8,8 @@ import {
   findReviewHits,
   flattenAdrReferences,
   renameScope,
+  rewriteBuildSiteRemotes,
   rewriteCommitlintScopes,
-  rewriteDeployWorkflow,
   rewritePlaywrightWebServers,
   rewriteVitestProjects,
   validateScope,
@@ -181,24 +181,23 @@ describe('rewriteCommitlintScopes', () => {
   });
 });
 
-describe('rewriteDeployWorkflow', () => {
-  const source = realFile('.github/workflows/deploy.yml');
+describe('rewriteBuildSiteRemotes', () => {
+  const source = realFile('scripts/build-site.ts');
 
-  it('builds and assembles the new remote instead of the examples', () => {
-    const result = rewriteDeployWorkflow(source, REMOVED, { scope: '@acme', name: 'payments' });
+  it('points the deployable site build at the new remote only', () => {
+    const result = rewriteBuildSiteRemotes(source, 'payments');
 
-    expect(result).not.toContain('Build dashboard remote');
-    expect(result).not.toContain('Build admin remote');
-    expect(result).not.toContain('apps/dashboard/dist');
-    expect(result).not.toContain('apps/admin/dist');
+    expect(result).toContain("const REMOTES = ['payments'] as const;");
+    expect(result).not.toMatch(/REMOTES = \[[^\]]*'dashboard'/);
+    expect(result).not.toMatch(/REMOTES = \[[^\]]*'admin'/);
+    // The shell is not in REMOTES — it is the host, built separately.
+    expect(result).toContain("FEDERATION_ENV: 'production'");
+  });
 
-    expect(result).toContain('- name: Build payments remote');
-    expect(result).toContain('run: pnpm --filter @acme/payments run build');
-    expect(result).toContain('mkdir -p _site/remotes/payments');
-    expect(result).toContain('cp -r apps/payments/dist/. _site/remotes/payments/');
-    // The shell's own build and the SPA fallback are untouched.
-    expect(result).toContain('Build shell (production)');
-    expect(result).toContain('cp apps/shell/dist/index.html _site/404.html');
+  it('throws rather than silently no-op when the array is gone', () => {
+    expect(() => rewriteBuildSiteRemotes('const OTHER = [];', 'payments')).toThrow(
+      EjectTransformError,
+    );
   });
 });
 
