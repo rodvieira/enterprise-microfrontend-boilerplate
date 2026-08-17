@@ -32,8 +32,8 @@ export default defineConfig({
         type: 'javascript/auto',
       },
       {
-        // Same pattern as apps/shell/rspack.config.ts (research D2 in
-        // 002-shell-host): https://tailwindcss.com/docs/installation/framework-guides/rspack/react
+        // Same pattern as apps/shell/rspack.config.ts:
+        // https://tailwindcss.com/docs/installation/framework-guides/rspack/react
         test: /\.css$/,
         use: ['postcss-loader'],
         type: 'css',

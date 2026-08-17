@@ -1,7 +1,7 @@
 # @enterprise-mfe/telemetry
 
 The remote-observability **contract**, backed by a console sink. Not a
-vendor integration — see [ADR-0023](../../docs/decisions/0023-telemetry-contract.md).
+vendor integration.
 
 ```tsx
 import { TelemetryProvider } from '@enterprise-mfe/telemetry';
@@ -27,5 +27,5 @@ micro-frontend host has:
 Every event carries a `RemoteContext` (`name`, optional `version` from the
 registry, `routePath`), so a failure identifies **which build** broke.
 
-See [docs/how-to-connect-telemetry.md](../../docs/how-to-connect-telemetry.md)
+See [docs/USAGE.md](../../docs/USAGE.md)
 to plug in Sentry, Datadog, or OpenTelemetry.

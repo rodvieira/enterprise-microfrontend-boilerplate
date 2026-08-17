@@ -8,7 +8,7 @@
 - [ ] `pnpm check:shared-deps` passes (no singleton version drift)
 - [ ] `pnpm test` passes
 - [ ] New or changed behavior has a test
-- [ ] If this changes a decision already logged in `docs/decisions/`, a new ADR
+- [ ] If this changes how the project is used, `docs/USAGE.md` is updated
       is added (never edit an old one to pretend it always said that)
 - [ ] Commit messages follow Conventional Commits with the correct scope
 

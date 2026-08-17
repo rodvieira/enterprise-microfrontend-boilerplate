@@ -26,7 +26,7 @@ describe('App', () => {
     await waitFor(() => expect(screen.getByText('Not signed in')).toBeInTheDocument());
   });
 
-  it('reads the current session via the shared auth contract (FR-005)', async () => {
+  it('reads the current session via the shared auth contract', async () => {
     render(
       <AuthProvider>
         <SignInButton />
@@ -40,7 +40,7 @@ describe('App', () => {
     await waitFor(() => expect(screen.getByText('Signed in as Ada Lovelace')).toBeInTheDocument());
   });
 
-  it('increments the active-users KPI when a user:role-changed event is received (FR-014)', async () => {
+  it('increments the active-users KPI when a user:role-changed event is received', async () => {
     render(
       <AuthProvider>
         <App basePath="/dashboard" />

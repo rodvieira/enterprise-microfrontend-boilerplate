@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * The shell composing a third real remote (004-admin-remote) — proving the
- * mechanism 003-dashboard-remote built generalizes to more than one remote,
+ * The shell composing a second real remote — proving the mechanism
+ * generalizes to more than one,
  * not just the specific case it was first proven against.
  */
 test.describe('admin composition', () => {
@@ -14,7 +14,7 @@ test.describe('admin composition', () => {
     await expect(page.getByRole('heading', { name: 'Admin' })).toBeVisible();
   });
 
-  test('navigating between dashboard and admin leaves no state from the other (US1 scenario 2)', async ({
+  test('navigating between dashboard and admin leaves no state from the other', async ({
     page,
   }) => {
     await page.goto('/dashboard');
@@ -31,10 +31,10 @@ test.describe('admin composition', () => {
 });
 
 /**
- * The headline proof (004-admin-remote User Story 4): a role change in
+ * The headline proof: a role change in
  * admin updates the dashboard's "active users" KPI live, with no reload,
  * across two genuinely separate browser tabs — exactly what
- * packages/event-bus's BroadcastChannel relay exists for (research D2). Two
+ * packages/event-bus's BroadcastChannel relay exists for. Two
  * pages in the same browser context share an origin, which is what
  * BroadcastChannel requires; they do not share any JS memory, which is what
  * makes this a real test of the relay rather than of same-module delivery.
@@ -52,7 +52,7 @@ test.describe('live cross-remote update', () => {
     await adminPage.goto('/admin');
     // The auth stub starts signed out on every page independently (no
     // persistence) — the invite/edit trigger is correctly absent until
-    // signed in (FR-008).
+    // signed in.
     await adminPage.getByRole('button', { name: /sign in/i }).click();
     await adminPage.getByRole('button', { name: /invite or edit user/i }).click();
     await adminPage.getByLabel(/change an existing user's role/i).click();
@@ -62,7 +62,7 @@ test.describe('live cross-remote update', () => {
     await expect(dashboardPage.getByText('1,205')).toBeVisible();
   });
 
-  test('a dashboard opened after the role change shows fresh state, not a replay (FR-016)', async ({
+  test('a dashboard opened after the role change shows fresh state, not a replay', async ({
     context,
   }) => {
     const adminPage = await context.newPage();

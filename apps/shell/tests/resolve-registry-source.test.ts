@@ -7,7 +7,7 @@ import {
 const allFilesExist = () => true;
 
 describe('resolveRegistrySourcePath', () => {
-  it('defaults to dev when FEDERATION_ENV is unset (FR-005)', () => {
+  it('defaults to dev when FEDERATION_ENV is unset', () => {
     expect(resolveRegistrySourcePath(undefined, allFilesExist)).toBe(
       './src/internal/federation/remotes.dev.json',
     );

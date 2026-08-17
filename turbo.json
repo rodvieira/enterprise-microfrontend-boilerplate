@@ -11,10 +11,6 @@
       "cache": false,
       "persistent": true
     },
-    "test": {
-      "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
-    },
     "e2e": {
       "dependsOn": ["build"],
       "outputs": ["playwright-report/**"]

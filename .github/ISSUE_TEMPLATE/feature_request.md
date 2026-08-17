@@ -17,4 +17,4 @@ across apps, singleton-shared packages must stay in check:shared-deps. -->
 ## Does this need a new ADR?
 
 If this changes or adds to an architectural decision already in
-`docs/decisions/`, say which one, or note that this is new ground.
+`docs/USAGE.md`, say which part, or note that this is new ground.

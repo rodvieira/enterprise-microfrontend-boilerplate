@@ -9,7 +9,7 @@ vi.mock('@module-federation/enhanced/runtime', () => ({
 }));
 
 describe('RemoteRegion', () => {
-  it('contains a load failure to its own region — the rest of the host stays navigable (FR-012)', async () => {
+  it('contains a load failure to its own region — the rest of the host stays navigable', async () => {
     render(
       <div>
         <nav>

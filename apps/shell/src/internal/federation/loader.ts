@@ -10,7 +10,7 @@ import type { ComponentType } from 'react';
  *
  * `exposedModule` is `"<remoteName>/<exposedKey>"`, matching whatever the
  * remote's own federation.config.ts lists under `exposes` — see
- * docs/architecture.md's "Remote loading" section.
+ * docs/USAGE.md's "Remote loading" section.
  */
 export function createFederationLoader<T>(exposedModule: string): RemoteLoader<T> {
   return async () => {

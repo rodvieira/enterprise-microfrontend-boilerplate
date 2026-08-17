@@ -34,7 +34,7 @@ export function App({ basePath }: RemoteAppProps) {
   // independent ones.
   const overview = useDashboardOverview({ forceFailure: shouldForceOverviewFailure() });
 
-  // 004-admin-remote's headline proof: a role change in admin bumps this
+  // The headline proof: a role change in admin bumps this
   // count live, with no reload and no direct coupling — the update travels
   // only through packages/event-bus (a simple increment
   // against whatever the last fetch resolved, not a recomputation from

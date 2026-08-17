@@ -24,15 +24,15 @@ Composed inside the shell: run the command above alongside
 `pnpm --filter @enterprise-mfe/shell run dev` and
 `pnpm --filter @enterprise-mfe/dashboard run dev` (or just `pnpm dev` from
 the repository root), then visit `http://localhost:3000/admin`. See
-[the registry entry](../../specs/004-admin-remote/contracts/registry-entry.md)
+its registry entry
 for exactly what makes this remote registrable — registering it required no
-shell source change, since `003-dashboard-remote` already built the
+shell source change, since the shell already had the
 route-patching mechanism this remote reuses unchanged.
 
 ## Structure
 
 The same `src/exposed/` / `src/internal/` split every app in this
-repository uses (constitution Principle I):
+repository uses:
 
 ```text
 src/
@@ -50,7 +50,7 @@ src/
 
 `internal/users/fixtures.ts` is a self-contained, in-memory fixture — 27
 seeded users, mutated in place by `use-user-list.ts` — exactly like
-`apps/dashboard`'s KPI/chart/feed data (`003-dashboard-remote` research D5).
+`apps/dashboard`'s KPI/chart/feed data.
 This project has no backend by design.
 
 ## Permission gating
@@ -58,7 +58,7 @@ This project has no backend by design.
 The invite/edit action is reachable only when the current session's
 `user.permissions` includes `users:write`, checked locally
 (`internal/permissions/use-can-write-users.ts`) rather than by extending
-`packages/auth`'s `ProtectedRoute` — see `specs/004-admin-remote/research.md`
+`packages/auth`'s `ProtectedRoute`
 D4 for why this stayed a local, narrowly-scoped check instead of a shared
 contract change.
 

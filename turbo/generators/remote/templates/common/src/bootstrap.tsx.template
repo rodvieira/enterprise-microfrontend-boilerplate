@@ -12,7 +12,7 @@ if (!container) {
  * Standalone dev entry has no shell to supply a basePath or an ancestor
  * <AuthProvider> — same pattern every remote in this repository follows.
  * When composed inside the shell, App.tsx relies on the shell's own
- * <AuthProvider> instead (FR-005) — see exposed/App.tsx's comment.
+ * <AuthProvider> instead — see exposed/App.tsx's comment.
  */
 createRoot(container).render(
   <AuthProvider>

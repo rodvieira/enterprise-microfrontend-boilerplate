@@ -7,7 +7,7 @@ actually provides is the *contract* — `useAuth()`, `<AuthProvider>`,
 `<ProtectedRoute>` — so that the shell and every remote can be built against a
 stable session API today and have a real identity provider dropped in behind it
 later without a single consumer changing. That decision is deliberate and
-documented in [ADR-0009](../../docs/decisions/0009-auth-contract-not-implementation.md):
+deliberate:
 every enterprise adopting this boilerplate already runs Okta, Entra ID, Auth0, or
 Keycloak, so shipping a real login flow means shipping code that gets deleted
 during adoption.
@@ -52,7 +52,7 @@ quietly splitting the session in two.
 
 Everything fake lives in `src/stub.ts` — three functions and one frozen user.
 Nothing in it is exported from the package, so swapping it cannot break a
-consumer. See [docs/how-to-connect-sso.md](../../docs/how-to-connect-sso.md) for
+consumer. See [docs/USAGE.md](../../docs/USAGE.md) for
 the integration path and `.env.example` for the variables a real provider needs.
 
 The recommended production pattern is Backend-For-Frontend, where tokens never
@@ -63,4 +63,4 @@ project is frontend-only by choice.
 
 This package holds shared state, so shell and every remote must resolve to one
 instance of it. `pnpm check:shared-deps` enforces that
-(constitution Principle III).
+(see `pnpm check:shared-deps`).

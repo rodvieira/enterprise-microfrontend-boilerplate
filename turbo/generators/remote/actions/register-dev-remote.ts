@@ -37,7 +37,7 @@ function readRegistry(repoRoot: string): DevRegistry {
 }
 
 /**
- * research D6: the next free port after every port already registered in
+ * The next free port after every port already registered in
  * remotes.dev.json, starting from the shell's own dev port (3000) so a
  * first-ever remote still lands on 3001.
  */
@@ -53,9 +53,9 @@ export function nextDevPort(registry: Pick<DevRegistry, 'remotes'>): number {
 }
 
 /**
- * Monorepo mode only (FR-009). Appends one DevRegistryEntry and, if not
+ * Monorepo mode only. Appends one DevRegistryEntry and, if not
  * already present, one allowedOrigins entry for the assigned port — never
- * touches remotes.staging.json or remotes.production.json (FR-010).
+ * touches remotes.staging.json or remotes.production.json.
  */
 export function registerDevRemote(options: RegisterDevRemoteOptions): RegisterDevRemoteResult {
   const registry = readRegistry(options.repoRoot);

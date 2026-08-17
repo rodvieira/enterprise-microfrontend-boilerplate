@@ -15,7 +15,7 @@ know the generator's flags from memory.
    `packages/auth` into its exposed entry point by default.
 4. **Monorepo or standalone mode?** Monorepo = lives in `apps/`, workspace-linked.
    Standalone = generates an independent project consuming `packages/*` as
-   published dependencies (see ADR-0007) — pick this if the person says the remote
+   published dependencies — pick this if the person says the remote
    will be owned by a different team/repository.
 5. **Does it need to publish events or listen to `packages/event-bus`?** If yes,
    scaffold the subscription/publish boilerplate too, not just the empty shell.
@@ -34,6 +34,6 @@ Run `pnpm turbo gen remote` with the answers, verify the new app builds
 ## If asked to add a remote before the generator exists
 
 The generator doesn't exist until after `dashboard` and `admin` are both built by
-hand (see ADR-0008 and CLAUDE.md, build order). If asked to scaffold a third remote
+hand. If asked to scaffold a third remote
 before that point, explain this and offer to scaffold it manually by copying the
 structure of the closer of the two existing remotes instead.

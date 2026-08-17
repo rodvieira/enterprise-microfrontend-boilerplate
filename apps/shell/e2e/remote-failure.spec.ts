@@ -2,22 +2,20 @@ import { expect, test } from '@playwright/test';
 
 /**
  * `packages/federation-utils`' failure-containment mechanism
- * (`002-shell-host`) has only ever been proven against simulated loaders —
+ * had only ever been proven against simulated loaders —
  * never a real remote that is actually unreachable, because none existed
- * until sprint 4. This spec closes that gap (005-guard-rails US1).
+ * This spec closes that gap.
  *
  * "Genuinely unreachable" is produced by aborting the remote's requests at
  * the network layer (`page.route(...).abort()`), not by stopping its dev
  * server process — the suite runs `fullyParallel` against dev servers
  * shared for the whole run, so killing a real process would break every
  * other concurrently-running test. The browser's actual `fetch()` call
- * still genuinely fails (research D1) — the same code path a real network
+ * still genuinely fails — the same code path a real network
  * outage would exercise.
  */
 test.describe('real remote-load failure containment', () => {
-  test('a real unreachable remote shows a contained, retryable failure (FR-001-FR-003)', async ({
-    page,
-  }) => {
+  test('a real unreachable remote shows a contained, retryable failure', async ({ page }) => {
     await page.route('http://localhost:3001/**', (route) => route.abort());
 
     await page.goto('/dashboard');
@@ -36,7 +34,7 @@ test.describe('real remote-load failure containment', () => {
     await expect(page.getByRole('heading', { name: 'Admin' })).toBeVisible();
   });
 
-  test('retry recovers without a full page reload once the remote is reachable again (FR-004)', async ({
+  test('retry recovers without a full page reload once the remote is reachable again', async ({
     page,
   }) => {
     let blocked = true;
@@ -58,7 +56,7 @@ test.describe('real remote-load failure containment', () => {
     await expect(page.getByText('1,204')).toBeVisible();
   });
 
-  test('a remote that failed after a prior successful load shows the same contained state on revisit, not stale content (FR-005)', async ({
+  test('a remote that failed after a prior successful load shows the same contained state on revisit, not stale content', async ({
     page,
   }) => {
     // First visit succeeds — nothing intercepted yet.

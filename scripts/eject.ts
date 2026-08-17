@@ -3,14 +3,14 @@
  *
  * Renames the npm scope, replaces the two example remotes with your first
  * real one, and strips the artifacts of *this* project's build process
- * (specs, ADRs, blueprint) that mean nothing in your repo.
+ * that mean nothing in your repo.
  *
  * It runs once and then deletes itself. The undo is `git reset --hard`,
  * which is why it refuses to start on a dirty tree.
  *
- * What it deliberately does NOT do: rewrite prose. `docs/architecture.md`
- * narrates the example remotes across whole paragraphs, and no regex turns
- * that into a description of *your* platform. Everything it could not
+ * What it deliberately does NOT do: rewrite prose. `docs/USAGE.md`
+ * describes the example remotes in places, and no regex turns that into a
+ * description of *your* platform. Everything it could not
  * finish is listed in EJECT-TODO.md rather than silently mangled.
  */
 
@@ -98,12 +98,13 @@ const TEXT_EXTENSIONS = new Set([
 ]);
 const TEXT_FILENAMES = new Set(['.npmrc', '.gitignore', '.env.example']);
 
-/** Everything that documents how *this* repo was built, not how yours works. */
+/**
+ * Working notes that are this repository's own, not the adopter's. The
+ * spec folder and decision log this used to remove no longer exist —
+ * documentation is one file now (docs/USAGE.md), and that file is genuinely
+ * useful to whoever ejects, so it is kept and reported instead.
+ */
 const PROCESS_ARTIFACTS = [
-  'specs',
-  '.specify',
-  'docs/decisions',
-  'docs/blueprint.html',
   'docs/analise-enterprise-mfe-boilerplate.md',
   'docs/enterprise-microfrontend-boilerplate-analysis.md',
 ];
@@ -287,15 +288,6 @@ function removeProcessArtifacts(): void {
   for (const app of REMOVED_APPS) {
     remove(join('apps', app));
   }
-  // spec-kit tooling for a process whose specs/ no longer exist. The agents
-  // under .claude/agents/ are kept — they review real architectural rules
-  // this repo still enforces.
-  const skills = join(REPO_ROOT, '.claude', 'skills');
-  if (existsSync(skills)) {
-    for (const entry of readdirSync(skills)) {
-      if (entry.startsWith('speckit-')) remove(join('.claude', 'skills', entry));
-    }
-  }
 }
 
 function rewriteRemainingFiles(options: Options): ReviewHit[] {
@@ -382,10 +374,8 @@ and commit the result, CI's \`pnpm install --frozen-lockfile\` will fail.
   If you serve the shell from a subpath rather than a domain root, add
   \`"basePath": "/your-repo/"\` back to that environment's registry — it was
   dropped precisely because its old value named this boilerplate's repository.
-- **Rewrite \`docs/architecture.md\`** to describe your platform. It still narrates
+- **Rewrite \`docs/USAGE.md\`** to describe your platform. It still describes
   the example remotes in places.
-- **Record your own decisions.** The ADRs were removed with the rest of this
-  project's history; \`docs/decisions/\` is a habit worth keeping.
 `;
 
   writeFileSync(join(REPO_ROOT, 'EJECT-TODO.md'), body);

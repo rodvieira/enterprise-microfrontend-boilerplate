@@ -4,7 +4,7 @@ import { isAbsolute, resolve, sep } from 'node:path';
  * Mirrors apps/shell/src/internal/routes/remote-routes.tsx's
  * HOST_OWNED_ROUTE_PATHS. Not imported directly: that file lives under an
  * app's src/internal/, which no code outside that app may import from
- * (constitution Principle I, .dependency-cruiser.js) — the generator reuses
+ * (enforced by .dependency-cruiser.js) — the generator reuses
  * the same *semantics*, per generator-contract.md, not the literal module.
  */
 export const HOST_OWNED_ROUTE_PATHS: readonly string[] = ['/'];
@@ -33,7 +33,7 @@ const LABEL_PATTERN = /^[\w .,'&\/-]+$/;
 
 export interface ValidationResult {
   ok: boolean;
-  /** Present when ok is false — the specific, printable refusal reason (FR-004, FR-013). */
+  /** Present when ok is false — the specific, printable refusal reason. */
   reason?: string;
 }
 
@@ -100,7 +100,7 @@ export function validateLabel(label: string): ValidationResult {
 }
 
 /**
- * Standalone mode only (research D4, FR-016): the output path must resolve
+ * Standalone mode only: the output path must resolve
  * outside the monorepo root the generator is running from.
  */
 export function validateOutputPathOutsideRepo(
@@ -122,7 +122,7 @@ export function validateOutputPathOutsideRepo(
 }
 
 /**
- * FR-004 and the "generation interrupted partway" edge case: refuse to
+ * The "generation interrupted partway" case: refuse to
  * write over a pre-existing directory — empty or not — rather than
  * attempting to detect and repair a partial previous run.
  */

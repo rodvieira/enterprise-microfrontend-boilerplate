@@ -1,5 +1,5 @@
 /**
- * The singleton drift gate — constitution Principle III.
+ * The singleton drift gate.
  *
  * React, ReactDOM, and any shared package that holds state must resolve to a
  * single instance across the shell and every remote. Version drift in one of
@@ -22,8 +22,8 @@ const REPO_ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
  *
  * This list is explicit on purpose: "this must be a singleton" is a design
  * decision the code cannot infer. Adding a shared package that holds state or a
- * React context means adding it here in the same change — see constitution
- * Principle III and .claude/commands/add-shared-package.md.
+ * React context means adding it here in the same change — see CLAUDE.md and
+ * .claude/commands/add-shared-package.md.
  */
 const SINGLETONS = [
   'react',
@@ -31,25 +31,23 @@ const SINGLETONS = [
   '@enterprise-mfe/auth',
   // react-router holds routing context (history, matched routes) that will
   // cross the federation boundary once a remote exists — two copies would
-  // produce two histories, the same class of bug as two Reacts. Added in
-  // sprint 3 alongside the shell (research D6, constitution Principle III).
+  // produce two histories, the same class of bug as two Reacts.
   'react-router',
   // The pub/sub registry a publisher and subscriber must actually share —
   // two copies would mean admin's role-change events never reach
-  // dashboard's subscriber at all. Added in sprint 5 alongside apps/admin
-  // (004-admin-remote research D2, constitution Principle III).
+  // dashboard's subscriber at all.
   '@enterprise-mfe/event-bus',
   // The telemetry sink the host installs. Two copies would mean a remote
   // reporting into its own console-backed default while the host believes
   // everything is being sent to its real vendor — a monitoring gap that
-  // looks exactly like healthy silence (ADR-0023).
+  // looks exactly like healthy silence.
   '@enterprise-mfe/telemetry',
   // Build-time, unlike everything above it, and here for the same reason
   // they are: every app ships its own compiled Tailwind, so a composed page
   // carries one preflight per app. Identical versions make those duplicates
   // harmless. Different majors make them a silent visual bug — whichever
   // remote's reset loads last quietly restyles the others' base elements,
-  // with nothing failing and nothing to grep for (ADR-0024).
+  // with nothing failing and nothing to grep for.
   'tailwindcss',
   '@tailwindcss/postcss',
 ] as const;
@@ -81,7 +79,7 @@ function workspaceManifests(): Array<{ path: string; manifest: Manifest }> {
         .filter((entry) => entry.isDirectory())
         .map((entry) => entry.name);
     } catch {
-      // apps/ does not exist until the shell lands in sprint 3. Not an error.
+      // A missing apps/ or packages/ directory is not an error.
       continue;
     }
 
@@ -158,7 +156,7 @@ function main(): void {
       '\nSingleton version drift. Every manifest that declares one of these must use\n' +
         'an identical range — a mismatch does not fail the build, it fails at runtime\n' +
         'when a second copy loads. Pick the correct version and align every manifest.\n' +
-        'See .specify/memory/constitution.md, Principle III.\n',
+        "See CLAUDE.md's architecture rules.\n",
     );
     process.exit(1);
   }

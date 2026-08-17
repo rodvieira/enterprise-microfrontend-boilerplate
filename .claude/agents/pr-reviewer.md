@@ -21,7 +21,7 @@ Review the diff with two passes.
   `federation/remotes.dev.json`?
 - If the diff touches `packages/auth`, does it still work with the stub
   implementation, or does it accidentally assume a real identity provider is
-  connected? (See ADR-0009 — the stub must keep working standalone.)
+  connected? The stub must keep working standalone.
 
 ## Pass 2 — general quality
 

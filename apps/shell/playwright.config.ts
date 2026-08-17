@@ -1,9 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
 /**
- * The first real end-to-end config in this project (research D6,
- * 003-dashboard-remote) — deferred by 002-shell-host's research D7 until a
- * real remote existed to compose across a real network boundary.
+ * End-to-end coverage of the thing unit tests cannot reach: the shell
+ * composing real remotes across a real network boundary.
  *
  * All three dev servers are started from the repository root so pnpm's
  * workspace filtering resolves correctly regardless of the shell where this

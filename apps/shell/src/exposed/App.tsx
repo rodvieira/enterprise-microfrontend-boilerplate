@@ -97,7 +97,7 @@ function createAppRouter() {
 
 /**
  * What bootstrap.tsx mounts. This is the shell's public entry, the same
- * exposed/ vs internal/ split every remote uses (ADR-0006) —
+ * exposed/ vs internal/ split every remote uses —
  * even though the shell exposes nothing over federation today.
  */
 export function App() {

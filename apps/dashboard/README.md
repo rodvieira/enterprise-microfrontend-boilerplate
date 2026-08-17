@@ -18,13 +18,13 @@ pnpm --filter @enterprise-mfe/dashboard run build
 Composed inside the shell: run the command above alongside
 `pnpm --filter @enterprise-mfe/shell run dev` (or just `pnpm dev` from the
 repository root), then visit `http://localhost:3000/dashboard`. See
-[the registry entry](../../specs/003-dashboard-remote/contracts/registry-entry.md)
+its registry entry
 for exactly what makes this remote registrable.
 
 ## Structure
 
 The same `src/exposed/` / `src/internal/` split every app in this repository
-uses (constitution Principle I):
+uses:
 
 ```text
 src/
@@ -54,7 +54,7 @@ composed (found the hard way — see the commit history for
 network call — this project has no backend by design. KPI cards, the chart,
 and the feed all read from one shared `useDashboardOverview()` call in
 `App.tsx`, not three independent fetches. See
-[contracts/dashboard-data-contract.md](../../specs/003-dashboard-remote/contracts/dashboard-data-contract.md).
+its own data module.
 
 ## What's deliberately not here
 

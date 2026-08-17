@@ -12,6 +12,9 @@ export type { InputProps } from './components/input';
 export { Modal } from './components/modal';
 export type { ModalProps } from './components/modal';
 
+export { Select } from './components/select';
+export type { SelectProps } from './components/select';
+
 export { Table } from './components/table';
 export type { TableColumn, TableProps } from './components/table';
 

@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { useUserList } from '../src/internal/users/use-user-list';
 
 describe('useUserList', () => {
-  it('paginates a fixture set larger than one page, bounded (FR-006)', () => {
+  it('paginates a fixture set larger than one page, bounded', () => {
     const { result } = renderHook(() => useUserList());
 
     expect(result.current.users.length).toBeLessThanOrEqual(result.current.pageSize);
     expect(result.current.pageCount).toBeGreaterThan(1);
   });
 
-  it('sorting by a chosen column reorders the visible rows (FR-007)', () => {
+  it('sorting by a chosen column reorders the visible rows', () => {
     const { result } = renderHook(() => useUserList());
     const beforeFirstName = result.current.users[0]?.name;
 
@@ -41,7 +41,7 @@ describe('useUserList', () => {
     expect(result.current.page).toBe(0);
   });
 
-  it('rejects an invalid submission and adds nothing (FR-011)', () => {
+  it('rejects an invalid submission and adds nothing', () => {
     const { result } = renderHook(() => useUserList());
     const before = result.current.totalCount;
 
@@ -54,7 +54,7 @@ describe('useUserList', () => {
     expect(result.current.totalCount).toBe(before);
   });
 
-  it('rejects a duplicate email and adds nothing (FR-011)', () => {
+  it('rejects a duplicate email and adds nothing', () => {
     const { result } = renderHook(() => useUserList());
     const existingEmail = result.current.allUsers[0]?.email as string;
     const before = result.current.totalCount;
@@ -68,7 +68,7 @@ describe('useUserList', () => {
     expect(result.current.totalCount).toBe(before);
   });
 
-  it('changeRole updates the role of an existing user (FR-010)', () => {
+  it('changeRole updates the role of an existing user', () => {
     const { result } = renderHook(() => useUserList());
     const target = result.current.allUsers[0];
     expect(target).toBeDefined();

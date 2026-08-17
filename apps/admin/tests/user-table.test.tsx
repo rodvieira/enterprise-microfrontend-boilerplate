@@ -10,7 +10,7 @@ const USERS: readonly User[] = [
 ];
 
 describe('UserTable', () => {
-  it('renders a bounded page of users using the shared design system Table (FR-002, FR-006)', () => {
+  it('renders a bounded page of users using the shared design system Table', () => {
     render(<UserTable users={USERS} sortColumn="name" sortDirection="asc" onSort={() => {}} />);
     expect(screen.getByRole('table')).toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(3); // header + 2
@@ -18,7 +18,7 @@ describe('UserTable', () => {
     expect(screen.getByText('Amir')).toBeInTheDocument();
   });
 
-  it('choosing a sortable column calls onSort with that column (FR-007)', async () => {
+  it('choosing a sortable column calls onSort with that column', async () => {
     const onSort = vi.fn();
     render(<UserTable users={USERS} sortColumn="name" sortDirection="asc" onSort={onSort} />);
 

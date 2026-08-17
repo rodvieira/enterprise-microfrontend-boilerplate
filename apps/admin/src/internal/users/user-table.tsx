@@ -1,6 +1,6 @@
 import type { User } from '@enterprise-mfe/shared-types';
 import type { TableColumn } from '@enterprise-mfe/ui';
-import { Table } from '@enterprise-mfe/ui';
+import { Button, Table } from '@enterprise-mfe/ui';
 import type { SortColumn, SortDirection } from './use-user-list';
 
 export interface UserTableProps {
@@ -20,10 +20,10 @@ export function UserTable({ users, sortColumn, sortDirection, onSort }: UserTabl
   function header(label: string, column: SortColumn) {
     const active = sortColumn === column;
     return (
-      <button type="button" onClick={() => onSort(column)}>
+      <Button type="button" variant="ghost" size="sm" onClick={() => onSort(column)}>
         {label}
         {sortIndicator(active, sortDirection)}
-      </button>
+      </Button>
     );
   }
 

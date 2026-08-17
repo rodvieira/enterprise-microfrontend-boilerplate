@@ -46,7 +46,7 @@ jobs:
         run: pnpm check:package-exports
 
       # Chromium only, matching playwright.config.ts's default project — no
-      # cross-browser projects are defined yet (005-guard-rails research D2).
+      # cross-browser projects are defined yet.
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
@@ -57,8 +57,8 @@ jobs:
         run: pnpm audit --audit-level=high
         continue-on-error: true # a new upstream advisory must not block an unrelated PR; reviewed rather than enforced
 
-  # CVE/dependency scanning, distinct from pnpm audit above (specs/007-docs-security
-  # research D3). No step-level Action exists for OSV-Scanner — only this
+  # CVE/dependency scanning, distinct from pnpm audit above. No step-level
+  # Action exists for OSV-Scanner — only this
   # reusable-workflow form (confirmed against google.github.io/osv-scanner/github-action/).
   osv-scan:
     permissions:

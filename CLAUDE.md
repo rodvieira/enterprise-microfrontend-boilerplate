@@ -8,78 +8,81 @@ working example micro-frontends (dashboard, admin) composed inside a shell, shar
 a design system, an auth contract, and a typed event bus for cross-remote
 communication.
 
-Full spec: `docs/blueprint.html` (open in a browser). Every architectural decision
-is also logged as an ADR in `docs/decisions/`. The binding rules behind both live
-in `.specify/memory/constitution.md` — this file is the runtime guidance derived
-from it, and the constitution wins on any conflict.
+`docs/USAGE.md` is the one documentation file: commands, a step-by-step, and how
+to do each thing. Keep it that way — this project deliberately does not carry a
+spec folder, a decision log, or a doc per topic.
 
 ## Architecture (non-negotiable)
 
 ```
-apps/shell        → React host, reads federation/manifest.ts per environment
+apps/shell        → React host, reads a per-environment remote registry
 apps/dashboard    → remote 1, exposes ./App
 apps/admin        → remote 2, exposes ./App
 packages/*        → shared code, singleton where noted below
 ```
 
-- `usecase`-equivalent rule for this project: **`src/exposed/` is the only
-  federation-importable code in any app.** Everything in `src/internal/` is
-  private to that app. Never violate this even inside the monorepo.
+- **`src/exposed/` is the only federation-importable code in any app.**
+  Everything in `src/internal/` is private to that app. Never violate this
+  even inside the monorepo.
 - **Never use a relative import (`../`) across apps.** Even though the monorepo
   technically allows it, doing so breaks the boundary that keeps a remote portable
   to its own repository later. `dependency-cruiser` enforces this in CI — treat a
   CI failure here as a hard stop, not a warning to route around.
-- **React, ReactDOM, `packages/auth`, and `packages/event-bus` must resolve to a
-  single shared instance** across shell and every remote. `scripts/check-shared-deps.ts`
-  verifies this in CI. If you add a new package that holds state and gets consumed
-  by more than one app, add it to that check too.
+- **React, ReactDOM, `react-router`, `packages/auth`, `packages/event-bus`, and
+  `packages/telemetry` must resolve to a single shared instance** across shell and
+  every remote. `scripts/check-shared-deps.ts` verifies this in CI. If you add a
+  package that holds state or a React context consumed by more than one app, add it
+  to that check in the same change.
 - Module Federation itself prescribes no folder structure. Everything under
-  `apps/*/src/` beyond `exposed/`/`internal/` is our convention, documented in
-  `docs/architecture.md` — don't assume it's an MF requirement when explaining it
-  to someone else.
-
-## Build order (see ADR-0008)
-
-Shared packages (no federation dependency) → shell → dashboard remote → admin
-remote → guard rails → generator. The generator (`turbo gen remote`) is built by
-extracting the pattern from two real, working remotes — never design it before
-both exist. If you're asked to build the generator before both remotes are done,
-push back and point to this rule.
+  `apps/*/src/` beyond `exposed/`/`internal/` is this project's own convention —
+  don't present it as an MF requirement when explaining it to someone else.
 
 ## Commands
 
 - `pnpm dev` → runs shell + all remotes concurrently
 - `pnpm build` → `turbo build`, each app isolated + shell composed
-- `pnpm test` → `turbo test`
+- `pnpm build:site` → builds everything and assembles `_site/` for deployment
+- `pnpm test` → `vitest run` (deliberately not `turbo test`: no package defines a
+  `test` script, so `turbo test` would find zero tasks and exit 0 having run
+  nothing — a false green)
 - `pnpm e2e` → Playwright, shell composing both remotes
 - `pnpm check:boundaries` → dependency-cruiser, fails on cross-app relative imports
 - `pnpm check:shared-deps` → singleton drift check
-- `pnpm check:package-exports` → packs each publishable package and verifies its
+- `pnpm check:package-exports` → packs each package and verifies its
   `publishConfig.exports` resolve inside the tarball (run after `pnpm build`)
 - `pnpm audit --audit-level=high` → CVE baseline
 - `pnpm eject` → one-time: rename the scope, swap the example remotes for your own
 
-## Auth (see ADR-0009, docs/auth-strategy.md)
+## Auth
 
 `packages/auth` ships a **stub implementation** (in-memory fake user) behind a
 stable contract (`useAuth()`, `<ProtectedRoute>`, `<AuthProvider>`). Do not
 implement a real login flow unless explicitly asked — that decision was made
 deliberately, not left unfinished. If asked to "add real login," point to
-`docs/how-to-connect-sso.md` and confirm the person actually wants to change this
-decision, since it was made for a specific reason (enterprises bring their own
-identity provider).
+`docs/USAGE.md`'s "Connecting real authentication" and confirm the person actually
+wants to change this, since enterprises bring their own identity provider.
+
+`packages/telemetry` is the same shape of decision: a contract and a console sink,
+never a vendor integration.
+
+## Publishing
+
+This repository **does not publish its packages.** The packaging is kept correct
+and verified (`tsup` build, `publishConfig.exports`, `check:package-exports`) so
+that whoever adopts this can publish their own scope on day one — but do not add a
+release pipeline or publish anything without being asked.
+
+The consequence to state honestly whenever standalone mode comes up: a
+standalone-generated project cannot `pnpm install` until its scope is published
+somewhere.
 
 ## Rules
 
 - Conventional Commits, English only — code, comments, commits, docs, PR text.
 - **Comments in shipped code explain the *why*, in self-contained prose.** A
   comment is read by someone who has this file open and nothing else, so
-  traceability markers (`FR-012`, `research D3`, `US2 scenario 1`, sprint
-  numbers) do not belong there — they resolve to `specs/`, which an adopter
-  who ran `pnpm eject` no longer has. Link an ADR when the reasoning is
-  genuinely elsewhere; otherwise state the reason inline. Tests may still
-  cite whatever helps.
+  traceability markers (`FR-012`, `research D3`, sprint numbers) do not belong
+  there. State the reason inline. Tests may still cite whatever helps.
 - No dependency added without a one-line justification in the PR description.
-- Every new package or app needs an entry in the relevant `docs/` file, not just code.
-- If a decision changes something already logged in `docs/decisions/`, add a new
-  ADR that supersedes it — never edit an old ADR to pretend it always said that.
+- Documentation changes go in `docs/USAGE.md`. Do not add new doc files unless
+  asked — the single-file structure is deliberate.

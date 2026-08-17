@@ -37,7 +37,7 @@ loader wraps `loadRemote()` from `@module-federation/enhanced/runtime` (as
 That decoupling is what makes every failure mode — a loader that rejects,
 never settles, resolves to something unusable, or whose resolved component
 throws mid-render — testable with a fake promise, before a real remote exists.
-See [research.md D5](../../specs/002-shell-host/research.md) for the full
+See `docs/USAGE.md` for the full
 rationale.
 
 ## `RemoteBoundary` has no `pending` prop

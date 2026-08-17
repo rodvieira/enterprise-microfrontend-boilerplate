@@ -51,7 +51,7 @@ describe('publish / subscribe', () => {
     expect(calls).toEqual(['second']);
   });
 
-  it('does not queue or replay an event to a subscriber that arrives later (FR-016)', () => {
+  it('does not queue or replay an event to a subscriber that arrives later', () => {
     publish(TOPIC, PAYLOAD);
 
     const calls: unknown[] = [];
@@ -60,7 +60,7 @@ describe('publish / subscribe', () => {
     expect(calls).toEqual([]);
   });
 
-  it('is received by a subscriber connected only through the BroadcastChannel relay (research D2)', async () => {
+  it('is received by a subscriber connected only through the BroadcastChannel relay', async () => {
     // A second channel instance with the same name — standing in for a
     // second browser tab, which shares no in-memory state with this one.
     const remoteTabChannel = new BroadcastChannel('@enterprise-mfe/event-bus');

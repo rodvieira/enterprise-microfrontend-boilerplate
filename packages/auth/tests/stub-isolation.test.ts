@@ -12,7 +12,7 @@ function sourceFiles(dir: string): string[] {
 }
 
 /**
- * FR-008: the stub works with zero configuration and contacts nothing.
+ * The stub works with zero configuration and contacts nothing.
  *
  * Asserted against the source rather than by mocking, because the guarantee is
  * "this package has no integration point at all" — which a runtime test cannot

@@ -10,7 +10,7 @@ Create `packages/$ARGUMENTS` with:
   check an existing package first, don't assume).
 - `tsconfig.json` extending `packages/config-typescript`.
 - A `README.md` explaining what it solves in one paragraph, matching the tone of
-  the catalog in `docs/blueprint.html` §7.
+  the package list in `docs/USAGE.md`.
 
 Then ask: **does this package hold state or a context that more than one app
 (shell + any remote) will consume?** If yes, add it to `scripts/check-shared-deps.ts`

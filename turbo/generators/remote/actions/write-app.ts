@@ -52,10 +52,9 @@ function copyTemplateDir(
 }
 
 /**
- * Standalone mode's published dependency ranges (FR-017): read directly
- * from each packages/* manifest's own "version" field. Correct by
- * construction regardless of whether a publish has happened yet — see
- * package-publish-contract.md.
+ * Standalone mode's published dependency ranges: read directly from each
+ * packages/* manifest's own "version" field. Correct by construction
+ * regardless of whether a publish has ever happened.
  */
 function publishedRange(repoRoot: string, packageDirName: string): string {
   const manifestPath = join(repoRoot, 'packages', packageDirName, 'package.json');
@@ -85,7 +84,7 @@ function readRootTypescriptVersion(repoRoot: string): string {
 /**
  * Renders templates/common/ + templates/<mode>/ into options.targetDir.
  * Assumes every validation check (name, route, output-dir availability)
- * already ran during prompt collection (FR-014) — this function only
+ * already ran during prompt collection — this function only
  * writes.
  */
 export function writeApp(options: WriteAppOptions): WriteAppResult {
