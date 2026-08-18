@@ -12,7 +12,12 @@ export interface LayoutProps extends WithClassName {
 export function Layout({ header, sidebar, footer, children, className }: LayoutProps) {
   return (
     <div
-      className={cx('flex min-h-full flex-col bg-(--color-surface) text-(--color-text)', className)}
+      // min-h-dvh, not min-h-full: `min-height: 100%` only resolves when
+      // every ancestor has a height, and nothing sets one on html/body/#root
+      // — so it collapsed to the content's height and left the page's own
+      // background showing underneath. dvh also tracks mobile browser chrome,
+      // which vh does not.
+      className={cx('flex min-h-dvh flex-col bg-(--color-surface) text-(--color-text)', className)}
     >
       {header ? (
         <header className="flex h-14 items-center border-b border-(--color-border) px-4">

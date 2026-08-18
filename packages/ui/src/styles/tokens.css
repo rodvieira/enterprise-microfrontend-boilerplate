@@ -51,3 +51,16 @@
     --color-text-muted: oklch(0.72 0.02 255);
   }
 }
+
+/*
+ * The page itself, not just the app frame. Without this the browser's own
+ * white shows through wherever the frame does not reach: behind an
+ * overscroll bounce, and under any app that renders something shorter than
+ * the viewport.
+ */
+html,
+body {
+  min-height: 100%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
