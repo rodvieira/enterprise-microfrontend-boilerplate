@@ -11,7 +11,14 @@ export type Environment = 'dev' | 'staging' | 'production';
 export interface RemoteRegistration {
   /** Unique within the registry. Must match the name the remote's own build declares. */
   name: string;
-  /** Absolute URL of the remote's entry manifest. Subject to origin control. */
+  /**
+   * Where the remote's entry manifest lives. Subject to origin control.
+   *
+   * Either an absolute URL, whose origin must be on `allowedOrigins`, or a
+   * root-relative path (`/remotes/dashboard/mf-manifest.json`) meaning "the
+   * same origin as the shell" — which needs no allow-list entry and cannot
+   * fall out of step with wherever the shell is actually deployed.
+   */
   entry: string;
   /** The path the host mounts it under. Leading slash, no trailing slash. */
   routePath: string;

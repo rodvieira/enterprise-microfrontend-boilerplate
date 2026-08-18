@@ -1,16 +1,16 @@
 {
   "environment": "production",
-  "allowedOrigins": ["https://enterprise-microfrontend-boilerplat.vercel.app"],
+  "allowedOrigins": [],
   "remotes": [
     {
       "name": "dashboard",
-      "entry": "https://enterprise-microfrontend-boilerplat.vercel.app/remotes/dashboard/mf-manifest.json",
+      "entry": "/remotes/dashboard/mf-manifest.json",
       "routePath": "/dashboard",
       "label": "Dashboard"
     },
     {
       "name": "admin",
-      "entry": "https://enterprise-microfrontend-boilerplat.vercel.app/remotes/admin/mf-manifest.json",
+      "entry": "/remotes/admin/mf-manifest.json",
       "routePath": "/admin",
       "label": "Admin"
     }
