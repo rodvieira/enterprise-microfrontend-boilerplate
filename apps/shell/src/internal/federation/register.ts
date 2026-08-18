@@ -28,12 +28,16 @@ export function describeRemote(registration: RemoteRegistration): string {
  * here — it never reaches registerRemotes, so it never becomes a fetch
  * attempt, let alone a RemoteLoadState.
  */
-export async function registerAllowedRemotes(registry: RemoteRegistry): Promise<RegisterOutcome> {
+export async function registerAllowedRemotes(
+  registry: RemoteRegistry,
+  /** Defaults to the running page's origin; injectable so tests stay pure. */
+  selfOrigin: string = globalThis.location?.origin ?? '',
+): Promise<RegisterOutcome> {
   const registered: RemoteRegistration[] = [];
   const refused: RefusedRemote[] = [];
 
   for (const registration of registry.remotes) {
-    const decision = judgeOrigin(registration.entry, registry.allowedOrigins);
+    const decision = judgeOrigin(registration.entry, registry.allowedOrigins, selfOrigin);
     if (decision.allowed) {
       registered.push(registration);
     } else {

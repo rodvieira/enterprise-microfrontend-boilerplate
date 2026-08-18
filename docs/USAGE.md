@@ -372,6 +372,46 @@ an origin not listed, and the same list generates the shell's
 Content-Security-Policy, so the browser refuses too. **A missing origin
 here looks exactly like a broken remote** — check it first.
 
+### Same-origin remotes: use a relative entry
+
+If a remote is served from the same origin as the shell — which is what the
+single-project deployments above do — write its entry **root-relative** and
+leave `allowedOrigins` empty:
+
+```jsonc
+{
+  "environment": "production",
+  "allowedOrigins": [],
+  "remotes": [
+    { "name": "dashboard", "entry": "/remotes/dashboard/mf-manifest.json", "routePath": "/dashboard" }
+  ]
+}
+```
+
+This is what this repository's own production registry does, and it is the
+better default whenever it applies:
+
+- **It cannot drift.** An absolute URL has to be kept in step with wherever
+  the shell actually got deployed. When the two disagree — a host that
+  truncates the project name, a domain change — the shell fetches from
+  somewhere that does not resolve, and the failure looks like a broken
+  remote rather than a wrong string.
+- **Preview deployments work.** Every Vercel/Netlify preview has a URL
+  nobody wrote down. An absolute entry sends those previews to production's
+  remotes; a relative one loads the preview's own.
+- **The CSP gets tighter.** With nothing on the allow-list the generated
+  policy is just `script-src 'self'`.
+
+Same-origin is allowed without an allow-list entry on purpose: it is the
+origin already executing the shell's own code, so requiring it to be listed
+would be a check that cannot meaningfully fail.
+
+Two things it does **not** cover, deliberately: an entry must be
+*root*-relative (`/remotes/…`), because a bare `remotes/…` resolves against
+whatever route the person is on; and `//host/path` is protocol-relative,
+which names another origin while looking relative, so it is judged as the
+third-party URL it really is.
+
 Add `"basePath": "/your-subpath/"` only if the shell is served from a
 subpath rather than a domain root.
 

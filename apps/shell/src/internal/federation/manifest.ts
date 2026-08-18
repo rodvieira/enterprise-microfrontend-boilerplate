@@ -77,6 +77,27 @@ function assertVersionsAreUsable(
   }
 }
 
+/**
+ * `entry` is what the whole composition hangs on, so a malformed one is
+ * rejected at startup rather than surfacing later as an unexplained load
+ * failure. A relative entry must be root-relative: a bare `remotes/…`
+ * resolves against whatever route the person is on, which is a different
+ * file on most deployments.
+ */
+function assertEntriesAreUsable(environment: string, remotes: readonly RemoteRegistration[]): void {
+  for (const remote of remotes) {
+    if (typeof remote.entry !== 'string' || remote.entry.trim().length === 0) {
+      fail(
+        `[environment: ${environment}] remote "${remote.name}" has an "entry" of ${JSON.stringify(remote.entry)}. It must be an absolute URL or a root-relative path.`,
+      );
+    }
+    if (/^[a-z]+:/i.test(remote.entry) || remote.entry.startsWith('/')) continue;
+    fail(
+      `[environment: ${environment}] remote "${remote.name}" has a relative "entry" (${JSON.stringify(remote.entry)}) that does not start with "/". A path relative to the current route resolves differently depending on where the person navigated from.`,
+    );
+  }
+}
+
 function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): RemoteRegistry {
   if (typeof document !== 'object' || document === null) {
     fail('expected a JSON object at the top level.');
@@ -107,6 +128,7 @@ function validate(document: unknown, hostOwnedRoutePaths: readonly string[]): Re
 
   assertNoDuplicateNames(registry.environment, registry.remotes);
   assertNoRoutePathCollisions(registry.environment, registry.remotes, hostOwnedRoutePaths);
+  assertEntriesAreUsable(registry.environment, registry.remotes);
   assertVersionsAreUsable(registry.environment, registry.remotes);
 
   return registry;
