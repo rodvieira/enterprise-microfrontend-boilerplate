@@ -39,24 +39,31 @@ describe('validateScope', () => {
 });
 
 describe('renameScope', () => {
+  // A scope this repository does not use. `pnpm rename` walks every text
+  // file including this one, so a fixture written with the real scope would
+  // be rewritten along with the code and turn this into
+  // `renameScope(x, '@acme', '@acme')` — which then fails its own
+  // "old scope is gone" assertion. Found by actually running the rename.
+  const FROM = '@old-scope';
+
   it('rewrites package names, imports, and MF shared keys alike', () => {
     const source = [
-      `import { Button } from '@enterprise-mfe/ui';`,
-      `"name": "@enterprise-mfe/dashboard"`,
-      `'@enterprise-mfe/auth': { singleton: true },`,
-      '@enterprise-mfe:registry=https://npm.pkg.github.com',
+      `import { Button } from '${FROM}/ui';`,
+      `"name": "${FROM}/dashboard"`,
+      `'${FROM}/auth': { singleton: true },`,
+      `${FROM}:registry=https://registry.npmjs.org`,
     ].join('\n');
 
-    const renamed = renameScope(source, '@enterprise-mfe', '@acme');
+    const renamed = renameScope(source, FROM, '@acme');
 
-    expect(renamed).not.toContain('@enterprise-mfe');
+    expect(renamed).not.toContain(FROM);
     expect(renamed).toContain(`from '@acme/ui'`);
     expect(renamed).toContain('"@acme/dashboard"');
     expect(renamed).toContain('@acme:registry=');
   });
 
   it('leaves an unrelated scope alone', () => {
-    expect(renameScope(`import x from '@other/pkg';`, '@enterprise-mfe', '@acme')).toBe(
+    expect(renameScope(`import x from '@other/pkg';`, FROM, '@acme')).toBe(
       `import x from '@other/pkg';`,
     );
   });

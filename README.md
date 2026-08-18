@@ -29,10 +29,9 @@ This project ships two working remotes instead of one, specifically
 because the second one is what proves a convention actually generalizes
 rather than merely happening to work once. It is not a full framework (no
 proprietary vocabulary, no hosted cloud service), not locked to one
-monorepo tool (every remote is independently deployable — see
-ADR-0007), and it
-does not implement real authentication — it ships a stable contract
-instead of a login flow, deliberately.
+monorepo tool (every remote is independently deployable), and it does not
+implement real authentication — it ships a stable contract instead of a
+login flow, deliberately.
 
 ## What's actually running
 
@@ -50,8 +49,8 @@ instead of a login flow, deliberately.
 - **`pnpm turbo gen remote`** — a generator extracted from what
   `apps/dashboard` and `apps/admin` actually share (not designed ahead of
   them), producing a third remote either inside this monorepo or as a
-  fully independent, standalone project consuming `packages/*` as
-  published dependencies.
+  fully independent, standalone project — the latter consuming
+  `packages/*` from whichever registry you publish your own scope to.
 - **Guard rails in CI** that catch the two bugs that actually break
   micro-frontend architectures in production: `pnpm check:shared-deps`
   (dependency version drift across the shell and every remote) and
@@ -69,11 +68,10 @@ Two browser tabs. Changing a role in **admin** moves **dashboard**'s
 global, and no import between the two remotes. The update travels only
 through the typed event bus.
 
-Live: <https://enterprise-microfrontend-boilerplate.vercel.app/>
-— the shell composing the real `apps/dashboard` and `apps/admin` remotes,
-deployed to Vercel.
-[docs/USAGE.md](docs/USAGE.md) covers deploying to your
-own static host.
+Live: <https://enterprise-microfrontend-boilerplate.vercel.app/> — the
+shell composing the real `apps/dashboard` and `apps/admin` remotes,
+deployed to Vercel. [Deploying](docs/USAGE.md#deploying) covers putting it
+on your own host.
 
 ## Quick start
 
@@ -99,8 +97,7 @@ pnpm eject --scope @acme --first-remote payments
 
 That renames the `@enterprise-mfe` scope to yours, scaffolds your first
 real remote in place of the two examples, and removes the artifacts of
-*this* project's own working notes. It runs
-once, then deletes itself, and writes `EJECT-TODO.md` listing what a
+*this* project's own working notes. It runs once, then deletes itself, and writes `EJECT-TODO.md` listing what a
 script should not decide for you — mostly prose that still describes the
 example remotes.
 
@@ -119,8 +116,10 @@ command refuses to start without one.
 | Lint / format | Biome |
 | Tests | Vitest + Testing Library, Playwright for e2e |
 
-Why each of these, and what the alternatives cost, is covered where it
-matters in [docs/USAGE.md](docs/USAGE.md).
+Every app builds to static assets — no SSR, no runtime backend — so this
+deploys anywhere that serves files. See
+[Deploying](docs/USAGE.md#deploying) for Vercel, Netlify, Cloudflare,
+S3 + CloudFront, Azure, and nginx.
 
 ## Learn more
 
