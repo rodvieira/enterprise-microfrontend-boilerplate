@@ -78,8 +78,14 @@ const EXAMPLE_E2E_SPECS = [
   'apps/shell/e2e/remote-failure.spec.ts',
 ];
 
-/** Removed last, once they have done their job. */
-const SELF = ['scripts/eject.ts', 'scripts/eject'];
+/**
+ * Removed last, once they have done their job.
+ *
+ * `rename` goes too: it exists to turn a fresh clone into yours, and after
+ * an eject there is no old scope left for it to find. Leaving it behind
+ * means shipping a documented command that silently does nothing.
+ */
+const SELF = ['scripts/eject.ts', 'scripts/eject', 'scripts/rename.ts'];
 
 interface Options {
   scope: string;
@@ -344,7 +350,9 @@ function formatWrittenFiles(): void {
 }
 
 function removeSelf(): void {
-  edit('package.json', (content) => content.replace(/^\s*"eject": "[^"]*",\n/m, ''));
+  edit('package.json', (content) =>
+    content.replace(/^\s*"eject": "[^"]*",\n/m, '').replace(/^\s*"rename": "[^"]*",\n/m, ''),
+  );
   edit('vitest.config.mts', (content) =>
     content.replace(
       /\n\s*\{\n\s*extends: true,\n\s*test: \{\n\s*name: 'eject',\n(?:[^{}]*\n)*?\s*\},\n\s*\},/,
