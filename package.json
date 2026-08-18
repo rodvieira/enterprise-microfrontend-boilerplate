@@ -17,6 +17,7 @@
     "check:boundaries": "depcruise apps packages --config .dependency-cruiser.js",
     "check:shared-deps": "tsx scripts/check-shared-deps.ts",
     "check:package-exports": "tsx scripts/check-package-exports.ts",
+    "rename": "tsx scripts/rename.ts",
     "eject": "tsx scripts/eject.ts",
     "gen": "turbo gen",
     "prepare": "lefthook install"

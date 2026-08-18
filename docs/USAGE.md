@@ -65,18 +65,39 @@ Answers a few questions and writes `apps/<name>`, registers it in the dev
 registry, and picks the next free port. See
 [Adding a remote](#adding-a-remote).
 
-### 5. Make the repository yours
+### 5. Put your own name on it
+
+```bash
+pnpm rename --scope @acme --name acme-platform
+```
+
+Renames the npm scope (`@enterprise-mfe` → `@acme`) and the project name
+across the whole checkout. The project name is not cosmetic: it is the root
+package name, the shell's `<title>`, and the text in the shell's own
+header — until you replace it, this boilerplate is visibly branding
+whatever you ship.
+
+`--name` is optional and defaults to the scope without its `@`.
+
+**Nothing is deleted.** Both example remotes, the docs, and the command
+itself all stay, so you can rename on day one and keep learning from the
+examples. Run `pnpm install` afterwards — the lockfile still names the old
+scope.
+
+### 6. Later: drop the examples
 
 ```bash
 pnpm eject --scope @acme --first-remote payments
 ```
 
-Renames the npm scope and the project name, replaces `dashboard` and
-`admin` with your first real remote, and removes this project's own build
-artifacts. It runs once and deletes itself, leaving `EJECT-TODO.md` with
-anything a script should not decide for you.
+`dashboard` and `admin` exist to prove the conventions generalise. When you
+no longer need them, eject replaces both with your first real remote, does
+the same renaming, and removes this project's own working notes. It runs
+**once** and deletes itself, leaving `EJECT-TODO.md` with anything a script
+should not decide for you.
 
-Run it on a clean working tree — `git reset --hard` is the undo.
+Both commands run on a clean working tree only — `git reset --hard` is the
+undo, and that only works from one.
 
 ---
 
@@ -95,7 +116,8 @@ Run it on a clean working tree — `git reset --hard` is the undo.
 | `pnpm check:shared-deps` | Fails when a shared dependency drifts between apps |
 | `pnpm check:package-exports` | Packs each package and verifies its published exports resolve |
 | `pnpm gen remote` | Scaffolds a new remote |
-| `pnpm eject` | One-time: makes this repository yours |
+| `pnpm rename` | Renames the npm scope and project name — deletes nothing |
+| `pnpm eject` | One-time: swaps the examples for your first real remote, then removes itself |
 
 ### The two checks worth understanding
 
@@ -293,56 +315,220 @@ at a real URL is a deployment decision, not a scaffolding one.
 
 ## Deploying
 
-Every app builds to static assets. No SSR, no backend.
+Every app builds to **static assets** — no SSR, no runtime backend. That
+means this deploys anywhere that serves files, and the differences between
+clouds come down to two questions:
+
+1. **Can it rewrite unmatched paths to `index.html`?** The shell's routes
+   (`/dashboard`, `/admin`) have no file behind them.
+2. **Where do the remotes' files live?** They must not sit at the path the
+   shell routes them to.
+
+### One command, one directory
 
 ```bash
 pnpm build:site      # builds everything, assembles _site/
 ```
 
-`_site/` has the shell at the root and each remote under
-`/remotes/<name>/`. Drop it on any static host.
+```text
+_site/
+├── index.html            the shell
+├── remotes.json          which remotes to compose, and from which origins
+├── 404.html              copy of index.html, for hosts without rewrites
+└── remotes/
+    ├── dashboard/        the dashboard remote's own build
+    └── admin/
+```
 
 > **Never host a remote at the path the shell routes it to.** The shell's
-> router owns `/dashboard`; the remote's own build lives at
+> router owns `/dashboard`; the remote's build lives at
 > `/remotes/dashboard/`. Put the remote's `index.html` at `/dashboard` and a
 > hard navigation there is served that file directly, never reaching the
-> shell.
+> shell — the page looks almost right, which is what makes it expensive to
+> diagnose.
 
-### One build per environment
+### Before you deploy: the registry
+
+Deployment is the one thing the registry has to know about. In
+`apps/shell/src/internal/federation/remotes.production.json`:
+
+```jsonc
+{
+  "environment": "production",
+  "allowedOrigins": ["https://acme.example"],
+  "remotes": [
+    {
+      "name": "dashboard",
+      "entry": "https://acme.example/remotes/dashboard/mf-manifest.json",
+      "routePath": "/dashboard",
+      "label": "Dashboard"
+    }
+  ]
+}
+```
+
+`allowedOrigins` is enforced twice: the shell refuses to load a remote from
+an origin not listed, and the same list generates the shell's
+Content-Security-Policy, so the browser refuses too. **A missing origin
+here looks exactly like a broken remote** — check it first.
+
+Add `"basePath": "/your-subpath/"` only if the shell is served from a
+subpath rather than a domain root.
+
+Then build for that environment:
 
 ```bash
-FEDERATION_ENV=production pnpm --filter @enterprise-mfe/shell run build
+FEDERATION_ENV=production pnpm build:site
 ```
 
-That picks `remotes.production.json`. Deploying "to production" means
-deploying the artifact built with that value — nothing more
-environment-specific.
+### Per-cloud setup
 
-If your host serves the shell from a subpath rather than a domain root, add
-`"basePath": "/your-subpath/"` to that environment's registry.
+Everything below deploys the same `_site/`. The only real difference is how
+each one expresses "rewrite unmatched paths to `index.html`".
 
-### SPA routes need a rewrite
+#### Vercel — `vercel.json`
 
-The shell's routes (`/dashboard`, `/admin`) have no matching file. A host
-that can rewrite — Vercel, Netlify, CloudFront, nginx `try_files` — should
-send unmatched paths to `index.html`:
+What this repository uses.
 
 ```json
-{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+{
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm build:site",
+  "outputDirectory": "_site",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
 ```
 
-A host that cannot rewrite (GitHub Pages, plain object storage) falls back
-to the `404.html` copy `build:site` also emits. That renders correctly but
-answers **HTTP 404**, which crawlers and uptime monitors read as broken.
-Prefer a host with rewrites.
+Vercel checks the filesystem before applying rewrites, so assets and each
+remote's `mf-manifest.json` keep serving directly. Import the repo and it
+reads this file — nothing to configure in the dashboard.
+
+#### Netlify — `netlify.toml`
+
+```toml
+[build]
+  command = "pnpm build:site"
+  publish = "_site"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+`status = 200` is the load-bearing part. The default (`301`) would redirect
+the URL instead of serving the shell at it.
+
+#### Cloudflare Pages — `_redirects`
+
+Build command `pnpm build:site`, output `_site`, and commit a `_redirects`
+file into the output:
+
+```text
+/*    /index.html   200
+```
+
+Add it by having `build:site` copy a `public/_redirects`, or write it in
+the build command:
+
+```bash
+pnpm build:site && printf '/*    /index.html   200\n' > _site/_redirects
+```
+
+#### AWS S3 + CloudFront
+
+S3 alone has no rewrite. Two options, in order of preference:
+
+- **CloudFront Function** on viewer-request: if the URI has no file
+  extension, set `request.uri = '/index.html'`. Precise, and keeps real
+  404s as 404s.
+- **Custom error response**: map 403 and 404 to `/index.html` with response
+  code **200**. Simpler, but every genuinely missing asset also returns the
+  shell.
+
+Upload with `aws s3 sync _site/ s3://your-bucket --delete`, and invalidate
+`/index.html` and `/remotes.json` on each deploy — those two must never be
+served stale, or the shell composes yesterday's remotes.
+
+#### Azure Static Web Apps — `staticwebapp.config.json`
+
+```json
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/remotes/*", "*.{css,js,json,png,svg,gif}"]
+  }
+}
+```
+
+The `exclude` matters: without it the fallback swallows requests for the
+remotes' own manifests.
+
+#### nginx / any container
+
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+Serve `_site` as the root. This is also what a plain Docker image with
+`nginx:alpine` needs — copy `_site` to `/usr/share/nginx/html` and drop in
+that config.
+
+#### GitHub Pages — works, with a caveat worth knowing
+
+Pages has **no rewrite capability**. It serves `404.html` for unmatched
+paths, which `build:site` emits as a copy of `index.html`, so the shell
+boots and the page renders correctly — but the response status is **404**.
+
+Humans see the right page. Crawlers, uptime monitors, and link checkers see
+a broken site. Fine for an internal demo; prefer a host with rewrites for
+anything public.
+
+A Pages *project page* also serves from `/<repo>/`, so set
+`"basePath": "/<repo>/"` in the production registry.
+
+### Deploying remotes independently
+
+Everything above puts the shell and its remotes on one origin, which is the
+simplest thing that works. The architecture does not require it — and the
+point of micro-frontends is that it should not.
+
+To give each remote its own deployment, deploy each app's own `dist/`
+separately and point the registry at real, separate origins:
+
+```jsonc
+{
+  "allowedOrigins": [
+    "https://shell.acme.example",
+    "https://dashboard.acme.example"
+  ],
+  "remotes": [
+    {
+      "name": "dashboard",
+      "entry": "https://dashboard.acme.example/mf-manifest.json",
+      "routePath": "/dashboard"
+    }
+  ]
+}
+```
+
+Each remote then ships on its own schedule, and only the shell's registry
+changes when one moves. This is also the first configuration that genuinely
+exercises `origin-guard.ts` and the derived CSP — same-origin hosting never
+puts either to the test.
+
+Each remote's own `dist/` still needs the SPA rewrite if you want its
+standalone URL to be navigable.
 
 ### Rollback
 
 Publish each remote to an **immutable, versioned path**:
 
 ```text
-https://cdn.example/dashboard/1.4.1/mf-manifest.json
-https://cdn.example/dashboard/1.4.2/mf-manifest.json   ← current
+https://cdn.acme.example/dashboard/1.4.1/mf-manifest.json
+https://cdn.acme.example/dashboard/1.4.2/mf-manifest.json   ← current
 ```
 
 Then rolling back is editing `entry` and `version` in the registry and
@@ -350,7 +536,29 @@ redeploying that JSON. No remote is rebuilt, because 1.4.1 was never
 overwritten. Canary and blue/green work the same way: two environments'
 registries pointing at different versions of one remote.
 
----
+```jsonc
+{ "name": "dashboard", "entry": ".../1.4.1/mf-manifest.json", "version": "1.4.1" }
+```
+
+`version` is optional and the host never resolves or compares it — `entry`
+alone decides what loads. It exists so a failure reads `dashboard@1.4.2`
+instead of `dashboard`. A remote on a mutable path should omit it rather
+than state a version it cannot guarantee.
+
+### When a deployed remote does not load
+
+In order of how often it is the cause:
+
+1. **Its origin is missing from `allowedOrigins`** — the shell refuses
+   before fetching anything, and logs the refusal with the origin it
+   rejected.
+2. **The shell was built for the wrong environment** — check
+   `FEDERATION_ENV`, then open `/remotes.json` on the deployed site and
+   confirm it is the file you expected.
+3. **`entry` 404s** — open it directly. It must be the remote's
+   `mf-manifest.json`, not its `index.html`.
+4. **The remote is hosted at the shell's route path** — see the warning at
+   the top of this section.
 
 ## Connecting real authentication
 

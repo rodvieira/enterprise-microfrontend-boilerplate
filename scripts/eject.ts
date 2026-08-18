@@ -45,6 +45,7 @@ import {
   rewriteVitestProjects,
   validateScope,
 } from './eject/transforms';
+import { walkTextFiles } from './lib/workspace-files';
 
 const REPO_ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 const OLD_SCOPE = '@enterprise-mfe';
@@ -58,45 +59,6 @@ const OLD_SCOPE = '@enterprise-mfe';
 const OLD_PROJECT_NAME = 'enterprise-microfrontend-boilerplate';
 const REMOVED_APPS = ['dashboard', 'admin'] as const;
 const DEV_REGISTRY = 'apps/shell/src/internal/federation/remotes.dev.json';
-
-/** Build output and VCS internals: never walked, never rewritten. */
-const SKIP_DIRS = new Set([
-  'node_modules',
-  '.git',
-  'dist',
-  '_site',
-  '.turbo',
-  'coverage',
-  'playwright-report',
-  'test-results',
-]);
-
-/**
- * Every extension that carries the old scope somewhere in this repo, plus
- * the near neighbours of each. `.mts` is not hypothetical — vitest.config.mts
- * is the single file using it, and leaving it out silently skipped the one
- * config that names every workspace project.
- */
-const TEXT_EXTENSIONS = new Set([
-  '.ts',
-  '.tsx',
-  '.mts',
-  '.cts',
-  '.js',
-  '.jsx',
-  '.mjs',
-  '.cjs',
-  '.json',
-  '.jsonc',
-  '.md',
-  '.css',
-  '.html',
-  '.yml',
-  '.yaml',
-  '.template',
-  '.txt',
-]);
-const TEXT_FILENAMES = new Set(['.npmrc', '.gitignore', '.env.example']);
 
 /**
  * Working notes that are this repository's own, not the adopter's. The
@@ -204,22 +166,6 @@ function assertPreconditions(): void {
   if (!existsSync(join(REPO_ROOT, 'apps', REMOVED_APPS[0]))) {
     fail(`apps/${REMOVED_APPS[0]} is already gone — this repository looks ejected already.`);
   }
-}
-
-function walkTextFiles(dir: string, found: string[] = []): string[] {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isDirectory()) {
-      if (SKIP_DIRS.has(entry.name)) continue;
-      walkTextFiles(join(dir, entry.name), found);
-      continue;
-    }
-    const dot = entry.name.lastIndexOf('.');
-    const extension = dot > 0 ? entry.name.slice(dot) : '';
-    if (TEXT_EXTENSIONS.has(extension) || TEXT_FILENAMES.has(entry.name)) {
-      found.push(join(dir, entry.name));
-    }
-  }
-  return found;
 }
 
 function edit(path: string, transform: (content: string) => string): void {
