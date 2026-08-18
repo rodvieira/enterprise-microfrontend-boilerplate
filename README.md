@@ -1,7 +1,7 @@
 # enterprise-microfrontend-boilerplate
 
 [![CI](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/rodvieira/enterprise-microfrontend-boilerplate/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://enterprise-microfrontend-boilerplate.vercel.app/)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://enterprise-microfrontend-boilerplat.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![pnpm](https://img.shields.io/badge/pnpm-workspace-f69220)](https://pnpm.io/)
 
@@ -68,7 +68,7 @@ Two browser tabs. Changing a role in **admin** moves **dashboard**'s
 global, and no import between the two remotes. The update travels only
 through the typed event bus.
 
-Live: <https://enterprise-microfrontend-boilerplate.vercel.app/> — the
+Live: <https://enterprise-microfrontend-boilerplat.vercel.app/> — the
 shell composing the real `apps/dashboard` and `apps/admin` remotes,
 deployed to Vercel. [Deploying](docs/USAGE.md#deploying) covers putting it
 on your own host.
