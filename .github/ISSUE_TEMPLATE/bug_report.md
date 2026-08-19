@@ -13,11 +13,10 @@ labels: bug
 - [ ] apps/shell
 - [ ] apps/dashboard
 - [ ] apps/admin
-- [ ] packages/ui
-- [ ] packages/auth
 - [ ] packages/shared-types
 - [ ] packages/federation-utils
-- [ ] packages/event-bus
+- [ ] packages/telemetry
+- [ ] turbo/generators (`pnpm gen remote`)
 - [ ] Other (describe below)
 
 ## Steps to reproduce

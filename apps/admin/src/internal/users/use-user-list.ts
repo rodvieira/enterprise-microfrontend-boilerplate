@@ -1,7 +1,7 @@
-import { publish } from '@enterprise-mfe/event-bus';
 import type { Role, User } from '@enterprise-mfe/shared-types';
 import { permissionsForRole } from '@enterprise-mfe/shared-types';
 import { useMemo, useState } from 'react';
+import { useHost } from '../host-context';
 import { createUserFixtures } from './fixtures';
 
 export type SortColumn = 'name' | 'email' | 'role';
@@ -28,6 +28,7 @@ function sortUsers(users: readonly User[], column: SortColumn, direction: SortDi
  * only after a role-change mutation actually succeeds.
  */
 export function useUserList() {
+  const { bus } = useHost();
   const [allUsers, setAllUsers] = useState<User[]>(() => createUserFixtures());
   const [page, setPage] = useState(0);
   const [sortColumn, setSortColumn] = useState<SortColumn>('name');
@@ -93,7 +94,7 @@ export function useUserList() {
           : user,
       ),
     );
-    publish('user:role-changed', { userId, newRole });
+    bus.publish('user:role-changed', { userId, newRole });
     return { ok: true };
   }
 

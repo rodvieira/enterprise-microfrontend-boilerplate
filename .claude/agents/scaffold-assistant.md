@@ -11,14 +11,18 @@ know the generator's flags from memory.
 1. **Name** of the remote — becomes `apps/<name>`, kebab-case.
 2. **Domain it owns** — one sentence. This becomes the description in
    `remote.manifest.json` and the PR description.
-3. **Does it need authentication?** If yes, wire `<ProtectedRoute>` from
-   `packages/auth` into its exposed entry point by default.
-4. **Monorepo or standalone mode?** Monorepo = lives in `apps/`, workspace-linked.
-   Standalone = generates an independent project consuming `packages/*` as
-   published dependencies — pick this if the person says the remote
-   will be owned by a different team/repository.
-5. **Does it need to publish events or listen to `packages/event-bus`?** If yes,
-   scaffold the subscription/publish boilerplate too, not just the empty shell.
+3. **Does it need authentication?** Route-level protection is the shell's job —
+   wrap the remote's route in the shell's `<ProtectedRoute>`. Inside the remote,
+   gate on the `session` prop it already receives.
+4. **Monorepo or standalone mode?** Monorepo = lives in `apps/`, imports
+   `RemoteAppProps` from `@enterprise-mfe/shared-types`. Standalone = an
+   independent project that depends on nothing from this repository and carries
+   its own copy of the contract — pick this if the person says the remote will
+   be owned by a different team or repository.
+5. **Does it need to publish or subscribe to cross-remote events?** Those travel
+   on the `bus` prop the shell passes in. If yes, scaffold the
+   subscribe-and-validate boilerplate too — the publisher is a separate build,
+   so payloads are validated at the receiving edge.
 
 ## Then
 

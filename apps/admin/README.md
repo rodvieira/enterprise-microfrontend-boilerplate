@@ -5,10 +5,10 @@ invite/edit modal, reachable only with the `users:write` permission.
 Exposes one component, `./App`, over Module Federation.
 
 Its role changes are this project's headline cross-remote proof: submitting
-one publishes an event through `packages/event-bus` that
+one publishes an event on the `bus` the shell passed in, which
 [`apps/dashboard`](../dashboard/README.md) subscribes to, updating its
-"active users" KPI live — no reload, no direct import between the two
-remotes.
+"active users" KPI live — no reload, no shared module, no direct import
+between the two remotes.
 
 ## Running it
 
@@ -38,9 +38,11 @@ src/
 │   └── App.tsx              # what the shell mounts ("admin/App"); also imports internal/styles.css — see apps/dashboard/README.md for why
 ├── internal/
 │   ├── users/                # fixture data, pagination/sort state, the table, the invite/edit modal
-│   ├── permissions/            # the local users:write check — not a packages/auth contract change
-│   └── styles.css                # Tailwind entry, imports the design system's tokens
-├── bootstrap.tsx             # standalone dev entry — wraps App in its own <AuthProvider>
+│   ├── permissions/            # the local users:write check
+│   ├── host-context.tsx        # makes the host's session and bus reachable without prop drilling
+│   ├── ui/                      # this app's own components and design tokens
+│   └── styles.css                # Tailwind entry, imports internal/ui/tokens.css
+├── bootstrap.tsx             # standalone dev entry — supplies stand-in props
 └── index.tsx                 # dynamic import('./bootstrap') — the MF async boundary
 ```
 
@@ -53,16 +55,26 @@ This project has no backend by design.
 
 ## Permission gating
 
-The invite/edit action is reachable only when the current session's
-`user.permissions` includes `users:write`, checked locally
-(`internal/permissions/use-can-write-users.ts`) rather than by extending
-`packages/auth`'s `ProtectedRoute`
-D4 for why this stayed a local, narrowly-scoped check instead of a shared
-contract change.
+The invite/edit action is reachable only when the session handed in by the
+host carries `users:write`, checked locally in
+`internal/permissions/use-can-write-users.ts`.
+
+Kept local on purpose. Route-level protection is the orchestrator's job — it
+owns the routes. What a remote gates *inside* its own screens is its own
+business, and a remote in another repository has no way to extend the host's
+`ProtectedRoute` anyway. Reading a permission off the session prop is
+something any remote can do, in any repository.
 
 ## Session
 
-Reads the current session through `useAuth()` with no admin-local
-`<AuthProvider>` in `exposed/App.tsx` — the same pattern
-`apps/dashboard` uses. Only the standalone entry (`bootstrap.tsx`)
-establishes its own session.
+Arrives as the `session` prop, already resolved by the shell — the same
+pattern `apps/dashboard` uses, and the same one a remote in another
+repository has available to it.
+
+`exposed/App.tsx` puts `session` and `bus` into `internal/host-context.tsx`
+so components several levels down reach them without threading props through
+every layer. That context is this app's own: it never crosses the federation
+boundary, so it stays valid wherever this app is built.
+
+The standalone entry (`bootstrap.tsx`) supplies stand-ins from
+`internal/standalone-host.ts`, since it has no shell to hand it any.

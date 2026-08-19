@@ -60,8 +60,6 @@ export default defineConfig({
         react: { singleton: true, requiredVersion: '{{reactVersion}}' },
         'react-dom': { singleton: true, requiredVersion: '{{reactDomVersion}}' },
         'react-router': { singleton: true, requiredVersion: '{{reactRouterVersion}}' },
-        '@enterprise-mfe/auth': { singleton: true },
-        '@enterprise-mfe/event-bus': { singleton: true },
       },
     }),
   ],

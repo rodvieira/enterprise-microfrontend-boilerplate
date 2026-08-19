@@ -26,12 +26,12 @@ describe('App', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  it('renders the frame using @enterprise-mfe/ui, not shell-defined chrome', async () => {
+  it('renders the frame using the shell chrome, not markup invented per route', async () => {
     mockRegistryResponse({ environment: 'dev', allowedOrigins: [], remotes: [] });
     render(<App />);
 
     // The nav landmark and layout regions come from Layout/Nav in
-    // @enterprise-mfe/ui — this asserts their real roles exist, not that some
+    // internal/chrome — this asserts their real roles exist, not that some
     // div happens to look like navigation.
     await waitFor(() => expect(screen.getByRole('navigation')).toBeInTheDocument());
     expect(screen.getByRole('banner')).toBeInTheDocument();

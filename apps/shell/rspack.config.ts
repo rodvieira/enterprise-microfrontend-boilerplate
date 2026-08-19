@@ -116,7 +116,6 @@ export default defineConfig({
         react: { singleton: true, requiredVersion: '^19.2.8' },
         'react-dom': { singleton: true, requiredVersion: '^19.2.8' },
         'react-router': { singleton: true, requiredVersion: '^8.3.0' },
-        '@enterprise-mfe/auth': { singleton: true },
         '@enterprise-mfe/telemetry': { singleton: true },
       },
     }),

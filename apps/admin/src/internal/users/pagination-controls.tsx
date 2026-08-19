@@ -1,4 +1,4 @@
-import { Button } from '@enterprise-mfe/ui';
+import { Button } from '../ui/button';
 
 export interface PaginationControlsProps {
   page: number;

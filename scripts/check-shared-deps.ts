@@ -28,15 +28,10 @@ const REPO_ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 const SINGLETONS = [
   'react',
   'react-dom',
-  '@enterprise-mfe/auth',
   // react-router holds routing context (history, matched routes) that will
   // cross the federation boundary once a remote exists — two copies would
   // produce two histories, the same class of bug as two Reacts.
   'react-router',
-  // The pub/sub registry a publisher and subscriber must actually share —
-  // two copies would mean admin's role-change events never reach
-  // dashboard's subscriber at all.
-  '@enterprise-mfe/event-bus',
   // The telemetry sink the host installs. Two copies would mean a remote
   // reporting into its own console-backed default while the host believes
   // everything is being sent to its real vendor — a monitoring gap that

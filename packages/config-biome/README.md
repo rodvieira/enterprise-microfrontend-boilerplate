@@ -28,5 +28,5 @@ repositories — tracked in issue #1, resolved by moving to Biome 2.x.
 
 Project-specific exceptions belong in the consuming `biome.json` under
 `overrides`, not in this package. The root config does exactly that for one file,
-`packages/ui/src/components/modal.tsx`, where a suppression comment cannot attach
+`apps/admin/src/internal/ui/modal.tsx`, where a suppression comment cannot attach
 to the JSX attribute the rule fires on.

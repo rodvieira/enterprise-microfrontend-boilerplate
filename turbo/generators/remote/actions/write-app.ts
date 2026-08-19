@@ -52,17 +52,6 @@ function copyTemplateDir(
 }
 
 /**
- * Standalone mode's published dependency ranges: read directly from each
- * packages/* manifest's own "version" field. Correct by construction
- * regardless of whether a publish has ever happened.
- */
-function publishedRange(repoRoot: string, packageDirName: string): string {
-  const manifestPath = join(repoRoot, 'packages', packageDirName, 'package.json');
-  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as { version: string };
-  return `^${manifest.version}`;
-}
-
-/**
  * Standalone mode has no root package.json to hoist `typescript` from
  * (unlike monorepo mode, which relies on the workspace root's), so its own
  * package.json needs an explicit devDependency — read live from this
@@ -102,6 +91,14 @@ export function writeApp(options: WriteAppOptions): WriteAppResult {
     title: options.label,
     routePath: options.routePath,
     port: String(options.port),
+    // Where src/exposed/App.tsx gets RemoteAppProps from. Inside this
+    // workspace that is the shared-types package. A standalone project has no
+    // registry to install that package from, so it carries its own copy of
+    // the contract (templates/standalone/src/internal/contract.ts) instead —
+    // and this has to be decided here, before templates/common is rendered,
+    // because App.tsx lives there and is rendered exactly once.
+    contractImport:
+      options.mode === 'monorepo' ? '@enterprise-mfe/shared-types' : '../internal/contract',
     reactVersion: shared.react,
     reactDomVersion: shared['react-dom'],
     reactRouterVersion: shared['react-router'],
@@ -127,10 +124,6 @@ export function writeApp(options: WriteAppOptions): WriteAppResult {
   } else {
     const standaloneVars: Record<string, string> = {
       ...vars,
-      authRange: publishedRange(options.repoRoot, 'auth'),
-      eventBusRange: publishedRange(options.repoRoot, 'event-bus'),
-      sharedTypesRange: publishedRange(options.repoRoot, 'shared-types'),
-      uiRange: publishedRange(options.repoRoot, 'ui'),
       typescriptVersion: readRootTypescriptVersion(options.repoRoot),
     };
     copyTemplateDir(

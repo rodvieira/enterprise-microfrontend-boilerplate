@@ -1,5 +1,5 @@
-import { Card } from '@enterprise-mfe/ui';
-import type { CardTrend } from '@enterprise-mfe/ui';
+import { Card } from '../ui/card';
+import type { CardTrend } from '../ui/card';
 
 export type KpiCardStatus = 'loading' | 'loaded' | 'error';
 

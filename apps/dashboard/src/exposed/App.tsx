@@ -1,7 +1,5 @@
-import { useAuth } from '@enterprise-mfe/auth';
-import { useEventSubscription } from '@enterprise-mfe/event-bus';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityChart } from '../internal/chart/activity-chart';
 import { shouldForceOverviewFailure } from '../internal/data/force-failure';
 import { useDashboardOverview } from '../internal/data/use-dashboard-overview';
@@ -22,27 +20,33 @@ import '../internal/styles.css';
  * to a 0×0 container — found only by inspecting the composed page's actual
  * stylesheets in a real browser, not by a passing accessibility-tree assertion.
  *
- * Deliberately no <AuthProvider> here: when composed inside the shell, this
- * component renders inside the shell's own <AuthProvider> (React context is
- * shared because @enterprise-mfe/auth is an MF singleton). Only the
- * standalone dev entry (bootstrap.tsx) needs its own provider, since it has
- * no shell ancestor to supply one.
+ * Everything it needs from the host arrives as props — `session` and `bus`.
+ * It imports nothing of the host's, which is what lets a remote live in its
+ * own repository: there is no package to install.
  */
-export function App({ basePath }: RemoteAppProps) {
-  const { user, isAuthenticated } = useAuth();
+export function App({ basePath, session, bus }: RemoteAppProps) {
+  const { user, isAuthenticated } = session;
   // One fetch, shared by every domain surface (data-model.md) — not three
   // independent ones.
   const overview = useDashboardOverview({ forceFailure: shouldForceOverviewFailure() });
 
-  // The headline proof: a role change in admin bumps this
-  // count live, with no reload and no direct coupling — the update travels
-  // only through packages/event-bus (a simple increment
-  // against whatever the last fetch resolved, not a recomputation from
-  // admin's user list, which this remote has no reason to know about).
+  // The headline proof: a role change in admin bumps this count live, with
+  // no reload and no coupling between the two remotes — it travels through
+  // the host's bus. A simple increment against whatever the last fetch
+  // resolved, not a recomputation from admin's user list, which this remote
+  // has no reason to know about.
   const [roleChangeBumps, setRoleChangeBumps] = useState(0);
-  useEventSubscription('user:role-changed', () => {
-    setRoleChangeBumps((count) => count + 1);
-  });
+  useEffect(
+    () =>
+      bus.subscribe('user:role-changed', (payload) => {
+        // The payload crossed a boundary between two separately built
+        // applications, so its shape is checked here rather than assumed.
+        if (typeof payload !== 'object' || payload === null) return;
+        if (typeof (payload as { userId?: unknown }).userId !== 'string') return;
+        setRoleChangeBumps((count) => count + 1);
+      }),
+    [bus],
+  );
 
   const adjustedOverview = useMemo(() => {
     if (overview.status !== 'loaded' || roleChangeBumps === 0) {

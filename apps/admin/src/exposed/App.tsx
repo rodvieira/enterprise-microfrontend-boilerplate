@@ -1,5 +1,5 @@
-import { useAuth } from '@enterprise-mfe/auth';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
+import { HostProvider, useHost } from '../internal/host-context';
 import { PaginationControls } from '../internal/users/pagination-controls';
 import { useUserList } from '../internal/users/use-user-list';
 import { UserFormModal } from '../internal/users/user-form-modal';
@@ -16,13 +16,21 @@ import '../internal/styles.css';
  * section for why (the CSS-federation and default-export
  * findings, applied from day one in this app).
  *
- * Deliberately no <AuthProvider> here: when composed inside the shell, this
- * component renders inside the shell's own <AuthProvider> (React context is
- * shared because @enterprise-mfe/auth is an MF singleton). Only the
- * standalone dev entry (bootstrap.tsx) needs its own provider.
+ * Everything it needs from the host arrives as props — `session` and `bus`.
+ * It imports nothing of the host's, which is what lets a remote live in its
+ * own repository: there is no package to install.
  */
-export function App({ basePath }: RemoteAppProps) {
-  const { user, isAuthenticated } = useAuth();
+export function App({ basePath, session, bus }: RemoteAppProps) {
+  return (
+    <HostProvider value={{ session, bus }}>
+      <AdminScreen basePath={basePath} />
+    </HostProvider>
+  );
+}
+
+function AdminScreen({ basePath }: { basePath: string }) {
+  const { session } = useHost();
+  const { user, isAuthenticated } = session;
   const userList = useUserList();
 
   return (

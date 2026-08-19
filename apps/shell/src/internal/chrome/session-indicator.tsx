@@ -1,13 +1,13 @@
-import { useAuth } from '@enterprise-mfe/auth';
-import { Button } from '@enterprise-mfe/ui';
+import { useSession } from '../session/context';
+import { Button } from './button';
 
 /**
  * Shows the signed-in person's name, or a control to sign in — the frame's
- * one visible sign that @enterprise-mfe/auth's session contract works when
+ * one visible sign that the host's session works when
  * compiled and run for real.
  */
 export function SessionIndicator() {
-  const { status, user, login, logout } = useAuth();
+  const { status, user, login, logout } = useSession();
 
   if (status === 'unknown') {
     return null;

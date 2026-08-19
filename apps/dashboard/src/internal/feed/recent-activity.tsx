@@ -1,6 +1,6 @@
-import { Table } from '@enterprise-mfe/ui';
-import type { TableColumn } from '@enterprise-mfe/ui';
 import type { ActivityFeedItem, DashboardOverview, FetchState } from '../data/types';
+import { Table } from '../ui/table';
+import type { TableColumn } from '../ui/table';
 
 export interface RecentActivityProps {
   state: FetchState<DashboardOverview>;

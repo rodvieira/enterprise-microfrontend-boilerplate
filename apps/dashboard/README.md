@@ -35,7 +35,7 @@ src/
 │   ├── chart/                  # the activity chart (recharts)
 │   ├── feed/                    # the recent activity feed
 │   └── styles.css                # Tailwind entry, imports the design system's tokens
-├── bootstrap.tsx             # standalone dev entry — wraps App in its own <AuthProvider>
+├── bootstrap.tsx             # standalone dev entry — supplies stand-in props
 └── index.tsx                 # dynamic import('./bootstrap') — the MF async boundary
 ```
 
@@ -59,19 +59,23 @@ error states together instead of tearing.
 
 Changing a user's role in [`apps/admin`](../admin/README.md) moves this
 remote's "active users" KPI live — no reload, and no import between the two
-remotes. This side of it is a single `useEventSubscription` on
-`'user:role-changed'` in `exposed/App.tsx`, which increments the count the
-last fetch returned rather than recomputing it from admin's user list. This
-remote has no reason to know that list exists.
+remotes. This side of it is a single `bus.subscribe('user:role-changed', …)`
+in `exposed/App.tsx`, which increments the count the last fetch returned
+rather than recomputing it from admin's user list. This remote has no reason
+to know that list exists.
 
-It works across browser tabs too, because the bus relays over a same-origin
-`BroadcastChannel`.
+The payload is validated before it is used. The publisher is a separately
+built application, so its idea of the payload can differ from this one's —
+the tests fire malformed payloads at it on purpose.
+
+It works across browser tabs too, because the shell's bus relays over a
+same-origin `BroadcastChannel`.
 
 ## Session
 
-Reads the current session through `useAuth()` from `@enterprise-mfe/auth`
-with **no dashboard-local `<AuthProvider>`** in `exposed/App.tsx` — when
-composed inside the shell, this component renders inside the shell's own
-provider, and the React context is shared because `@enterprise-mfe/auth` is
-a Module Federation singleton. Only the standalone entry (`bootstrap.tsx`)
-establishes its own session, since it has no shell ancestor to supply one.
+Arrives as the `session` prop, already resolved by the shell — this remote
+mounts no provider and reads no shared module. That is what lets it move to
+its own repository unchanged: nothing it needs is an import.
+
+The standalone entry (`bootstrap.tsx`) supplies stand-ins from
+`internal/standalone-host.ts`, since it has no shell to hand it any.

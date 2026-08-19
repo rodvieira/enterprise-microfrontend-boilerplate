@@ -1,4 +1,4 @@
-import { ProtectedRoute } from '@enterprise-mfe/auth';
+import { ProtectedRoute } from '../session/protected-route';
 
 export function HomeRoute() {
   return (

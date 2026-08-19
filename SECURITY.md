@@ -20,12 +20,13 @@ reporting:
 
 - Anything that would let a compromised remote origin execute code inside the
   shell's origin beyond what the documented CSP/origin allow-list already
-  restricts (see `docs/blueprint.html` §9).
+  restricts (see "The remote registry" in `docs/USAGE.md`).
 - Dependency vulnerabilities with a real exploitation path in this project's
   usage (not just a CVE ID with no relevant attack surface here).
-- Issues in the `packages/auth` stub that could mislead an adopter into
+- Issues in the shell's stub session
+  (`apps/shell/src/internal/session/`) that could mislead an adopter into
   thinking it's production-safe when it isn't (it explicitly is not — see
-  `docs/decisions/0009-auth-contract-not-implementation.md`).
+  "Connecting real authentication" in `docs/USAGE.md`).
 
 ## Supported versions
 

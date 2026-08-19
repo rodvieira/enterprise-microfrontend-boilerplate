@@ -3,7 +3,7 @@
   "extends": ["./packages/config-biome/biome.json"],
   "overrides": [
     {
-      "include": ["packages/ui/src/components/modal.tsx"],
+      "include": ["apps/admin/src/internal/ui/modal.tsx"],
       "linter": {
         "rules": {
           "a11y": {

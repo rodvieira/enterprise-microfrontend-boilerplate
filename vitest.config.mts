@@ -2,11 +2,11 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 /**
- * One runner for the whole workspace (research D4). Packages declare no test
+ * One runner for the whole workspace. Packages declare no test
  * config of their own — they inherit this one, the same way they inherit the
  * shared tsconfig and Biome rules. Run a single package with:
  *
- *   pnpm test --project @enterprise-mfe/ui
+ *   pnpm test --project shell
  *
  * Projects are listed explicitly rather than globbed. A glob-created project
  * does not inherit `environment` or `setupFiles` from this file, which silently
@@ -45,7 +45,7 @@ export default defineConfig({
           name: 'turbo-generators',
           root: './turbo/generators/remote',
           environment: 'node',
-          include: ['*.test.ts'],
+          include: ['**/*.test.ts'],
         },
       },
       {
@@ -57,10 +57,7 @@ export default defineConfig({
           include: ['*.test.ts'],
         },
       },
-      browserProject('@enterprise-mfe/ui', './packages/ui'),
-      browserProject('@enterprise-mfe/auth', './packages/auth'),
       browserProject('@enterprise-mfe/federation-utils', './packages/federation-utils'),
-      browserProject('@enterprise-mfe/event-bus', './packages/event-bus'),
       browserProject('@enterprise-mfe/telemetry', './packages/telemetry'),
       browserProject('shell', './apps/shell'),
       browserProject('dashboard', './apps/dashboard'),

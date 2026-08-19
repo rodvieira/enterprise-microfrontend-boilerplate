@@ -1,55 +1,74 @@
-import { AuthProvider, useAuth } from '@enterprise-mfe/auth';
-import { publish } from '@enterprise-mfe/event-bus';
+import type { RemoteBus, RemoteSession, User } from '@enterprise-mfe/shared-types';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { App } from '../src/exposed/App';
 
-/** Exposes the stub's login() as a button — the dashboard itself has no sign-in UI (that's shell chrome's job). */
-function SignInButton() {
-  const { login } = useAuth();
-  return (
-    <button type="button" onClick={() => login()}>
-      Sign in
-    </button>
-  );
+/**
+ * A remote receives everything from its host as props, so its tests supply
+ * those props directly. There is no provider to wrap it in and no package to
+ * mock — which is the same position a team in another repository is in.
+ */
+function makeBus(): RemoteBus & { emit: (topic: string, payload: unknown) => void } {
+  const subscribers = new Map<string, Set<(payload: unknown) => void>>();
+  return {
+    publish(topic, payload) {
+      for (const handler of subscribers.get(topic) ?? []) handler(payload);
+    },
+    subscribe(topic, handler) {
+      const handlers = subscribers.get(topic) ?? new Set();
+      handlers.add(handler);
+      subscribers.set(topic, handlers);
+      return () => handlers.delete(handler);
+    },
+    emit(topic, payload) {
+      for (const handler of subscribers.get(topic) ?? []) handler(payload);
+    },
+  };
 }
 
+const SIGNED_OUT: RemoteSession = { user: null, isAuthenticated: false };
+
+const ADA: User = {
+  id: 'user-1',
+  name: 'Ada Lovelace',
+  email: 'ada@example.com',
+  role: 'admin',
+  permissions: ['users:read', 'users:write', 'dashboard:read'],
+};
+
 describe('App', () => {
-  it('renders standalone, given a basePath, with no shell present', async () => {
-    render(
-      <AuthProvider>
-        <App basePath="/dashboard" />
-      </AuthProvider>,
-    );
+  it('renders standalone, given a basePath, with no host present', async () => {
+    render(<App basePath="/dashboard" session={SIGNED_OUT} bus={makeBus()} />);
     expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText('Not signed in')).toBeInTheDocument());
   });
 
-  it('reads the current session via the shared auth contract', async () => {
+  it('reflects the session the host handed it', async () => {
     render(
-      <AuthProvider>
-        <SignInButton />
-        <App basePath="/dashboard" />
-      </AuthProvider>,
+      <App basePath="/dashboard" session={{ user: ADA, isAuthenticated: true }} bus={makeBus()} />,
     );
-    await waitFor(() => expect(screen.getByText('Not signed in')).toBeInTheDocument());
-
-    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
-
     await waitFor(() => expect(screen.getByText('Signed in as Ada Lovelace')).toBeInTheDocument());
   });
 
-  it('increments the active-users KPI when a user:role-changed event is received', async () => {
-    render(
-      <AuthProvider>
-        <App basePath="/dashboard" />
-      </AuthProvider>,
-    );
+  it("increments the active-users KPI on the host bus's user:role-changed", async () => {
+    const bus = makeBus();
+    render(<App basePath="/dashboard" session={SIGNED_OUT} bus={bus} />);
     await waitFor(() => expect(screen.getByText('1,204')).toBeInTheDocument());
 
-    publish('user:role-changed', { userId: 'user-1', newRole: 'editor' });
+    bus.emit('user:role-changed', { userId: 'user-1', newRole: 'editor' });
 
     await waitFor(() => expect(screen.getByText('1,205')).toBeInTheDocument());
+  });
+
+  it('ignores a malformed payload rather than trusting what crossed the boundary', async () => {
+    const bus = makeBus();
+    render(<App basePath="/dashboard" session={SIGNED_OUT} bus={bus} />);
+    await waitFor(() => expect(screen.getByText('1,204')).toBeInTheDocument());
+
+    // Another application, built separately, could send anything.
+    bus.emit('user:role-changed', 'not an object');
+    bus.emit('user:role-changed', { userId: 42 });
+
+    expect(screen.getByText('1,204')).toBeInTheDocument();
   });
 });

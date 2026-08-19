@@ -1,4 +1,3 @@
-import { AuthProvider } from '@enterprise-mfe/auth';
 import { TelemetryProvider } from '@enterprise-mfe/telemetry';
 import { useEffect, useState } from 'react';
 import type { PatchRoutesOnNavigationFunctionArgs, RouteObject } from 'react-router';
@@ -11,6 +10,7 @@ import type { RemoteRegistration } from '../internal/federation/types';
 import { HomeRoute } from '../internal/routes/home';
 import { RemoteRegion } from '../internal/routes/remote-region';
 import { HOST_OWNED_ROUTE_PATHS } from '../internal/routes/remote-routes';
+import { SessionProvider } from '../internal/session/context';
 
 /**
  * Built fresh per `<App>` mount (via `useState`'s lazy initializer below),
@@ -124,11 +124,11 @@ export function App() {
 
   return (
     <TelemetryProvider>
-      <AuthProvider>
+      <SessionProvider>
         <RegisteredRemotesProvider value={registeredRemotes}>
           <RouterProvider router={router} />
         </RegisteredRemotesProvider>
-      </AuthProvider>
+      </SessionProvider>
     </TelemetryProvider>
   );
 }

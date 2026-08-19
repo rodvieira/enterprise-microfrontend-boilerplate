@@ -1,21 +1,18 @@
-import { AuthProvider } from '@enterprise-mfe/auth';
 import { createRoot } from 'react-dom/client';
 import { App } from './exposed/App';
+import { standaloneBus, standaloneSession } from './internal/standalone-host';
 import './internal/styles.css';
 
 const container = document.getElementById('root');
 if (!container) {
-  throw new Error('apps/{{name}}: #root element not found in index.html.');
+  throw new Error('{{name}}: #root element not found in index.html.');
 }
 
 /**
- * Standalone dev entry has no shell to supply a basePath or an ancestor
- * <AuthProvider> — same pattern every remote in this repository follows.
- * When composed inside the shell, App.tsx relies on the shell's own
- * <AuthProvider> instead — see exposed/App.tsx's comment.
+ * Standalone dev entry: no shell is present, so the props a host would
+ * normally supply come from internal/standalone-host instead — same pattern
+ * every remote in the source monorepo follows.
  */
 createRoot(container).render(
-  <AuthProvider>
-    <App basePath="/" />
-  </AuthProvider>,
+  <App basePath="/" session={standaloneSession} bus={standaloneBus} />,
 );

@@ -41,8 +41,10 @@ src/
 ├── internal/
 │   ├── federation/           # registry fetch/validate, origin control, the MF loader
 │   ├── routes/                # host-owned routes, the remote region component
-│   ├── chrome/                 # layout + session indicator, from @enterprise-mfe/ui + auth
-│   └── styles.css              # Tailwind entry, imports the design system's tokens
+│   ├── session/               # who is signed in — a stub, behind useSession()
+│   ├── bus/                    # cross-remote pub/sub, relayed across tabs
+│   ├── chrome/                 # the frame: layout, nav, buttons, design tokens
+│   └── styles.css              # Tailwind entry, imports chrome/tokens.css
 ├── bootstrap.tsx              # the real entry point
 └── index.tsx                  # dynamic import('./bootstrap') — the MF async boundary
 ```
@@ -76,3 +78,11 @@ pnpm --filter @enterprise-mfe/shell run e2e
 
 `playwright.config.ts` starts both the shell's and the dashboard's dev
 servers itself; no manual setup is required.
+
+## What the shell hands a remote
+
+`internal/routes/remote-region.tsx` mounts each remote's exposed `./App` with
+`basePath`, `session`, and `bus` as props. That is the entire contract — see
+`docs/USAGE.md`'s "What a remote needs from the orchestrator". `session/` and
+`bus/` are internal on purpose: a remote in another repository cannot import
+them, so it receives what they produce instead.

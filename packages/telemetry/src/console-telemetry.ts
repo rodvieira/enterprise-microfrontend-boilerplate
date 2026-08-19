@@ -10,7 +10,7 @@ function describe(remote: RemoteContext): string {
  * The default sink: prints, keeps nothing, sends nothing anywhere.
  *
  * A console implementation rather than a no-op, for the same reason
- * @enterprise-mfe/auth ships a visible stub — on a fresh clone you can watch
+ * The shell's session module ships a visible stub — on a fresh clone you can watch
  * the instrumentation fire and see exactly which events a real backend would
  * receive, instead of wiring a vendor first to find out whether it works.
  *

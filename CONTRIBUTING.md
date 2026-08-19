@@ -14,14 +14,17 @@ pnpm dev
 ## The rules that matter most
 
 1. **Never import across apps with a relative path.** `apps/dashboard` must never
-   `import` anything from `apps/admin` directly — only through federation or a
-   shared package. This is enforced in CI via `dependency-cruiser`
+   `import` anything from `apps/admin` directly — only through federation. This is enforced in CI via `dependency-cruiser`
    (`pnpm check:boundaries`), and failing it blocks the PR.
 2. **Only `src/exposed/` is a valid import target from outside an app.**
    `src/internal/` is private, always. See `docs/USAGE.md`.
-3. **Shared singleton packages** (`packages/auth`, `packages/event-bus`, React
-   itself) must stay on identical versions across every app. `pnpm check:shared-deps`
-   verifies this — if you bump a version, bump it everywhere that package is used.
+3. **Shared singletons** (React, ReactDOM, `react-router`, Tailwind,
+   `packages/telemetry`) must stay on identical versions across every app.
+   `pnpm check:shared-deps` verifies this — if you bump a version, bump it
+   everywhere that package is used.
+   Note what is *not* on that list: nothing a remote needs from the shell is a
+   shared module. Session and messaging arrive as props, so a remote in another
+   repository is subject to no version negotiation at all.
 4. **Conventional Commits**, scoped to the app or package you touched (e.g.
    `feat(admin): add role-change confirmation modal`). Enforced by commitlint on
    commit.

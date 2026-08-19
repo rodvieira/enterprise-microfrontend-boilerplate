@@ -28,11 +28,18 @@ packages/*        → shared code, singleton where noted below
   technically allows it, doing so breaks the boundary that keeps a remote portable
   to its own repository later. `dependency-cruiser` enforces this in CI — treat a
   CI failure here as a hard stop, not a warning to route around.
-- **React, ReactDOM, `react-router`, `packages/auth`, `packages/event-bus`, and
-  `packages/telemetry` must resolve to a single shared instance** across shell and
-  every remote. `scripts/check-shared-deps.ts` verifies this in CI. If you add a
-  package that holds state or a React context consumed by more than one app, add it
-  to that check in the same change.
+- **React, ReactDOM, `react-router`, Tailwind, and `packages/telemetry` must
+  resolve to a single shared instance** across shell and every remote.
+  `scripts/check-shared-deps.ts` verifies this in CI. If you add a package that
+  holds state or a React context consumed by more than one app, add it to that
+  check in the same change.
+- **A remote must import nothing from this project.** Everything crossing the
+  boundary is a prop: `basePath`, `session`, `bus` (`RemoteAppProps` in
+  `packages/shared-types`). The real deployment model is micro-frontends in
+  other repositories, built by other teams, whose URLs this shell orchestrates —
+  they cannot install anything from here. Never solve a cross-app problem by
+  adding a package for remotes to import; widen the props contract instead, and
+  only if it genuinely must cross.
 - Module Federation itself prescribes no folder structure. Everything under
   `apps/*/src/` beyond `exposed/`/`internal/` is this project's own convention —
   don't present it as an MF requirement when explaining it to someone else.
@@ -55,9 +62,11 @@ packages/*        → shared code, singleton where noted below
 
 ## Auth
 
-`packages/auth` ships a **stub implementation** (in-memory fake user) behind a
-stable contract (`useAuth()`, `<ProtectedRoute>`, `<AuthProvider>`). Do not
-implement a real login flow unless explicitly asked — that decision was made
+`apps/shell/src/internal/session/` ships a **stub implementation** (in-memory
+fake user) behind a stable contract (`useSession()`, `<ProtectedRoute>`,
+`<SessionProvider>`). It is the orchestrator's concern, not a package: remotes
+receive the resolved session as a prop. Do not implement a real login flow
+unless explicitly asked — that decision was made
 deliberately, not left unfinished. If asked to "add real login," point to
 `docs/USAGE.md`'s "Connecting real authentication" and confirm the person actually
 wants to change this, since enterprises bring their own identity provider.
