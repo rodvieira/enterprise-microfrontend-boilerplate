@@ -126,10 +126,11 @@ undo, and that only works from one.
 Both exist because they catch failures that **do not fail the build** —
 they fail silently at runtime, far from their cause.
 
-- **`check:shared-deps`** — React, ReactDOM, `react-router`, `auth`,
-  `event-bus`, `telemetry`, and Tailwind must resolve to one version across
-  every app. Two copies of React, or two auth contexts, is a bug that
-  surfaces nowhere near the version mismatch that caused it.
+- **`check:shared-deps`** — React, ReactDOM, `react-router`, `telemetry`, and
+  Tailwind must resolve to one version across every app. Two copies of React
+  is a bug that surfaces nowhere near the version mismatch that caused it.
+  Note how short that list is: nothing a remote needs from the shell is a
+  shared module, so a remote in another repository negotiates none of this.
 - **`check:boundaries`** — `src/exposed/` is an app's public surface;
   `src/internal/` is private, even across federation. Without enforcement,
   a remote's implementation detail quietly becomes another team's
@@ -140,11 +141,22 @@ they fail silently at runtime, far from their cause.
 ## How the pieces fit
 
 ```
-apps/shell        the host. Owns routing, the remote registry, and origin control.
+apps/shell        the orchestrator. Owns routing, the remote registry, origin
+                  control, the session, and the cross-remote bus.
 apps/dashboard    a remote. Exposes ./App over Module Federation.
 apps/admin        a second remote. Proves the conventions generalise.
-packages/*        contracts shared by all of them.
+packages/*        the host's own building blocks, plus the props contract.
 ```
+
+The arrow only points one way. The shell reaches remotes over the network,
+by URL, and hands each one `basePath`, `session`, and `bus` as props. A
+remote reaches back for nothing — which is what lets it live in another
+repository, on another team's release schedule.
+
+The two examples here happen to sit in this monorepo because they have to
+live somewhere. Treat that as an accident of packaging, not a requirement:
+they consume the shell exactly the way a remote three repositories away
+would.
 
 ### The remote registry
 
@@ -179,6 +191,36 @@ shell's Content-Security-Policy — so the browser enforces it too.
 `version` is optional, never resolved by the host, and exists so a failure
 says `dashboard@1.4.2` instead of `dashboard`. See
 [Deploying](#deploying) for how it makes rollback a one-line edit.
+
+### Styling across independently built apps
+
+Each app compiles its own Tailwind bundle, and a remote's stylesheet loads
+**after** the host's. Tailwind utilities are global single-class selectors, so
+whichever stylesheet comes last wins any tie — and a remote only emits the
+utilities its own source uses.
+
+That produces a failure worth knowing about before it finds you. If the host's
+frame relies on a responsive variant the remote never emits, the remote's plain
+`.flex-col` outranks the host's `@media ... .md\:flex-row`, and the host's
+sidebar collapses to a stacked layout. Nothing throws, nothing logs, and every
+test that only asserts "the nav is visible" still passes.
+
+The fix here is `apps/shell/src/internal/chrome/frame.css`: the frame's
+structural rules are **plain CSS, outside any `@layer`**. Unlayered CSS
+outranks every layer, and Tailwind puts all of its output in layers — so the
+frame is immune to whatever any remote ships, including a remote redeployed
+next year by a team you have never met.
+
+Appearance is different: a remote emitting the same `border-b` declares the
+same thing, so utilities are fine there. Only structure the host depends on
+needs to leave the utility layer.
+
+`apps/shell/e2e/chrome-isolation.spec.ts` asserts the resulting geometry rather
+than visibility, because geometry is the only thing that catches this.
+
+If you give a remote a stylesheet of its own, the same reasoning applies in
+reverse: anything it must not lose to the host's bundle belongs outside a layer
+too.
 
 ### Two failure surfaces, kept apart
 
@@ -699,12 +741,16 @@ A Pages *project page* also serves from `/<repo>/`, so set
 
 ### Deploying remotes independently
 
-Everything above puts the shell and its remotes on one origin, which is the
-simplest thing that works. The architecture does not require it — and the
-point of micro-frontends is that it should not.
+Everything above puts the shell and its remotes on one origin, because that
+is the simplest thing that works and it keeps this repository's own demo to
+a single deploy.
 
-To give each remote its own deployment, deploy each app's own `dist/`
-separately and point the registry at real, separate origins:
+**This section is the one most adopters actually want.** If your
+micro-frontends are built by other teams in other repositories, they are not
+in this repo's `pnpm build` at all — the shell only ever learns their URLs.
+
+Deploy each remote's own `dist/` wherever that team deploys, and point the
+registry at real, separate origins:
 
 ```jsonc
 {
@@ -726,6 +772,18 @@ Each remote then ships on its own schedule, and only the shell's registry
 changes when one moves. This is also the first configuration that genuinely
 exercises `origin-guard.ts` and the derived CSP — same-origin hosting never
 puts either to the test.
+
+Two things a cross-origin remote must get right, both of which same-origin
+hosting hides:
+
+- **CORS.** The browser fetches the manifest and `remoteEntry.js` from the
+  shell's origin, so the remote's host must send
+  `Access-Control-Allow-Origin` for it. Rspack's dev server already does;
+  your production host is a separate setting.
+- **`allowedOrigins`.** The shell refuses an origin that is not listed, and
+  the same list generates the CSP. A remote that is deployed, reachable, and
+  simply not listed fails closed — which is the intended behaviour, and the
+  first thing to check when a new remote does not appear.
 
 Each remote's own `dist/` still needs the SPA rewrite if you want its
 standalone URL to be navigable.
