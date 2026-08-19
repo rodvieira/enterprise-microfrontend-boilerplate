@@ -1,5 +1,6 @@
 interface PlaceholderPanelProps {
   label: string;
+  onAnnounce: () => void;
 }
 
 /**
@@ -8,13 +9,20 @@ interface PlaceholderPanelProps {
  * `src/exposed/App.tsx` and nothing else, the same split every remote in
  * this repository uses.
  */
-export function PlaceholderPanel({ label }: PlaceholderPanelProps) {
+export function PlaceholderPanel({ label, onAnnounce }: PlaceholderPanelProps) {
   return (
-    <div className="rounded-lg border border-(--color-border) p-6">
+    <div className="flex flex-col items-start gap-4 rounded-lg border border-(--color-border) p-6">
       <p className="text-sm text-(--color-text-muted)">
-        {label} is scaffolded and composes inside the shell. Replace this
-        panel with real content under `src/internal/`.
+        {label} is scaffolded and composes inside the shell. Replace this panel with real content
+        under `src/internal/`.
       </p>
+      <button
+        type="button"
+        onClick={onAnnounce}
+        className="rounded-(--radius-control) bg-(--color-brand-600) px-(--spacing-control-x) py-(--spacing-control-y) text-sm font-medium text-white hover:bg-(--color-brand-700)"
+      >
+        Publish a message on the host bus
+      </button>
     </div>
   );
 }

@@ -1,6 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useUserList } from '../src/internal/users/use-user-list';
+
+// The hook publishes onto the host's bus, which App supplies from props.
+vi.mock('../src/internal/host-context', () => ({
+  useHost: () => ({
+    session: { user: null, isAuthenticated: false },
+    bus: { publish: vi.fn(), subscribe: vi.fn(() => () => {}) },
+  }),
+}));
 
 describe('useUserList', () => {
   it('paginates a fixture set larger than one page, bounded', () => {

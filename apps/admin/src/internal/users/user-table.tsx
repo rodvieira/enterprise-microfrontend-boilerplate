@@ -1,6 +1,7 @@
 import type { User } from '@enterprise-mfe/shared-types';
-import type { TableColumn } from '@enterprise-mfe/ui';
-import { Button, Table } from '@enterprise-mfe/ui';
+import { Button } from '../ui/button';
+import { Table } from '../ui/table';
+import type { TableColumn } from '../ui/table';
 import type { SortColumn, SortDirection } from './use-user-list';
 
 export interface UserTableProps {

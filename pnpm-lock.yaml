@@ -80,18 +80,9 @@ importers:
 
   apps/admin:
     dependencies:
-      '@enterprise-mfe/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@enterprise-mfe/event-bus':
-        specifier: workspace:*
-        version: link:../../packages/event-bus
       '@enterprise-mfe/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
-      '@enterprise-mfe/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@module-federation/enhanced':
         specifier: ^2.8.1
         version: 2.8.1(@rspack/core@2.1.7(@module-federation/runtime-tools@2.8.1))(typescript@5.9.3)
@@ -144,18 +135,9 @@ importers:
 
   apps/dashboard:
     dependencies:
-      '@enterprise-mfe/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@enterprise-mfe/event-bus':
-        specifier: workspace:*
-        version: link:../../packages/event-bus
       '@enterprise-mfe/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
-      '@enterprise-mfe/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@module-federation/enhanced':
         specifier: ^2.8.1
         version: 2.8.1(@rspack/core@2.1.7(@module-federation/runtime-tools@2.8.1))(typescript@5.9.3)
@@ -211,9 +193,6 @@ importers:
 
   apps/shell:
     dependencies:
-      '@enterprise-mfe/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
       '@enterprise-mfe/federation-utils':
         specifier: workspace:*
         version: link:../../packages/federation-utils
@@ -223,9 +202,6 @@ importers:
       '@enterprise-mfe/telemetry':
         specifier: workspace:*
         version: link:../../packages/telemetry
-      '@enterprise-mfe/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@module-federation/enhanced':
         specifier: ^2.8.1
         version: 2.8.1(@rspack/core@2.1.7(@module-federation/runtime-tools@2.8.1))(typescript@5.9.3)
@@ -279,65 +255,9 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(@types/node@22.20.1)(jsdom@30.0.1)(vite@8.2.0(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
 
-  packages/auth:
-    dependencies:
-      '@enterprise-mfe/shared-types':
-        specifier: workspace:*
-        version: link:../shared-types
-    devDependencies:
-      '@enterprise-mfe/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
-      '@testing-library/jest-dom':
-        specifier: ^7.0.0
-        version: 7.0.0(@testing-library/dom@10.4.1)
-      '@testing-library/react':
-        specifier: ^16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@testing-library/user-event':
-        specifier: ^14.6.1
-        version: 14.6.1(@testing-library/dom@10.4.1)
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
-      vitest:
-        specifier: ^4.1.10
-        version: 4.1.10(@types/node@22.20.1)(jsdom@30.0.1)(vite@8.2.0(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
-
   packages/config-biome: {}
 
   packages/config-typescript: {}
-
-  packages/event-bus:
-    dependencies:
-      '@enterprise-mfe/shared-types':
-        specifier: workspace:*
-        version: link:../shared-types
-    devDependencies:
-      '@enterprise-mfe/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
-      '@testing-library/jest-dom':
-        specifier: ^7.0.0
-        version: 7.0.0(@testing-library/dom@10.4.1)
-      '@testing-library/react':
-        specifier: ^16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@testing-library/user-event':
-        specifier: ^14.6.1
-        version: 14.6.1(@testing-library/dom@10.4.1)
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
-      vitest:
-        specifier: ^4.1.10
-        version: 4.1.10(@types/node@22.20.1)(jsdom@30.0.1)(vite@8.2.0(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
 
   packages/federation-utils:
     devDependencies:
@@ -373,34 +293,6 @@ importers:
         version: 4.1.10(@types/node@22.20.1)(jsdom@30.0.1)(vite@8.2.0(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
 
   packages/telemetry:
-    devDependencies:
-      '@enterprise-mfe/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
-      '@testing-library/jest-dom':
-        specifier: ^7.0.0
-        version: 7.0.0(@testing-library/dom@10.4.1)
-      '@testing-library/react':
-        specifier: ^16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@testing-library/user-event':
-        specifier: ^14.6.1
-        version: 14.6.1(@testing-library/dom@10.4.1)
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
-      vitest:
-        specifier: ^4.1.10
-        version: 4.1.10(@types/node@22.20.1)(jsdom@30.0.1)(vite@8.2.0(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
-
-  packages/ui:
-    dependencies:
-      '@enterprise-mfe/shared-types':
-        specifier: workspace:*
-        version: link:../shared-types
     devDependencies:
       '@enterprise-mfe/config-typescript':
         specifier: workspace:*

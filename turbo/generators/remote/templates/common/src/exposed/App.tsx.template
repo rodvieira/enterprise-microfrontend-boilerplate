@@ -1,5 +1,4 @@
-import { useAuth } from '@enterprise-mfe/auth';
-import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
+import type { RemoteAppProps } from '{{contractImport}}';
 import { PlaceholderPanel } from '../internal/placeholder/placeholder-panel';
 import '../internal/styles.css';
 
@@ -12,16 +11,21 @@ import '../internal/styles.css';
  * The styles.css import matters *here*, not only in bootstrap.tsx: when the
  * shell loads this module via federation, it fetches only the chunks in
  * `./App`'s own dependency graph — bootstrap.tsx's chunk is never
- * requested. See docs/USAGE.md's "Remotes" section for the full
- * story (found the hard way while building apps/dashboard).
+ * requested. See docs/USAGE.md's "Remotes" section for the full story.
  *
- * Deliberately no <AuthProvider> here: when composed inside the shell, this
- * component renders inside the shell's own <AuthProvider> (React context is
- * shared because @enterprise-mfe/auth is an MF singleton). Only
- * the standalone dev entry (bootstrap.tsx) needs its own provider.
+ * Everything that crosses the boundary arrives as a prop: the session the
+ * orchestrator resolved, and the bus it owns. Nothing is read from a shared
+ * module or a React context reaching across builds, which is what lets this
+ * app move to its own repository without changing a line.
  */
-export function App({ basePath }: RemoteAppProps) {
-  const { user, isAuthenticated } = useAuth();
+export function App({ basePath, session, bus }: RemoteAppProps) {
+  const { user, isAuthenticated } = session;
+
+  const announce = () => {
+    // The orchestrator relays this to every other remote it composes,
+    // including tabs of the same app. Replace with a topic this app owns.
+    bus.publish('{{name}}:hello', { from: '{{name}}' });
+  };
 
   return (
     <div className="flex flex-col gap-6 p-6" data-base-path={basePath}>
@@ -31,7 +35,7 @@ export function App({ basePath }: RemoteAppProps) {
           {isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}
         </p>
       </header>
-      <PlaceholderPanel label="{{title}}" />
+      <PlaceholderPanel label="{{title}}" onAnnounce={announce} />
     </div>
   );
 }

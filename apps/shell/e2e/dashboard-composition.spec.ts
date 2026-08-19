@@ -8,7 +8,7 @@ test.describe('dashboard composition', () => {
   test('the shell composes the dashboard remote at /dashboard (SC-001)', async ({ page }) => {
     await page.goto('/dashboard');
 
-    // The shell's own chrome (built from @enterprise-mfe/ui, never simulated).
+    // The shell's own chrome (built from internal/chrome, never simulated).
     await expect(page.getByRole('navigation')).toBeVisible();
     await expect(page.getByRole('banner')).toBeVisible();
 

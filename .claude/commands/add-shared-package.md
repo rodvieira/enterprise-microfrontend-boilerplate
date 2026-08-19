@@ -14,6 +14,12 @@ Create `packages/$ARGUMENTS` with:
 
 Then ask: **does this package hold state or a context that more than one app
 (shell + any remote) will consume?** If yes, add it to `scripts/check-shared-deps.ts`
-so version drift is caught in CI — this is not optional, it's how `packages/auth`
-and `packages/event-bus` are protected today, and skipping it here reintroduces
-the exact bug class the guard rail exists to prevent.
+so version drift is caught in CI — this is not optional, it's how
+`packages/telemetry` is protected today, and skipping it here reintroduces the
+exact bug class the guard rail exists to prevent.
+
+Then ask the harder question: **is this a package a remote would have to
+import?** If so, it is almost certainly the wrong shape. Remotes live in other
+repositories and cannot install from here — anything they need arrives through
+`RemoteAppProps`. A new shared package is legitimate only when its consumers are
+all inside this repository.

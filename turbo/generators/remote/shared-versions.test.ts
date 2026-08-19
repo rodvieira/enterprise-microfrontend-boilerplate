@@ -17,8 +17,6 @@ const COMPLETE_SINGLETONS: Record<string, string> = {
   react: '^19.2.8',
   'react-dom': '^19.2.8',
   'react-router': '^8.3.0',
-  '@enterprise-mfe/auth': 'workspace:*',
-  '@enterprise-mfe/event-bus': 'workspace:*',
 };
 
 describe('resolveSourceManifest', () => {
@@ -77,13 +75,13 @@ describe('readSharedVersions', () => {
     // root so this test never touches the real apps/.
     const tempRoot = mkdtempSync(join(tmpdir(), 'shared-versions-test-'));
     try {
-      const { '@enterprise-mfe/event-bus': _omitted, ...incomplete } = COMPLETE_SINGLETONS;
+      const { 'react-router': _omitted, ...incomplete } = COMPLETE_SINGLETONS;
       mkdirSync(join(tempRoot, 'apps/dashboard'), { recursive: true });
       writeFileSync(
         join(tempRoot, 'apps/dashboard/package.json'),
         JSON.stringify({ dependencies: incomplete }),
       );
-      expect(() => readSharedVersions(tempRoot)).toThrowError(/@enterprise-mfe\/event-bus/);
+      expect(() => readSharedVersions(tempRoot)).toThrowError(/react-router/);
     } finally {
       rmSync(tempRoot, { recursive: true, force: true });
     }

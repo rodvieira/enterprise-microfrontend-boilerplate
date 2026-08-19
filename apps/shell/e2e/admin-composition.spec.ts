@@ -33,8 +33,8 @@ test.describe('admin composition', () => {
 /**
  * The headline proof: a role change in
  * admin updates the dashboard's "active users" KPI live, with no reload,
- * across two genuinely separate browser tabs — exactly what
- * packages/event-bus's BroadcastChannel relay exists for. Two
+ * across two genuinely separate browser tabs — exactly what the shell's
+ * BroadcastChannel relay (apps/shell/src/internal/bus/) exists for. Two
  * pages in the same browser context share an origin, which is what
  * BroadcastChannel requires; they do not share any JS memory, which is what
  * makes this a real test of the relay rather than of same-module delivery.

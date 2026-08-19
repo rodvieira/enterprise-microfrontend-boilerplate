@@ -3,7 +3,7 @@
  *
  * Inside this monorepo every package resolves through its `exports` field to
  * raw TypeScript in `src/` — which is why the apps can import them with no
- * build step, and why `pnpm dev` hot-reloads a change to packages/ui.
+ * build step, and why `pnpm dev` hot-reloads a change to a package.
  * External consumers cannot do that: their bundler excludes node_modules
  * from its TypeScript loader rules, so raw `.ts` never compiles.
  *

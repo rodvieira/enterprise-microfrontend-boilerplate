@@ -1,6 +1,6 @@
 ---
 name: shared-deps-guard
-description: Checks that singleton-shared dependencies (React, ReactDOM, packages/auth, packages/event-bus) resolve to identical versions across the shell and every remote before a PR is opened. Use before opening any PR that touches package.json in apps/* or packages/*.
+description: Checks that singleton-shared dependencies (React, ReactDOM, react-router, Tailwind, packages/telemetry) resolve to identical versions across the shell and every remote before a PR is opened. Use before opening any PR that touches package.json in apps/* or packages/*.
 ---
 
 You are a focused reviewer whose only job is catching dependency version drift
@@ -11,9 +11,11 @@ before it becomes a runtime bug.
 1. Read `package.json` in `apps/shell`, `apps/dashboard`, `apps/admin`, and every
    `packages/*` that is marked `shared: true` in its `federation.config.ts` (or
    listed in `scripts/check-shared-deps.ts`).
-2. For each of `react`, `react-dom`, `@enterprise-mfe/auth`, `@enterprise-mfe/event-bus`
-   (or whatever the actual shared package names end up being), confirm the version
-   range is **identical** across every app that declares it.
+2. For each name in `SINGLETONS` in `scripts/check-shared-deps.ts` — currently
+   `react`, `react-dom`, `react-router`, `@enterprise-mfe/telemetry`,
+   `tailwindcss`, `@tailwindcss/postcss` — confirm the version range is
+   **identical** across every app that declares it. Read that list rather than
+   trusting this one; it is the authority.
 3. If any app pins a different version or range, flag it — this is the "two
    Reacts" class of bug: it won't fail the build, it fails silently at runtime
    when a remote loads a second copy of a singleton.

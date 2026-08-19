@@ -1,0 +1,48 @@
+/**
+ * The contract between the orchestrator and this remote.
+ *
+ * Declared here rather than installed: this project depends on no package
+ * from the source monorepo, and a type cannot cross a Module Federation
+ * boundary anyway — the host and this app are separate builds, so what
+ * actually holds them together is the shape of the props at runtime. Keeping
+ * the declaration local means `pnpm install` needs no private registry, and
+ * the only thing to keep in sync with the orchestrator is these few lines.
+ *
+ * These interfaces mirror `@enterprise-mfe/shared-types` in the source
+ * monorepo. If the orchestrator widens the contract, copy the addition here.
+ */
+
+export interface User {
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly role: string;
+  readonly permissions: readonly string[];
+}
+
+export interface RemoteSession {
+  /** Whoever the orchestrator resolved, or null when signed out. */
+  readonly user: User | null;
+  readonly isAuthenticated: boolean;
+}
+
+/**
+ * Messaging between remotes, owned by the orchestrator.
+ *
+ * `payload` is `unknown` on purpose. The publisher is a different build,
+ * possibly a different framework, so a shared payload type would be a
+ * guarantee no compiler can enforce across the boundary. Validate what you
+ * receive before using it.
+ */
+export interface RemoteBus {
+  publish(topic: string, payload: unknown): void;
+  subscribe(topic: string, handler: (payload: unknown) => void): () => void;
+}
+
+/** Everything the orchestrator hands this remote when it mounts it. */
+export interface RemoteAppProps {
+  /** The route the orchestrator mounted this remote at. */
+  readonly basePath: string;
+  readonly session: RemoteSession;
+  readonly bus: RemoteBus;
+}

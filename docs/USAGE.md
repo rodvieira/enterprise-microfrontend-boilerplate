@@ -6,8 +6,9 @@ one page, read this one.
 - [Step by step: from clone to your own platform](#step-by-step-from-clone-to-your-own-platform)
 - [Commands](#commands)
 - [How the pieces fit](#how-the-pieces-fit)
-- [Shared packages](#shared-packages)
-- [A worked example: using them together](#a-worked-example-using-them-together)
+- [What a remote needs from the orchestrator](#what-a-remote-needs-from-the-orchestrator)
+- [Packages that are still shared](#packages-that-are-still-shared)
+- [A worked example: a remote that uses the contract](#a-worked-example-a-remote-that-uses-the-contract)
 - [Adding a remote](#adding-a-remote)
 - [Deploying](#deploying)
 - [Connecting real authentication](#connecting-real-authentication)
@@ -42,8 +43,8 @@ move to its own repository later.
 Open `/admin` in one tab and `/dashboard` in another. In admin, **Invite or
 edit user → Change an existing user's role → Submit**. The dashboard's
 "active users" KPI moves in the other tab — no reload, no shared global, no
-import between the two remotes. The update travels through
-`@enterprise-mfe/event-bus`.
+import between the two remotes. The update travels through the bus the shell
+owns and hands to both as a prop.
 
 You need to be signed in for the admin form to appear (**Sign in**, top
 right — it is a stub, any click signs you in as an admin).
@@ -190,165 +191,137 @@ navigable.
 
 ---
 
-## Shared packages
+## What a remote needs from the orchestrator
 
-Everything under `packages/` is consumed through workspace links —
-`import { Button } from '@enterprise-mfe/ui'` works with no build step, and
-editing a package hot-reloads into every running app.
+**Nothing it has to install.**
 
-### `@enterprise-mfe/ui`
+That is the whole design. In a large organisation the micro-frontends live in
+other repositories, are built by other teams, and are deployed to other URLs.
+They cannot `pnpm install` anything from here — this project publishes no
+packages, and even a private registry would couple every team's release to
+this one's.
 
-The design system. Every component takes a required, programmatically
-associated label where one applies, and carries its own focus, error, and
-loading states.
+So everything crossing the boundary is a **prop**. The shell mounts a remote's
+exposed root and hands it three things:
 
-```tsx
-import { Button, Card, Input, Layout, Modal, Nav, Select, Table, ToastProvider, useToast } from '@enterprise-mfe/ui';
+```ts
+interface RemoteAppProps {
+  /** The route the orchestrator mounted this remote at. */
+  readonly basePath: string;
+  /** Who is signed in, already resolved by the orchestrator. */
+  readonly session: RemoteSession;
+  /** Messaging between remotes, owned by the orchestrator. */
+  readonly bus: RemoteBus;
+}
 
-<Select label="Role" value={role} onChange={(e) => setRole(e.target.value)}>
-  <option value="admin">admin</option>
-  <option value="viewer">viewer</option>
-</Select>;
+interface RemoteSession {
+  /** Non-null exactly when `isAuthenticated` is true. */
+  readonly user: User | null;
+  readonly isAuthenticated: boolean;
+}
+
+interface RemoteBus {
+  publish(topic: string, payload: unknown): void;
+  /** Returns an unsubscribe function. */
+  subscribe(topic: string, handler: (payload: unknown) => void): () => void;
+}
 ```
 
-| Export | Purpose |
+The definitive copy is `packages/shared-types/src/component.ts`. A remote in
+another repository copies those few lines into its own source — a type cannot
+cross a Module Federation boundary anyway, because the host and the remote are
+separate builds. What actually holds them together is the shape of the props
+at runtime, and that is deliberately small enough to keep in sync by hand.
+
+### Why `payload` is `unknown`
+
+The publisher is a different build, possibly a different framework, released
+on a different day. A shared payload type would be a guarantee no compiler can
+enforce across that boundary. **Validate what you receive**, in the subscriber:
+
+```ts
+bus.subscribe('user:role-changed', (payload) => {
+  if (typeof payload !== 'object' || payload === null) return;
+  const event = payload as { userId?: unknown; newRole?: unknown };
+  if (typeof event.userId !== 'string' || typeof event.newRole !== 'string') return;
+  // …now it is safe to use.
+});
+```
+
+`apps/dashboard/src/exposed/App.tsx` does exactly this, and its tests fire
+malformed payloads at it on purpose.
+
+### What the orchestrator keeps to itself
+
+These live in `apps/shell/src/internal/` and are **not** part of any remote's
+contract:
+
+| Module | Its job |
 |---|---|
-| `Button` | `variant`: primary / secondary / ghost / danger · `size`: sm / md / lg |
-| `Card` | Surface with an optional `trend` indicator — the KPI tiles |
-| `Input` / `Select` | Labelled form controls with `error` and `hint` wiring |
-| `Modal` | Focus-trapped dialog, closes on Escape and backdrop click |
-| `Table` | Typed columns, empty state, optional caption |
-| `Nav` | Roving-tabindex navigation — one Tab stop, arrows move within |
-| `Layout` | Header / sidebar / footer frame |
-| `ToastProvider` + `useToast` | Transient notifications |
-| `cx` | Class-name joiner |
+| `session/` | Resolves who is signed in and exposes it via `useSession()`. Backed by an in-memory stub — see [Connecting real authentication](#connecting-real-authentication). |
+| `bus/` | Owns the pub/sub instance and relays it across browser tabs over `BroadcastChannel`, validating messages at the receiving edge. |
+| `chrome/` | The frame: header, nav, footer, and the shell's own design tokens. |
+| `routes/` | Reads the registry, mounts each remote, and passes the props above. |
 
-Import the tokens once, in your app's CSS:
-
-```css
-@import "tailwindcss";
-@import "@enterprise-mfe/ui/styles.css";
-```
-
-### `@enterprise-mfe/auth`
-
-The session **contract**, backed by an in-memory stub. Not real
-authentication — see [Connecting real
-authentication](#connecting-real-authentication).
-
-```tsx
-import { AuthProvider, ProtectedRoute, useAuth } from '@enterprise-mfe/auth';
-
-const { user, status, isAuthenticated, login, logout } = useAuth();
-```
-
-`status` is `'unknown' | 'authenticated' | 'unauthenticated'` — three
-states, not a boolean, so a protected screen does not flash its signed-out
-view on first paint.
-
-The shell mounts the one `AuthProvider`; remotes inherit it through the
-shared singleton, and only need their own when running standalone.
-
-### `@enterprise-mfe/event-bus`
-
-Typed publish/subscribe for cross-remote communication, including across
-browser tabs.
-
-```tsx
-import { publish, subscribe, useEventSubscription } from '@enterprise-mfe/event-bus';
-
-publish('user:role-changed', { userId, newRole });
-useEventSubscription('user:role-changed', (payload) => { /* … */ });
-```
-
-Topics are a closed set (`EventMap`), so a typo fails to compile. Adding
-one means adding its type **and** its runtime validator — payloads arriving
-from another tab are validated at the receiving edge, because two tabs can
-be running independently-deployed builds whose idea of a payload differs.
-
-### `@enterprise-mfe/telemetry`
-
-The observability contract, with a console sink by default. See
-[Connecting telemetry](#connecting-telemetry).
-
-### `@enterprise-mfe/shared-types`
-
-`User`, `Role`, `Permission`, `ROLE_PERMISSIONS`, `permissionsForRole`,
-plus the prop types a remote's exposed root receives. Deliberately small —
-resist making it "types for everything".
-
-### `@enterprise-mfe/federation-utils`
-
-`useRemote()` and `RemoteBoundary` — remote loading and error containment.
-Bundler- and federation-agnostic on purpose: it takes a loader function, so
-it is testable with a plain promise.
+A remote never imports any of it. It receives the *results*.
 
 ---
 
-## A worked example: using them together
+## Packages that are still shared
 
-The snippets above show each package alone. This is one feature using them
-the way a real remote does — a billing panel that lists invoices, gates the
-action behind a permission, and tells the rest of the application when an
-invoice is paid.
+Only four remain, and none of them is something a remote installs:
 
-Every line below is compiled against the real packages, including the
-`EventMap` change.
+### `@enterprise-mfe/shared-types`
 
-### 1. Declare the event, and its validator
+`User`, `Role`, `Permission`, `ROLE_PERMISSIONS`, `permissionsForRole`, and the
+contract above. Used by the shell and by the example remotes because they
+happen to live in this workspace. A remote outside it declares the same shapes
+itself. Deliberately small — resist making it "types for everything".
 
-Topics are a closed set, so a new one starts here rather than at the call
-site. In `packages/event-bus/src/event-map.ts`:
+### `@enterprise-mfe/federation-utils`
 
-```ts
-export interface EventMap {
-  'user:role-changed': RoleChangedEvent;
-  'invoice:paid': InvoicePaidEvent;        // ← new
-}
+`useRemote()` and `RemoteBoundary` — remote loading and error containment. A
+**host** concern; a remote never loads itself. Bundler- and
+federation-agnostic on purpose: it takes a loader function, so it is testable
+with a plain promise.
 
-export interface InvoicePaidEvent {
-  invoiceId: string;
-  amountCents: number;
-}
+### `@enterprise-mfe/telemetry`
 
-function isInvoicePaidEvent(payload: unknown): payload is InvoicePaidEvent {
-  if (typeof payload !== 'object' || payload === null) return false;
-  const c = payload as Partial<InvoicePaidEvent>;
-  return (
-    typeof c.invoiceId === 'string' &&
-    c.invoiceId.length > 0 &&
-    typeof c.amountCents === 'number' &&
-    Number.isInteger(c.amountCents)
-  );
-}
+The observability contract, with a console sink by default. Installed by the
+shell, reporting on remotes: load timings and failures. See
+[Connecting telemetry](#connecting-telemetry).
 
-export const eventValidators: EventValidators = {
-  'user:role-changed': isRoleChangedEvent,
-  'invoice:paid': isInvoicePaidEvent,      // ← new
-};
-```
+### `@enterprise-mfe/config-typescript` and `@enterprise-mfe/config-biome`
 
-**Forgetting the validator does not compile.** `EventValidators` is a
-mapped type over `EventMap`, so omitting one is:
+Shared tool configuration for this workspace. Not runtime code.
 
-```text
-error TS2741: Property "'invoice:paid'" is missing in type
-'{ 'user:role-changed': … }' but required in type 'EventValidators'.
-```
+### What is deliberately *not* here
 
-That matters because the validator is what protects a subscriber from a
-payload sent by a *differently deployed* build of the publisher in another
-tab. A convention would be forgotten; a compile error cannot be.
+There is no `ui` package, and no `auth` or `event-bus` package. Every large
+organisation already has a design system, and would not adopt one from a
+boilerplate; session and messaging are the orchestrator's job, delivered as
+props. Removing them is what makes the "install nothing" claim true rather
+than aspirational.
 
-### 2. The component
+Matching the orchestrator's look across teams is then a matter of agreeing on
+**token values** — `--color-brand-600`, `--radius-control` — which a remote
+copies into its own stylesheet. That is a contract a team in another repo can
+actually honour.
+
+---
+
+## A worked example: a remote that uses the contract
+
+A billing panel that lists invoices, gates an action behind a permission, and
+tells the rest of the platform when an invoice is paid — using only props.
+
+Note what is absent: no import from this project, no provider to wrap it in,
+no design-system dependency. This file compiles in a repository that has never
+heard of the orchestrator.
 
 ```tsx
-import { useAuth } from '@enterprise-mfe/auth';
-import { publish, useEventSubscription } from '@enterprise-mfe/event-bus';
-import type { Permission, RemoteAppProps } from '@enterprise-mfe/shared-types';
-import { Button, Card, Table } from '@enterprise-mfe/ui';
-import type { TableColumn } from '@enterprise-mfe/ui';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { RemoteAppProps } from './contract'; // your own copy of the contract
 
 interface Invoice {
   id: string;
@@ -357,81 +330,83 @@ interface Invoice {
   paid: boolean;
 }
 
-const REQUIRED: Permission = 'users:write';
-
-/** Permission checks read the session; they are not an auth-package change. */
-function useCanSettle(): boolean {
-  const { user } = useAuth();
-  return user?.permissions.includes(REQUIRED) ?? false;
+/** The subscriber's own validator: the publisher is a separate build. */
+function readInvoicePaid(payload: unknown): { amountCents: number } | null {
+  if (typeof payload !== 'object' || payload === null) return null;
+  const candidate = payload as { invoiceId?: unknown; amountCents?: unknown };
+  if (typeof candidate.invoiceId !== 'string' || candidate.invoiceId.length === 0) return null;
+  if (!Number.isInteger(candidate.amountCents)) return null;
+  return { amountCents: candidate.amountCents as number };
 }
 
-export function BillingPanel({ basePath }: RemoteAppProps) {
-  const { user, isAuthenticated } = useAuth();
-  const canSettle = useCanSettle();
+export function BillingPanel({ basePath, session, bus }: RemoteAppProps) {
+  const { user, isAuthenticated } = session;
+  const canSettle = user?.permissions.includes('users:write') ?? false;
+
   const [invoices, setInvoices] = useState<Invoice[]>([
     { id: 'inv-1', customer: 'Acme', amountCents: 1200, paid: false },
   ]);
   const [settledCents, setSettledCents] = useState(0);
 
-  // Reacts to the event regardless of who published it — including this
-  // same remote open in another tab.
-  useEventSubscription('invoice:paid', (payload) => {
-    setSettledCents((total) => total + payload.amountCents);
-  });
+  // Reacts to the event regardless of who published it — another remote,
+  // or this same one open in another tab.
+  useEffect(
+    () =>
+      bus.subscribe('invoice:paid', (payload) => {
+        const event = readInvoicePaid(payload);
+        if (!event) return;
+        setSettledCents((total) => total + event.amountCents);
+      }),
+    [bus],
+  );
 
   function settle(invoice: Invoice) {
     setInvoices((all) => all.map((i) => (i.id === invoice.id ? { ...i, paid: true } : i)));
     // Published only after the change actually succeeded — never optimistically.
-    publish('invoice:paid', { invoiceId: invoice.id, amountCents: invoice.amountCents });
+    bus.publish('invoice:paid', { invoiceId: invoice.id, amountCents: invoice.amountCents });
   }
 
-  const columns: readonly TableColumn<Invoice>[] = useMemo(
-    () => [
-      { key: 'customer', header: 'Customer', cell: (i) => i.customer },
-      { key: 'amount', header: 'Amount', cell: (i) => `$${(i.amountCents / 100).toFixed(2)}` },
-      {
-        key: 'action',
-        header: 'Action',
-        cell: (i) =>
-          i.paid ? (
-            'Paid'
-          ) : (
-            <Button size="sm" disabled={!canSettle} onClick={() => settle(i)}>
-              Mark paid
-            </Button>
-          ),
-      },
-    ],
-    [canSettle],
-  );
+  const total = useMemo(() => (settledCents / 100).toFixed(2), [settledCents]);
 
   return (
-    <section>
+    <section data-base-path={basePath}>
       <p>{isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}</p>
-      <p>Mounted at {basePath}</p>
-      <Card label="Settled today" value={`$${(settledCents / 100).toFixed(2)}`} trend="up" />
-      <Table columns={columns} rows={invoices} getRowId={(i) => i.id} caption="Invoices" />
+      <p>Settled today: ${total}</p>
+      <table>
+        <tbody>
+          {invoices.map((invoice) => (
+            <tr key={invoice.id}>
+              <td>{invoice.customer}</td>
+              <td>${(invoice.amountCents / 100).toFixed(2)}</td>
+              <td>
+                {invoice.paid ? (
+                  'Paid'
+                ) : (
+                  <button type="button" disabled={!canSettle} onClick={() => settle(invoice)}>
+                    Mark paid
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 }
+
+export default BillingPanel;
 ```
 
-### What each package did
+Three details are load-bearing:
 
-| Package | Its job here |
-|---|---|
-| `shared-types` | `RemoteAppProps` is what the shell passes in; `Permission` is the closed union a typo cannot survive |
-| `auth` | `useAuth()` reads the session the **shell** established — this remote mounts no provider of its own |
-| `ui` | `Button`, `Card`, `Table` — no bespoke markup, so it matches every other remote automatically |
-| `event-bus` | `publish` announces a fact; `useEventSubscription` reacts to one, wherever it came from |
-
-### The two you do *not* call from a remote
-
-- **`telemetry`** is installed by the shell and reports on *remotes* —
-  load timings and failures. A remote can consume the same sink (it is a
-  shared singleton) but nothing here needs to.
-- **`federation-utils`** (`useRemote`, `RemoteBoundary`) is how a **host**
-  loads a remote. A remote never loads itself.
+1. **`session` is read, never fetched.** The orchestrator already resolved it.
+   A remote deciding for itself who is signed in is how two parts of one page
+   end up disagreeing.
+2. **`publish` happens after the change succeeded**, not optimistically. Other
+   remotes treat the event as a fact.
+3. **`bus.subscribe` returns its own unsubscribe**, so returning it straight
+   from `useEffect` is the whole cleanup.
 
 ### The same pattern, in working code
 
@@ -441,12 +416,16 @@ example to delete. The identical pattern is already running:
 | Step | Real file |
 |---|---|
 | Publishes after a successful change | `apps/admin/src/internal/users/use-user-list.ts` |
-| Subscribes and updates a KPI | `apps/dashboard/src/exposed/App.tsx` |
+| Subscribes, validates, updates a KPI | `apps/dashboard/src/exposed/App.tsx` |
 | Permission-gated action | `apps/admin/src/internal/permissions/use-can-write-users.ts` |
-| Session with no local provider | `apps/admin/src/exposed/App.tsx` |
+| Session arriving as a prop | `apps/admin/src/exposed/App.tsx` |
+| Standing in for the host in dev | `apps/dashboard/src/internal/standalone-host.ts` |
 
 Open `/admin` and `/dashboard` in two tabs and change a role: that is this
-example, already wired.
+example, already wired — and the event crosses a `BroadcastChannel` relay the
+shell owns, not a package both apps import.
+
+---
 
 ## Adding a remote
 
@@ -456,24 +435,49 @@ pnpm gen remote
 
 You are asked for a name, a route path, a label, and a mode:
 
-- **Monorepo** — writes `apps/<name>`, links `packages/*` through the
-  workspace, registers the remote in `remotes.dev.json`, and assigns the
-  next free port.
-- **Standalone** — writes an independent project outside this repository
-  that depends on `@enterprise-mfe/*` as published packages.
-
-> **Standalone mode needs a registry.** This repository does not publish its
-> packages, so a standalone project's `pnpm install` cannot resolve them
-> until you publish your own scope (`@acme/*`) to your own registry. The
-> packaging is ready for that — `pnpm check:package-exports` verifies each
-> package's published shape — but the publish itself is your decision.
-> Inside the monorepo, nothing needs publishing.
+- **Monorepo** — writes `apps/<name>`, registers the remote in
+  `remotes.dev.json`, and assigns the next free port. It imports
+  `RemoteAppProps` from `@enterprise-mfe/shared-types`, since it lives in
+  this workspace.
+- **Standalone** — writes an independent project outside this repository.
+  It depends on **no package from here**: it carries its own copy of the
+  contract in `src/internal/contract.ts`, so `pnpm install` works from the
+  public registry with no token and no private registry. Move the directory
+  into its own repository and it keeps building.
 
 Whatever mode you pick, the generated app follows the same rule as every
-other: only `src/exposed/` may be imported from outside it.
+other: only `src/exposed/` may be imported from outside it. Both modes render
+standalone too — with no host present, `src/internal/standalone-host.ts`
+supplies the props a shell would.
 
 Staging and production registries are **not** touched — pointing a remote
 at a real URL is a deployment decision, not a scaffolding one.
+
+### Adding a remote you host elsewhere
+
+Most of the time the remote already exists, built by another team in another
+repository, and there is nothing to generate. Composing it takes two edits to
+the shell:
+
+1. Add its entry to `apps/shell/remotes.<env>.json`:
+
+   ```jsonc
+   {
+     "name": "payments",
+     "entry": "https://payments.acme.example/mf-manifest.json",
+     "routePath": "/payments",
+     "label": "Payments"
+   }
+   ```
+
+2. Add its origin to that file's `allowedOrigins`. The shell refuses to load
+   a remote from an origin not listed there, and the same list generates the
+   Content-Security-Policy — so a missing entry fails closed, twice.
+
+The remote itself needs to do exactly three things: expose `./App` over
+Module Federation, accept `RemoteAppProps`, and serve its manifest with
+`Access-Control-Allow-Origin` set for the shell's origin. It can be built by
+anyone, with any toolchain, on any release cadence.
 
 ---
 
@@ -766,13 +770,18 @@ In order of how often it is the cause:
 
 ## Connecting real authentication
 
-`@enterprise-mfe/auth` ships a stub — an in-memory fake user behind a stable
+The shell ships a stub session — an in-memory fake user behind a stable
 contract. That is deliberate: every organisation brings its own identity
 provider, and a login flow baked into a boilerplate is one you would have to
 remove.
 
-To connect a real provider, replace the three stub calls in
-`packages/auth/src/context.tsx` (`stubSignIn`, `stubSignOut`,
+Authentication is the **orchestrator's** job here, which is why it lives in
+`apps/shell/src/internal/session/` rather than in a package. Remotes never
+implement it; they receive the resolved `session` as a prop, so connecting a
+real provider is a change in exactly one application.
+
+To connect one, replace the three stub calls in
+`apps/shell/src/internal/session/context.tsx` (`stubSignIn`, `stubSignOut`,
 `stubRestore`) with your OIDC client. Any OIDC-compliant provider — Okta,
 Entra ID, Auth0, Keycloak, Google Workspace — fits the same three
 variables:
@@ -783,12 +792,14 @@ AUTH_CLIENT_ID=
 AUTH_REDIRECT_URI=http://localhost:3000/callback
 ```
 
-**Nothing else changes.** `useAuth()`, `<ProtectedRoute>`, and every
-consumer keep working, because the contract does not change — which is the
-whole point of shipping one.
+**Nothing else changes.** `useSession()`, `<ProtectedRoute>`, and every remote
+keep working, because neither contract changes — not the shell's internal one,
+and not the `session` prop remotes see.
 
-Keep tokens out of the shared package's public surface: consumers need
-`user`, `status`, and the two actions, not credentials.
+Keep tokens out of what crosses the boundary: a remote needs `user` and
+`isAuthenticated`, never credentials. `RemoteSession` is shaped that way on
+purpose — widening it to carry an access token would hand every remote,
+including ones built by other teams, something it has no business holding.
 
 ---
 

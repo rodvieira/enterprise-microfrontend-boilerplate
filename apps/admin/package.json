@@ -11,10 +11,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@enterprise-mfe/auth": "workspace:*",
-    "@enterprise-mfe/event-bus": "workspace:*",
     "@enterprise-mfe/shared-types": "workspace:*",
-    "@enterprise-mfe/ui": "workspace:*",
     "@module-federation/enhanced": "^2.8.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

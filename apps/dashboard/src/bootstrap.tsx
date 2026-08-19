@@ -1,6 +1,6 @@
-import { AuthProvider } from '@enterprise-mfe/auth';
 import { createRoot } from 'react-dom/client';
 import { App } from './exposed/App';
+import { standaloneBus, standaloneSession } from './internal/standalone-host';
 import './internal/styles.css';
 
 const container = document.getElementById('root');
@@ -9,15 +9,9 @@ if (!container) {
 }
 
 /**
- * Standalone dev entry has no shell to supply a basePath or an ancestor
- * <AuthProvider> — the dashboard must still render fully with no shell
- * present (spec edge case), so this is the one place `apps/dashboard`
- * establishes its own session. When composed inside the shell, App.tsx
- * relies on the shell's own <AuthProvider> instead — see
- * exposed/App.tsx's comment.
+ * Standalone dev entry: no host, so nothing supplies `session` or `bus`.
+ * This remote must still render fully on its own — that is what lets it live
+ * in its own repository — so local stand-ins are passed instead. When
+ * composed by the orchestrator, those same props come from the host.
  */
-createRoot(container).render(
-  <AuthProvider>
-    <App basePath="/" />
-  </AuthProvider>,
-);
+createRoot(container).render(<App basePath="/" session={standaloneSession} bus={standaloneBus} />);

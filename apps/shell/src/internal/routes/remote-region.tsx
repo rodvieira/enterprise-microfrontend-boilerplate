@@ -3,9 +3,11 @@ import type { RemoteLoader } from '@enterprise-mfe/federation-utils';
 import type { RemoteAppProps } from '@enterprise-mfe/shared-types';
 import type { RemoteContext, Telemetry } from '@enterprise-mfe/telemetry';
 import { useTelemetry } from '@enterprise-mfe/telemetry';
-import { Button } from '@enterprise-mfe/ui';
 import { useCallback, useMemo } from 'react';
+import { hostBus } from '../bus/bus';
+import { Button } from '../chrome/button';
 import { createFederationLoader } from '../federation/loader';
+import { useSession } from '../session/context';
 
 export interface RemoteRegionProps {
   /** The registered remote's name, matching what registerRemotes was given. */
@@ -56,6 +58,10 @@ function instrumented<T>(
  */
 export function RemoteRegion({ remoteName, basePath, version }: RemoteRegionProps) {
   const telemetry = useTelemetry();
+  const { user, isAuthenticated } = useSession();
+
+  // Stable per session change, so a remote can put it in a dependency array.
+  const session = useMemo(() => ({ user, isAuthenticated }), [user, isAuthenticated]);
 
   const remote = useMemo<RemoteContext>(
     () => ({ name: remoteName, routePath: basePath, ...(version ? { version } : {}) }),
@@ -102,7 +108,10 @@ export function RemoteRegion({ remoteName, basePath, version }: RemoteRegionProp
         </p>
       )}
     >
-      <Component basePath={basePath} />
+      {/* The whole contract with a remote. It imports nothing of ours —
+          it lives in another repository — so the session it should respect
+          and the bus it talks to arrive as props. */}
+      <Component basePath={basePath} session={session} bus={hostBus} />
     </RemoteBoundary>
   );
 }

@@ -1,8 +1,11 @@
 import type { Role, User } from '@enterprise-mfe/shared-types';
-import { Button, Input, Modal, Select } from '@enterprise-mfe/ui';
 import type { FormEvent } from 'react';
 import { useId, useState } from 'react';
 import { useCanWriteUsers } from '../permissions/use-can-write-users';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Modal } from '../ui/modal';
+import { Select } from '../ui/select';
 import type { MutationOutcome, NewUserInput } from './use-user-list';
 
 export interface UserFormModalProps {

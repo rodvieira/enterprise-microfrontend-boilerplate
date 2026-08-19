@@ -1,11 +1,10 @@
-import { useAuth } from '@enterprise-mfe/auth';
+import { useHost } from '../host-context';
 
 /**
- * Local permission check — not a packages/auth contract
- * change. Reads the User.permissions shape @enterprise-mfe/shared-types
- * already defines.
+ * Local permission check, against the session the host handed in. Reads the
+ * User.permissions shape @enterprise-mfe/shared-types already defines.
  */
 export function useCanWriteUsers(): boolean {
-  const { user } = useAuth();
-  return user?.permissions.includes('users:write') ?? false;
+  const { session } = useHost();
+  return session.user?.permissions.includes('users:write') ?? false;
 }

@@ -24,13 +24,7 @@ const NOT_A_REMOTE: readonly string[] = ['shell'];
  * `main()` on import) — shared-versions.test.ts cross-checks this list
  * against that file's source text so the two can't silently drift apart.
  */
-export const REQUIRED_SINGLETONS = [
-  'react',
-  'react-dom',
-  'react-router',
-  '@enterprise-mfe/auth',
-  '@enterprise-mfe/event-bus',
-] as const;
+export const REQUIRED_SINGLETONS = ['react', 'react-dom', 'react-router'] as const;
 
 export type SharedVersions = Record<(typeof REQUIRED_SINGLETONS)[number], string>;
 

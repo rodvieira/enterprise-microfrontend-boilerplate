@@ -8,11 +8,13 @@
 A production-grade starting point for large, scalable React applications
 built on micro-frontend architecture — [Module Federation
 2.0](https://module-federation.io/), via [Rspack](https://rspack.rs/).
-Ships two real, working micro-frontends — a dashboard and an admin panel —
-composed inside a shell, sharing a design system and an authentication
-contract, talking to each other through a typed event bus. A scaffolding
-generator (`pnpm turbo gen remote`) produces a third remote either inside
-this monorepo or as a standalone, independently-deployable repository.
+The shell is an **orchestrator**: you give it the URLs of micro-frontends that
+live in other repositories, built and deployed by other teams, and it composes
+them into one application. Ships two real, working remotes — a dashboard and an
+admin panel — that talk to each other and share a session **without importing a
+single package from here**. A scaffolding generator
+(`pnpm turbo gen remote`) produces a third, either inside this monorepo or as a
+standalone repository that depends on nothing of ours.
 
 ## Why this exists
 
@@ -27,7 +29,9 @@ built by people who didn't write the first one.
 
 This project ships two working remotes instead of one, specifically
 because the second one is what proves a convention actually generalizes
-rather than merely happening to work once. It is not a full framework (no
+rather than merely happening to work once. Both consume the orchestrator
+purely through props — the same position a team in another repository is in,
+rather than the easier one a monorepo would let them get away with. It is not a full framework (no
 proprietary vocabulary, no hosted cloud service), not locked to one
 monorepo tool (every remote is independently deployable), and it does not
 implement real authentication — it ships a stable contract instead of a
@@ -41,9 +45,9 @@ login flow, deliberately.
 - **`apps/dashboard`** — KPI cards, an activity chart, and a recent
   activity feed, exposed over Module Federation as `./App`.
 - **`apps/admin`** — a paginated user table and an invite/edit modal.
-  Changing a user's role there publishes an event through
-  `packages/event-bus` that `apps/dashboard` subscribes to, updating its
-  "active users" KPI live — no reload, no direct import between the two
+  Changing a user's role there publishes an event on the bus the shell passes
+  in, which `apps/dashboard` subscribes to, updating its "active users" KPI
+  live — no reload, no shared module, no direct import between the two
   remotes. This is this project's headline proof that the architecture
   works end-to-end, not just that two apps can be loaded side by side.
 - **`pnpm turbo gen remote`** — a generator extracted from what
@@ -66,7 +70,7 @@ login flow, deliberately.
 Two browser tabs. Changing a role in **admin** moves **dashboard**'s
 "active users" KPI — across a tab boundary, with no reload, no shared
 global, and no import between the two remotes. The update travels only
-through the typed event bus.
+through the bus the shell owns and hands each remote as a prop.
 
 Live: <https://enterprise-microfrontend-boilerplat.vercel.app/> — the
 shell composing the real `apps/dashboard` and `apps/admin` remotes,

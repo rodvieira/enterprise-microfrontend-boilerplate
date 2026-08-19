@@ -1,4 +1,0 @@
-{
-  "extends": "@enterprise-mfe/config-typescript/tsconfig.react.json",
-  "include": ["src/**/*", "tests/**/*"]
-}

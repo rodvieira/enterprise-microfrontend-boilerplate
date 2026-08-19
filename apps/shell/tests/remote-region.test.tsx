@@ -3,6 +3,7 @@ import type { Telemetry } from '@enterprise-mfe/telemetry';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { RemoteRegion } from '../src/internal/routes/remote-region';
+import { SessionProvider } from '../src/internal/session/context';
 
 vi.mock('@module-federation/enhanced/runtime', () => ({
   loadRemote: vi.fn().mockRejectedValue(new Error('Failed to fetch remote entry')),
@@ -11,13 +12,15 @@ vi.mock('@module-federation/enhanced/runtime', () => ({
 describe('RemoteRegion', () => {
   it('contains a load failure to its own region — the rest of the host stays navigable', async () => {
     render(
-      <div>
-        <nav>
-          <a href="/other">Other page</a>
-        </nav>
-        <RemoteRegion remoteName="dashboard" basePath="/dashboard" />
-        <footer>Shell footer</footer>
-      </div>,
+      <SessionProvider>
+        <div>
+          <nav>
+            <a href="/other">Other page</a>
+          </nav>
+          <RemoteRegion remoteName="dashboard" basePath="/dashboard" />
+          <footer>Shell footer</footer>
+        </div>
+      </SessionProvider>,
     );
 
     await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
@@ -38,9 +41,11 @@ describe('RemoteRegion', () => {
     };
 
     render(
-      <TelemetryProvider telemetry={telemetry}>
-        <RemoteRegion remoteName="dashboard" basePath="/dashboard" version="1.4.2" />
-      </TelemetryProvider>,
+      <SessionProvider>
+        <TelemetryProvider telemetry={telemetry}>
+          <RemoteRegion remoteName="dashboard" basePath="/dashboard" version="1.4.2" />
+        </TelemetryProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());

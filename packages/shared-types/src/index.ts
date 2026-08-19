@@ -2,4 +2,9 @@
 
 export type { Permission, Role, User } from './user';
 export { ROLE_PERMISSIONS, permissionsForRole } from './user';
-export type { RemoteAppProps, WithClassName } from './component';
+export type {
+  RemoteAppProps,
+  RemoteBus,
+  RemoteSession,
+  WithClassName,
+} from './component';

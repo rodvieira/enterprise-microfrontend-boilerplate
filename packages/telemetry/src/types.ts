@@ -1,7 +1,7 @@
 /**
  * The telemetry contract, not a telemetry implementation.
  *
- * Same shape of decision as @enterprise-mfe/auth: enterprises
+ * Same shape of decision as the shell's stub session: enterprises
  * bring their own vendor — Sentry, Datadog, OpenTelemetry, an internal
  * collector — and a boilerplate that picked one would be wrong for
  * everybody else and would drag that vendor's SDK across the federation

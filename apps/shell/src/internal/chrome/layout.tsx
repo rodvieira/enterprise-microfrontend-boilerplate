@@ -1,7 +1,8 @@
-import { Layout, Nav } from '@enterprise-mfe/ui';
-import type { NavItem } from '@enterprise-mfe/ui';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
+import { LayoutFrame } from './layout-frame';
+import { Nav } from './nav';
+import type { NavItem } from './nav';
 import { useRegisteredRemotes } from './registered-remotes-context';
 import { SessionIndicator } from './session-indicator';
 
@@ -19,7 +20,7 @@ export interface ShellLayoutProps {
 
 /**
  * The frame: navigation, layout, and a session indicator, all composed from
- * @enterprise-mfe/ui — never from shell-defined chrome. This is what
+ * the shell's own chrome components. This is what
  * proves the design system compiled by a real bundler, not just exercised in
  * a test environment.
  *
@@ -39,7 +40,7 @@ export function ShellLayout({ children }: ShellLayoutProps) {
     navItems.find((item) => isActiveHref(item.href, location.pathname))?.href ?? '/';
 
   return (
-    <Layout
+    <LayoutFrame
       header={
         <div
           style={{
@@ -56,6 +57,6 @@ export function ShellLayout({ children }: ShellLayoutProps) {
       sidebar={<Nav items={navItems} activeHref={activeHref} />}
     >
       {children}
-    </Layout>
+    </LayoutFrame>
   );
 }
