@@ -9,29 +9,31 @@ export interface LayoutFrameProps extends WithClassName {
   children: ReactNode;
 }
 
+/**
+ * The frame the orchestrator draws around whichever remote is mounted.
+ *
+ * Its structural classes come from frame.css, not from Tailwind utilities.
+ * That file explains why: a remote's stylesheet loads after the host's and can
+ * otherwise win the cascade against a responsive utility the host depends on.
+ * Colour and border utilities stay inline — a remote emitting the same
+ * declaration changes nothing.
+ */
 export function LayoutFrame({ header, sidebar, footer, children, className }: LayoutFrameProps) {
   return (
-    <div
-      // min-h-dvh, not min-h-full: `min-height: 100%` only resolves when
-      // every ancestor has a height, and nothing sets one on html/body/#root
-      // — so it collapsed to the content's height and left the page's own
-      // background showing underneath. dvh also tracks mobile browser chrome,
-      // which vh does not.
-      className={cx('flex min-h-dvh flex-col bg-(--color-surface) text-(--color-text)', className)}
-    >
+    <div className={cx('shell-frame bg-(--color-surface) text-(--color-text)', className)}>
       {header ? (
         <header className="flex h-14 items-center border-b border-(--color-border) px-4">
           {header}
         </header>
       ) : null}
 
-      <div className="flex flex-1 flex-col md:flex-row">
+      <div className="shell-frame-body">
         {sidebar ? (
-          <aside className="border-b border-(--color-border) p-4 md:w-64 md:border-r md:border-b-0">
+          <aside className="shell-frame-sidebar border-b border-(--color-border) md:border-r md:border-b-0">
             {sidebar}
           </aside>
         ) : null}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="shell-frame-main">{children}</main>
       </div>
 
       {footer ? (

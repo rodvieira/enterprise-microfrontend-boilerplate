@@ -1,0 +1,63 @@
+/*
+ * The orchestrator's frame, written as plain CSS on purpose.
+ *
+ * Every app in this architecture builds its own Tailwind bundle, and a
+ * remote's stylesheet loads *after* the host's. Tailwind utilities are global
+ * single-class selectors, so whichever stylesheet comes last wins any tie —
+ * and a remote emits only the utilities its own source uses. When the host
+ * relies on a responsive variant the remote never emits, the remote's plain
+ * `.flex-col` overrides the host's `@media … .md\:flex-row`, and the frame
+ * silently collapses to a stacked layout with nothing logged and nothing
+ * thrown.
+ *
+ * Unlayered CSS outranks every `@layer`, and Tailwind puts all of its output
+ * in layers. So these rules are immune to anything any remote ships, now or
+ * after a team we have never met redeploys. That immunity is the point: the
+ * frame belongs to the orchestrator, and a remote must not be able to move it
+ * by accident.
+ *
+ * Utility classes are still fine for the frame's *appearance* — a remote
+ * emitting the same `border-b` declares the same thing. Only structure, where
+ * the host depends on a variant, needs to live here.
+ *
+ * e2e/chrome-isolation.spec.ts asserts the resulting geometry.
+ */
+
+.shell-frame {
+  display: flex;
+  /* Not `min-height: 100%`: that resolves only when every ancestor has a
+     height, and nothing sets one on html/body/#root. dvh also tracks mobile
+     browser chrome, which vh does not. */
+  min-height: 100dvh;
+  flex-direction: column;
+}
+
+.shell-frame-body {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+}
+
+.shell-frame-sidebar {
+  padding: 1rem;
+}
+
+.shell-frame-main {
+  flex: 1 1 0%;
+  padding: 1rem;
+  /* A remote is free to render something wider than its region — a wide table,
+     a chart. Containing it here keeps that from stretching the host's frame
+     and pushing the sidebar off-screen. */
+  min-width: 0;
+}
+
+@media (width >= 48rem) {
+  .shell-frame-body {
+    flex-direction: row;
+  }
+
+  .shell-frame-sidebar {
+    width: 16rem;
+    flex: none;
+  }
+}
