@@ -76,7 +76,7 @@ jobs:
       # independently for the same reason, not copied unexamined.
       fail-on-vuln: false
 
-  # Socket's supply-chain scan job was removed (ADR-0017) — it requires a
+  # Socket's supply-chain scan job was removed — it requires a
   # SOCKET_SECURITY_API_KEY repository secret nobody configured, and ran on
   # every push/PR failing for that reason alone. OSV-Scanner above still
   # covers CVE/advisory scanning.

@@ -44,7 +44,7 @@ describe('TelemetryProvider', () => {
   });
 
   it('falls back to the console sink outside a provider, rather than throwing', () => {
-    // A remote rendered standalone (ADR-0007) has no host to inherit a
+    // A remote rendered standalone has no host to inherit a
     // provider from. Refusing to render because nothing is watching would
     // make telemetry a hard dependency of running the app at all.
     const debug = vi.spyOn(console, 'debug').mockImplementation(() => {});

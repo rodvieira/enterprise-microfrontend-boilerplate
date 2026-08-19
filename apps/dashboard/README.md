@@ -1,9 +1,8 @@
 # apps/dashboard
 
-The analytics/overview remote — the first micro-frontend remote in this
-project (ADR-0008's build order, ADR-0010's domain assignment): KPI cards
-(active users, usage trend), an activity-over-time chart, and a recent
-activity feed. Exposes one component, `./App`, over Module Federation.
+The analytics/overview remote: KPI cards (active users, usage trend), an
+activity-over-time chart, and a recent activity feed. Exposes one
+component, `./App`, over Module Federation.
 
 ## Running it
 
@@ -17,9 +16,9 @@ pnpm --filter @enterprise-mfe/dashboard run build
 
 Composed inside the shell: run the command above alongside
 `pnpm --filter @enterprise-mfe/shell run dev` (or just `pnpm dev` from the
-repository root), then visit `http://localhost:3000/dashboard`. See
-its registry entry
-for exactly what makes this remote registrable.
+repository root), then visit `http://localhost:3000/dashboard`. Its entry
+in `apps/shell/src/internal/federation/remotes.dev.json` is what makes it
+registrable.
 
 ## Structure
 
@@ -53,15 +52,20 @@ composed (found the hard way — see the commit history for
 `internal/data/fetch-overview.ts` is a self-contained fixture, not a real
 network call — this project has no backend by design. KPI cards, the chart,
 and the feed all read from one shared `useDashboardOverview()` call in
-`App.tsx`, not three independent fetches. See
-its own data module.
+`App.tsx`, not three independent fetches — so they move through loading and
+error states together instead of tearing.
 
-## What's deliberately not here
+## The cross-remote update
 
-Live cross-remote KPI updates — ADR-0010's "Admin role change updates
-Dashboard's KPI via `packages/event-bus`" demo. Neither `apps/admin` nor
-`packages/event-bus` exist yet; that wiring is sprint 5's dependency on this
-remote, not the other way around.
+Changing a user's role in [`apps/admin`](../admin/README.md) moves this
+remote's "active users" KPI live — no reload, and no import between the two
+remotes. This side of it is a single `useEventSubscription` on
+`'user:role-changed'` in `exposed/App.tsx`, which increments the count the
+last fetch returned rather than recomputing it from admin's user list. This
+remote has no reason to know that list exists.
+
+It works across browser tabs too, because the bus relays over a same-origin
+`BroadcastChannel`.
 
 ## Session
 

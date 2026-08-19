@@ -29,7 +29,7 @@ describe('RemoteRegion', () => {
     expect(screen.getByText('Shell footer')).toBeInTheDocument();
   });
 
-  it('reports the load attempt and its failure, naming the build (ADR-0023)', async () => {
+  it('reports the load attempt and its failure, naming the build', async () => {
     const telemetry: Telemetry = {
       remoteLoadStarted: vi.fn(),
       remoteLoadSucceeded: vi.fn(),

@@ -1,9 +1,8 @@
 # apps/admin
 
-The users & permissions remote — the second micro-frontend remote
-(ADR-0008's build order, ADR-0010's domain assignment): a paginated/sorted
-user table and an invite/edit modal, reachable only with the `users:write`
-permission. Exposes one component, `./App`, over Module Federation.
+The users & permissions remote: a paginated, sortable user table and an
+invite/edit modal, reachable only with the `users:write` permission.
+Exposes one component, `./App`, over Module Federation.
 
 Its role changes are this project's headline cross-remote proof: submitting
 one publishes an event through `packages/event-bus` that
@@ -23,10 +22,9 @@ pnpm --filter @enterprise-mfe/admin run build
 Composed inside the shell: run the command above alongside
 `pnpm --filter @enterprise-mfe/shell run dev` and
 `pnpm --filter @enterprise-mfe/dashboard run dev` (or just `pnpm dev` from
-the repository root), then visit `http://localhost:3000/admin`. See
-its registry entry
-for exactly what makes this remote registrable — registering it required no
-shell source change, since the shell already had the
+the repository root), then visit `http://localhost:3000/admin`. Its entry
+in the shell's `remotes.dev.json` is what makes it registrable — adding it
+required no shell source change, because the shell already had the
 route-patching mechanism this remote reuses unchanged.
 
 ## Structure

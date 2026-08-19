@@ -6,10 +6,10 @@ Module Federation 2.0, configured as a host that exposes nothing of its own
 (`ModuleFederationPlugin`'s `exposes` map is deliberately empty — the shell
 composes, it doesn't get composed into).
 
-It runs standalone with zero remotes registered — that has always been a
-valid, tested state. As of sprint 4, `apps/dashboard` is registered in the
-development registry (`src/internal/federation/remotes.dev.json`) and
-composed at `/dashboard`, the first real remote this host has ever loaded
+It runs standalone with zero remotes registered — that is a valid, tested
+state, not a broken one. In this repository's development registry
+(`src/internal/federation/remotes.dev.json`) both `apps/dashboard` and
+`apps/admin` are registered, and composed at `/dashboard` and `/admin`
 across a real network boundary.
 
 Registered remotes are patched into the router lazily, via react-router 8's
@@ -54,10 +54,8 @@ build copies from exactly one of three source files
 (`remotes.dev.json` / `.staging.json` / `.production.json`) based on
 `FEDERATION_ENV`. This is what makes environment switching a deployment
 decision, not a rebuild: **one build serves all three environments**. See
-the registry contract
-for the file format and validation rules, and
-`docs/USAGE.md` for why runtime fetch
-was chosen over build-time injection.
+`docs/USAGE.md`'s "The remote registry" for the file format, the validation
+rules, and why a runtime fetch was chosen over build-time injection.
 
 ## Origin control
 
