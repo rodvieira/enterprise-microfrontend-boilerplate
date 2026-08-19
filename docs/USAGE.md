@@ -7,6 +7,7 @@ one page, read this one.
 - [Commands](#commands)
 - [How the pieces fit](#how-the-pieces-fit)
 - [Shared packages](#shared-packages)
+- [A worked example: using them together](#a-worked-example-using-them-together)
 - [Adding a remote](#adding-a-remote)
 - [Deploying](#deploying)
 - [Connecting real authentication](#connecting-real-authentication)
@@ -283,6 +284,169 @@ Bundler- and federation-agnostic on purpose: it takes a loader function, so
 it is testable with a plain promise.
 
 ---
+
+## A worked example: using them together
+
+The snippets above show each package alone. This is one feature using them
+the way a real remote does — a billing panel that lists invoices, gates the
+action behind a permission, and tells the rest of the application when an
+invoice is paid.
+
+Every line below is compiled against the real packages, including the
+`EventMap` change.
+
+### 1. Declare the event, and its validator
+
+Topics are a closed set, so a new one starts here rather than at the call
+site. In `packages/event-bus/src/event-map.ts`:
+
+```ts
+export interface EventMap {
+  'user:role-changed': RoleChangedEvent;
+  'invoice:paid': InvoicePaidEvent;        // ← new
+}
+
+export interface InvoicePaidEvent {
+  invoiceId: string;
+  amountCents: number;
+}
+
+function isInvoicePaidEvent(payload: unknown): payload is InvoicePaidEvent {
+  if (typeof payload !== 'object' || payload === null) return false;
+  const c = payload as Partial<InvoicePaidEvent>;
+  return (
+    typeof c.invoiceId === 'string' &&
+    c.invoiceId.length > 0 &&
+    typeof c.amountCents === 'number' &&
+    Number.isInteger(c.amountCents)
+  );
+}
+
+export const eventValidators: EventValidators = {
+  'user:role-changed': isRoleChangedEvent,
+  'invoice:paid': isInvoicePaidEvent,      // ← new
+};
+```
+
+**Forgetting the validator does not compile.** `EventValidators` is a
+mapped type over `EventMap`, so omitting one is:
+
+```text
+error TS2741: Property "'invoice:paid'" is missing in type
+'{ 'user:role-changed': … }' but required in type 'EventValidators'.
+```
+
+That matters because the validator is what protects a subscriber from a
+payload sent by a *differently deployed* build of the publisher in another
+tab. A convention would be forgotten; a compile error cannot be.
+
+### 2. The component
+
+```tsx
+import { useAuth } from '@enterprise-mfe/auth';
+import { publish, useEventSubscription } from '@enterprise-mfe/event-bus';
+import type { Permission, RemoteAppProps } from '@enterprise-mfe/shared-types';
+import { Button, Card, Table } from '@enterprise-mfe/ui';
+import type { TableColumn } from '@enterprise-mfe/ui';
+import { useMemo, useState } from 'react';
+
+interface Invoice {
+  id: string;
+  customer: string;
+  amountCents: number;
+  paid: boolean;
+}
+
+const REQUIRED: Permission = 'users:write';
+
+/** Permission checks read the session; they are not an auth-package change. */
+function useCanSettle(): boolean {
+  const { user } = useAuth();
+  return user?.permissions.includes(REQUIRED) ?? false;
+}
+
+export function BillingPanel({ basePath }: RemoteAppProps) {
+  const { user, isAuthenticated } = useAuth();
+  const canSettle = useCanSettle();
+  const [invoices, setInvoices] = useState<Invoice[]>([
+    { id: 'inv-1', customer: 'Acme', amountCents: 1200, paid: false },
+  ]);
+  const [settledCents, setSettledCents] = useState(0);
+
+  // Reacts to the event regardless of who published it — including this
+  // same remote open in another tab.
+  useEventSubscription('invoice:paid', (payload) => {
+    setSettledCents((total) => total + payload.amountCents);
+  });
+
+  function settle(invoice: Invoice) {
+    setInvoices((all) => all.map((i) => (i.id === invoice.id ? { ...i, paid: true } : i)));
+    // Published only after the change actually succeeded — never optimistically.
+    publish('invoice:paid', { invoiceId: invoice.id, amountCents: invoice.amountCents });
+  }
+
+  const columns: readonly TableColumn<Invoice>[] = useMemo(
+    () => [
+      { key: 'customer', header: 'Customer', cell: (i) => i.customer },
+      { key: 'amount', header: 'Amount', cell: (i) => `$${(i.amountCents / 100).toFixed(2)}` },
+      {
+        key: 'action',
+        header: 'Action',
+        cell: (i) =>
+          i.paid ? (
+            'Paid'
+          ) : (
+            <Button size="sm" disabled={!canSettle} onClick={() => settle(i)}>
+              Mark paid
+            </Button>
+          ),
+      },
+    ],
+    [canSettle],
+  );
+
+  return (
+    <section>
+      <p>{isAuthenticated && user ? `Signed in as ${user.name}` : 'Not signed in'}</p>
+      <p>Mounted at {basePath}</p>
+      <Card label="Settled today" value={`$${(settledCents / 100).toFixed(2)}`} trend="up" />
+      <Table columns={columns} rows={invoices} getRowId={(i) => i.id} caption="Invoices" />
+    </section>
+  );
+}
+```
+
+### What each package did
+
+| Package | Its job here |
+|---|---|
+| `shared-types` | `RemoteAppProps` is what the shell passes in; `Permission` is the closed union a typo cannot survive |
+| `auth` | `useAuth()` reads the session the **shell** established — this remote mounts no provider of its own |
+| `ui` | `Button`, `Card`, `Table` — no bespoke markup, so it matches every other remote automatically |
+| `event-bus` | `publish` announces a fact; `useEventSubscription` reacts to one, wherever it came from |
+
+### The two you do *not* call from a remote
+
+- **`telemetry`** is installed by the shell and reports on *remotes* —
+  load timings and failures. A remote can consume the same sink (it is a
+  shared singleton) but nothing here needs to.
+- **`federation-utils`** (`useRemote`, `RemoteBoundary`) is how a **host**
+  loads a remote. A remote never loads itself.
+
+### The same pattern, in working code
+
+This example is deliberately not in the repository — it would be a third
+example to delete. The identical pattern is already running:
+
+| Step | Real file |
+|---|---|
+| Publishes after a successful change | `apps/admin/src/internal/users/use-user-list.ts` |
+| Subscribes and updates a KPI | `apps/dashboard/src/exposed/App.tsx` |
+| Permission-gated action | `apps/admin/src/internal/permissions/use-can-write-users.ts` |
+| Session with no local provider | `apps/admin/src/exposed/App.tsx` |
+
+Open `/admin` and `/dashboard` in two tabs and change a role: that is this
+example, already wired.
 
 ## Adding a remote
 
