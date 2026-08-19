@@ -27,15 +27,16 @@ real second team hits: shared auth, dependency version drift, import
 boundary violations, or what actually happens the day a second remote gets
 built by people who didn't write the first one.
 
-This project ships two working remotes instead of one, specifically
-because the second one is what proves a convention actually generalizes
-rather than merely happening to work once. Both consume the orchestrator
-purely through props — the same position a team in another repository is in,
-rather than the easier one a monorepo would let them get away with. It is not a full framework (no
-proprietary vocabulary, no hosted cloud service), not locked to one
-monorepo tool (every remote is independently deployable), and it does not
-implement real authentication — it ships a stable contract instead of a
-login flow, deliberately.
+This project ships two working remotes instead of one, specifically because
+the second one is what proves a convention actually generalizes rather than
+merely happening to work once. Both consume the orchestrator purely through
+props — the same position a team in another repository is in, rather than
+the easier one a monorepo would let them get away with.
+
+It is not a full framework (no proprietary vocabulary, no hosted cloud
+service), not locked to one monorepo tool (every remote is independently
+deployable), and it does not implement real authentication — it ships a
+stable contract instead of a login flow, deliberately.
 
 ## What's actually running
 
@@ -52,9 +53,10 @@ login flow, deliberately.
   works end-to-end, not just that two apps can be loaded side by side.
 - **`pnpm turbo gen remote`** — a generator extracted from what
   `apps/dashboard` and `apps/admin` actually share (not designed ahead of
-  them), producing a third remote either inside this monorepo or as a
-  fully independent, standalone project — the latter consuming
-  `packages/*` from whichever registry you publish your own scope to.
+  them), producing a third remote either inside this monorepo or as a fully
+  independent, standalone project. The standalone output depends on **no
+  package from here**: no private registry, no token, `pnpm install` just
+  works. Move the directory into its own repository and it keeps building.
 - **Guard rails in CI** that catch the two bugs that actually break
   micro-frontend architectures in production: `pnpm check:shared-deps`
   (dependency version drift across the shell and every remote) and
@@ -88,6 +90,42 @@ Visit `http://localhost:3000` — the shell composes both remotes
 automatically. `/dashboard` and `/admin` are both live; switch users'
 roles in admin and watch dashboard's "active users" KPI update in the
 other tab, live.
+
+## Pointing it at micro-frontends you already have
+
+This is the main event. Your remotes live in their own repositories, built by
+their own teams — they are not in this repo's build, and the shell only ever
+learns their URLs. Composing one takes an entry in
+`apps/shell/src/internal/federation/remotes.<env>.json`:
+
+```jsonc
+{
+  "allowedOrigins": ["https://payments.acme.example"],
+  "remotes": [
+    {
+      "name": "payments",
+      "entry": "https://payments.acme.example/mf-manifest.json",
+      "routePath": "/payments",
+      "label": "Payments"
+    }
+  ]
+}
+```
+
+The remote itself has to do exactly three things:
+
+1. Expose `./App` over Module Federation.
+2. Accept `{ basePath, session, bus }` as props — about twenty lines of
+   interface it declares itself, since it installs nothing from here.
+3. Serve its manifest with `Access-Control-Allow-Origin` for the shell.
+
+Any team, any toolchain, any release cadence. `allowedOrigins` is the
+security boundary: an origin not on the list is refused by the shell *and*
+by the browser, since the same list generates the Content-Security-Policy.
+
+See [What a remote needs from the
+orchestrator](docs/USAGE.md#what-a-remote-needs-from-the-orchestrator) for
+the full contract.
 
 ## Adopting this for your own company
 
@@ -128,8 +166,9 @@ S3 + CloudFront, Azure, and nginx.
 ## Learn more
 
 - **[docs/USAGE.md](docs/USAGE.md)** — commands, a step-by-step from clone to
-  your own platform, the shared packages and their APIs, adding a remote,
-  deploying, and connecting real auth or telemetry.
+  your own platform, the props contract a remote consumes, adding a remote
+  (yours or someone else's), deploying to six clouds, and connecting real
+  auth or telemetry.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to propose a change.
 
 ## License

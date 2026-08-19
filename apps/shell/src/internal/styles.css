@@ -1,2 +1,8 @@
 @import "tailwindcss";
 @import "./chrome/tokens.css";
+
+/*
+ * Last, and deliberately outside any @layer — see chrome/frame.css for why the
+ * orchestrator's frame cannot be built from utilities a remote also ships.
+ */
+@import "./chrome/frame.css";
