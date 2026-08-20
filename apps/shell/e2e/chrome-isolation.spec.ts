@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 
 /**
@@ -17,12 +20,27 @@ import { expect, test } from '@playwright/test';
  *
  * These tests assert geometry rather than visibility, because that is the only
  * thing that catches it.
+ *
+ * The routes come from the registry rather than being written here, so this
+ * keeps guarding the frame after `pnpm eject` replaces the example remotes
+ * with the adopter's own.
  */
+interface DevRegistry {
+  remotes: { name: string; routePath: string }[];
+}
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const registry = JSON.parse(
+  readFileSync(join(HERE, '../src/internal/federation/remotes.dev.json'), 'utf8'),
+) as DevRegistry;
+
+const DESKTOP = { width: 1440, height: 900 };
+
 test.describe('host chrome survives a remote stylesheet', () => {
-  for (const route of ['/dashboard', '/admin']) {
-    test(`the sidebar and the remote sit side by side at ${route}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1440, height: 900 });
-      await page.goto(route);
+  for (const remote of registry.remotes) {
+    test(`the sidebar and the ${remote.name} remote sit side by side`, async ({ page }) => {
+      await page.setViewportSize(DESKTOP);
+      await page.goto(remote.routePath);
 
       // Wait for the remote to actually mount — its stylesheet is what could
       // break the frame, so measuring before it lands would prove nothing.
@@ -37,16 +55,23 @@ test.describe('host chrome survives a remote stylesheet', () => {
       expect(main.x).toBeGreaterThanOrEqual(sidebar.x + sidebar.width);
       // The sidebar is a column, not a short block with the page below it.
       expect(sidebar.height).toBeGreaterThan(main.height / 2);
+      // And it keeps its own width rather than taking the whole viewport.
+      expect(sidebar.width).toBeLessThan(DESKTOP.width / 3);
     });
   }
 
-  test('the sidebar keeps its own width rather than the full viewport', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/dashboard');
-    await expect(page.getByRole('main')).toBeVisible();
+  test('the frame still stacks on a narrow viewport', async ({ page }) => {
+    // The fix pins the frame's structure outside Tailwind's layers; this is
+    // what proves it pinned the responsive behaviour rather than replacing it
+    // with a layout that is always a row.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await expect(page.getByRole('navigation')).toBeVisible();
 
     const sidebar = await page.locator('aside').boundingBox();
-    if (!sidebar) throw new Error('sidebar is not laid out');
-    expect(sidebar.width).toBeLessThan(400);
+    const main = await page.getByRole('main').boundingBox();
+    if (!sidebar || !main) throw new Error('sidebar or main is not laid out');
+
+    expect(main.y).toBeGreaterThanOrEqual(sidebar.y + sidebar.height);
   });
 });

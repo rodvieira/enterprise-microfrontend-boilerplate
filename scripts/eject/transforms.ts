@@ -336,3 +336,37 @@ export function emptyRegistry(
 export function formatJson(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
+
+// ---------------------------------------------------------------------------
+// The README demo
+
+/**
+ * Strips the `demo:record` script and the recorder's dependencies from the
+ * root manifest.
+ *
+ * Line-based rather than parse-and-reserialise, for the same reason
+ * removeSelf edits the scripts block as text: rewriting the whole manifest
+ * through JSON.stringify would reorder or reformat entries the adopter never
+ * asked anyone to touch.
+ */
+export function removeDemoRecorder(content: string, dependencies: readonly string[]): string {
+  const escaped = dependencies.map((name) => name.replace(/[/@^$.*+?()[\]{}|\\]/g, '\\$&'));
+  const entries = ['demo:record', ...escaped];
+  let next = content;
+  for (const entry of entries) {
+    next = next.replace(new RegExp(`^\\s*"${entry}": "[^"]*",\\n`, 'm'), '');
+  }
+  return next;
+}
+
+/**
+ * Removes the demo GIF from the README.
+ *
+ * The image is deleted along with the example remotes it films, so the
+ * markdown link would otherwise render as a broken image. The surrounding
+ * prose is deliberately left alone — it names the removed apps, which puts it
+ * in the manual-review report where a human can rewrite it.
+ */
+export function removeDemoImage(content: string): string {
+  return content.replace(/^!\[[^\]]*\]\(docs\/assets\/[^)]*\)\n\n?/m, '');
+}
