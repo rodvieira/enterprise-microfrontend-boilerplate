@@ -38,6 +38,8 @@ import {
   findReviewHits,
   flattenAdrReferences,
   formatJson,
+  removeDemoImage,
+  removeDemoRecorder,
   renameScope,
   rewriteBuildSiteRemotes,
   rewriteCommitlintScopes,
@@ -70,6 +72,20 @@ const PROCESS_ARTIFACTS = [
   'docs/analise-enterprise-mfe-boilerplate.md',
   'docs/enterprise-microfrontend-boilerplate-analysis.md',
 ];
+
+/**
+ * The README demo and the script that records it.
+ *
+ * Both film the example remotes changing a role, so once those are gone the
+ * GIF shows two applications the adopter does not have and the recorder has
+ * nothing left to drive. Removing the recorder while leaving the image would
+ * recreate the exact trap this project already fell into: a demo nobody can
+ * regenerate, quietly describing an architecture that has moved on.
+ */
+const DEMO = ['docs/assets', 'scripts/record-demo.ts', 'scripts/gifenc.d.ts'];
+
+/** Only the recorder needs these, so they leave with it. */
+const DEMO_DEPENDENCIES = ['gifenc', 'pngjs', '@types/pngjs'];
 
 /** The example remotes' own end-to-end specs assert their domain content. */
 const EXAMPLE_E2E_SPECS = [
@@ -234,12 +250,17 @@ function rewriteConfigs(options: Options, port: number): void {
 }
 
 function removeProcessArtifacts(): void {
-  for (const path of [...PROCESS_ARTIFACTS, ...EXAMPLE_E2E_SPECS]) {
+  for (const path of [...PROCESS_ARTIFACTS, ...EXAMPLE_E2E_SPECS, ...DEMO]) {
     remove(path);
   }
   for (const app of REMOVED_APPS) {
     remove(join('apps', app));
   }
+  edit('package.json', (content) => removeDemoRecorder(content, DEMO_DEPENDENCIES));
+  // Left behind, this is a link to a file that no longer exists. The prose
+  // around it still names the example remotes, which the review report picks
+  // up like any other mention.
+  edit('README.md', removeDemoImage);
 }
 
 function rewriteRemainingFiles(options: Options): ReviewHit[] {

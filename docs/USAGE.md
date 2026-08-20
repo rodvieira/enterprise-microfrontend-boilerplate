@@ -118,6 +118,7 @@ undo, and that only works from one.
 | `pnpm check:shared-deps` | Fails when a shared dependency drifts between apps |
 | `pnpm check:package-exports` | Packs each package and verifies its published exports resolve |
 | `pnpm gen remote` | Scaffolds a new remote |
+| `pnpm demo:record` | Re-records the README's cross-remote GIF from the running apps (needs `pnpm dev`) |
 | `pnpm rename` | Renames the npm scope and project name — deletes nothing |
 | `pnpm eject` | One-time: swaps the examples for your first real remote, then removes itself |
 
@@ -216,7 +217,9 @@ same thing, so utilities are fine there. Only structure the host depends on
 needs to leave the utility layer.
 
 `apps/shell/e2e/chrome-isolation.spec.ts` asserts the resulting geometry rather
-than visibility, because geometry is the only thing that catches this.
+than visibility, because geometry is the only thing that catches this. It reads
+its routes from the dev registry, so it keeps guarding the frame after
+`pnpm eject` swaps the example remotes for yours.
 
 If you give a remote a stylesheet of its own, the same reasoning applies in
 reverse: anything it must not lose to the host's bundle belongs outside a layer

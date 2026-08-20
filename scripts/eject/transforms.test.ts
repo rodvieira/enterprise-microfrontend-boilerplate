@@ -7,6 +7,8 @@ import {
   findRemovedAppHits,
   findReviewHits,
   flattenAdrReferences,
+  removeDemoImage,
+  removeDemoRecorder,
   renameScope,
   rewriteBuildSiteRemotes,
   rewriteCommitlintScopes,
@@ -230,5 +232,69 @@ describe('emptyRegistry', () => {
     );
     expect(result.remotes).toEqual([]);
     expect(result.allowedOrigins).toEqual(['http://localhost:3001']);
+  });
+});
+
+describe('removeDemoRecorder', () => {
+  const manifest = `{
+  "scripts": {
+    "build:site": "tsx scripts/build-site.ts",
+    "demo:record": "tsx scripts/record-demo.ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/pngjs": "^6.0.5",
+    "gifenc": "^1.0.3",
+    "pngjs": "^7.0.0",
+    "typescript": "^5.9.3"
+  }
+}
+`;
+
+  it('removes the script and every dependency only it needed', () => {
+    const result = removeDemoRecorder(manifest, ['gifenc', 'pngjs', '@types/pngjs']);
+    for (const gone of ['demo:record', 'gifenc', 'pngjs', '@types/pngjs']) {
+      expect(result).not.toContain(gone);
+    }
+  });
+
+  it('leaves everything else exactly as it was', () => {
+    const result = removeDemoRecorder(manifest, ['gifenc', 'pngjs', '@types/pngjs']);
+    expect(result).toContain('"build:site": "tsx scripts/build-site.ts"');
+    expect(result).toContain('"test": "vitest run"');
+    expect(result).toContain('"typescript": "^5.9.3"');
+  });
+
+  it('still produces valid JSON, which is the point of removing whole lines', () => {
+    const result = removeDemoRecorder(manifest, ['gifenc', 'pngjs', '@types/pngjs']);
+    expect(() => JSON.parse(result)).not.toThrow();
+  });
+
+  it('is a no-op on a manifest that has already been ejected', () => {
+    const already = `{\n  "scripts": {\n    "test": "vitest run"\n  }\n}\n`;
+    expect(removeDemoRecorder(already, ['gifenc'])).toBe(already);
+  });
+});
+
+describe('removeDemoImage', () => {
+  it('removes the GIF that films the example remotes', () => {
+    const readme =
+      '## Demo\n\n![admin moving dashboard](docs/assets/cross-remote-kpi.gif)\n\nTwo tabs.\n';
+    const result = removeDemoImage(readme);
+    expect(result).not.toContain('docs/assets');
+    expect(result).toContain('## Demo');
+    expect(result).toContain('Two tabs.');
+  });
+
+  it('leaves the surrounding prose for the review report to flag', () => {
+    // The paragraph names the removed apps, so a human rewrites it — a script
+    // guessing at replacement prose would be worse than saying nothing.
+    const readme = '![x](docs/assets/a.gif)\n\nChanging a role in **admin** moves **dashboard**.\n';
+    expect(removeDemoImage(readme)).toBe('Changing a role in **admin** moves **dashboard**.\n');
+  });
+
+  it('leaves a README that has no demo image untouched', () => {
+    const readme = '# Title\n\nNo image here.\n';
+    expect(removeDemoImage(readme)).toBe(readme);
   });
 });
